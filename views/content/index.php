@@ -74,7 +74,13 @@
 					<a class="button good ajaxify" href="<?php echo site_url(SITE_AREA .'/content/news/create'); ?>"><?php echo lang('us_create_news'); ?></a>
 				
 					<?php echo lang('us_create_news_note'); ?>
-				</div>	
+				</div>
+
+                <div class="box create rounded">
+                    <a class="button good ajaxify" href="<?php echo site_url(SITE_AREA .'/content/news/news_options'); ?>"><?php echo lang('us_news_options'); ?></a>
+
+                    <?php echo lang('us_news_options_note'); ?>
+                </div>
 				
 				
 			</div>	<!-- /inner -->

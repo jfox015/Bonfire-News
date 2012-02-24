@@ -24,8 +24,13 @@
 	</div>
 	
 	<div>
-		<label for="image_path"><?php echo lang('us_image_path'); ?></label>
-		<input type="file" id="image_path" name="image_path" />
+		<label for="attachment"><?php echo lang('us_image_path'); ?></label>
+		<input type="file" id="attachment" name="attachment" /><br />
+		<?php if(isset($article) && isset($article->attachment) && !empty($article->attachment)) : 
+			$attachment = unserialize($article->attachment);
+			?>
+			<span class="subcaption">Current Attachment: <?php echo $attachment['file_name']." (".$attachment['file_size']."kB ".$attachment['file_type'].") | ".anchor('content/news/remove_attachment/'.$article->id,'Remove'); ?> </span>
+		<?php endif; ?>
 	</div>
 	
 	<div>
@@ -87,7 +92,7 @@
 
 	<?php if (isset($article) && has_permission('Site.News.Manage') && $article->id != $this->auth->user_id()) : ?>
 	<div class="box delete rounded">
-		<a class="button" id="delete-me" href="<?php echo site_url(SITE_AREA .'/settings/news/delete/'. $article->id); ?>" onclick="return confirm('<?php echo lang('us_delete_account_confirm'); ?>')"><?php echo lang('us_delete_account'); ?></a>
+		<a class="button" id="delete-me" href="<?php echo site_url(SITE_AREA .'/content/news/delete/'. $article->id); ?>" onclick="return confirm('<?php echo lang('us_delete_account_confirm'); ?>')"><?php echo lang('us_delete_account'); ?></a>
 		
 		<?php echo lang('us_delete_account_note'); ?>
 	</div>

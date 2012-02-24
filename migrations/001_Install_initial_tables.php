@@ -54,7 +54,7 @@ class Migration_Install_initial_tables extends Migration {
 		$this->db->query("INSERT INTO {$prefix}news_status VALUES(4, 'Archived', 0)");
 		
 		$data = array(
-			'name'        => 'Site.News.Manage' ,
+			'name'        => 'Site.News.Manage',
 			'description' => 'Manage News Content' 
 		);
 		$this->db->insert("{$prefix}permissions", $data);
@@ -65,7 +65,7 @@ class Migration_Install_initial_tables extends Migration {
 		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
 		
 		$data = array(
-			'name'        => 'Site.News.Add' ,
+			'name'        => 'Site.News.Add',
 			'description' => 'Add News Content' 
 		);
 		$this->db->insert("{$prefix}permissions", $data);
@@ -74,21 +74,25 @@ class Migration_Install_initial_tables extends Migration {
 		
 		// change the roles which don't have any specific login_destination set
 		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
-		
-		$data = array(
-			'name'        => 'OOTPOL.News.View' ,
-			'description' => 'View and Read News' 
-		);
-		$this->db->insert("{$prefix}permissions", $data);
-		
-		$permission_id = $this->db->insert_id();
-		
-		// change the roles which don't have any specific login_destination set
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(2, ".$permission_id.")");
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(3, ".$permission_id.")");
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(4, ".$permission_id.")");
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(5, ".$permission_id.")");
+
+        $data = array(
+            'name'        => 'Site.News.Delete',
+            'description' => 'Add News Content'
+        );
+        $this->db->insert("{$prefix}permissions", $data);
+
+        $permission_id = $this->db->insert_id();
+
+        // change the roles which don't have any specific login_destination set
+        $this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
+
+        $default_settings = "
+			INSERT INTO `{$prefix}settings` (`name`, `module`, `value`) VALUES
+			 ('news.allow_attachments', 'news', '1'),
+			 ('news.upload_dir_path', 'news', ''),
+			 ('news.upload_dir_url', 'news', '');
+		";
+        $this->db->query($default_settings);
 	}
 	
 	//--------------------------------------------------------------------
@@ -110,18 +114,28 @@ class Migration_Install_initial_tables extends Migration {
 		//delete the role
 		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Site.News.Manage')");
 		
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Site.News.Add'");
+		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Site.News.Delete'");
 		foreach ($query->result_array() as $row)
 		{
 			$permission_id = $row['permission_id'];
 			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
 		}
 		//delete the role
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Site.News.Add')");
+		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Site.News.Delete')");
 		
 		
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOTPOL.News.View'");
-		foreach ($query->result_array() as $row)
+		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Site.News.Add'");
+        foreach ($query->result_array() as $row)
+        {
+            $permission_id = $row['permission_id'];
+            $this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
+        }
+        //delete the role
+        $this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Site.News.Add')");
+
+
+        $query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOTPOL.News.View'");
+        foreach ($query->result_array() as $row)
 		{
 			$permission_id = $row['permission_id'];
 			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");

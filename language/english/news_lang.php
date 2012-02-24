@@ -5,7 +5,16 @@ $lang['article_unauthorized']		= 'Unauthorized. Sorry you do not have the approp
 $lang['us_empty_id']				= 'No Article Id was received.';
 $lang['us_create_news']				= 'Create News Article';
 $lang['us_create_news_note']		= '<h3>Create A New Article</h3><p>Create new articles to display news about the site and content.</p>';
+$lang['us_news_options_note']		= '<h3>News Options</h3><p>Manage attachment upload directories and news content options.</p>';
 $lang['us_edit_news']				= 'Edit News Article';
+
+$lang['mw_setting_title']			= 'News Settings';
+$lang['us_news_options']			= 'News Options';
+$lang['nw_settings_attachAllow']	= 'Allow Attachments';
+$lang['nw_upload_dir_path']			= 'Upload directory path';
+$lang['nw_upload_dir_path_note']	= 'Full Server path to attachmnent upload directory';
+$lang['nw_upload_dir_url']			= 'Upload directory URL';
+$lang['nw_upload_dir_url_note']		= 'Web accessible URL to asset upload directory';
 
 $lang['us_draft_articles']			= "Draft articles.";
 $lang['us_action_draft']			= "Draft";

@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
-	Copyright (c) 2011 Lonnie Ezell
+	Copyright (c) 2012 Jeff Fox
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -92,30 +92,97 @@ class Content extends Admin_Controller {
 		Template::render();
 	}
 	
+	//--------------------------------------------------------------------	
+
+	public function news_options() {
+	
+		if ($this->input->post('submit')) {
+		
+			$this->form_validation->set_rules('allow_attachments', lang('nw_settings_attachAllow'), 'number|xss_clean');
+			$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), 'required|xss_clean');
+			$this->form_validation->set_rules('upload_dir_url', lang('nw_upload_dir_url'), 'number|xss_clean');
+
+			if ($this->form_validation->run() !== FALSE) {
+
+                $data = array(
+                    array('name' => 'news.upload_dir_path', 'value' => $this->input->post('upload_dir_path')),
+                    array('name' => 'news.upload_dir_url', 'value' => $this->input->post('upload_dir_url')),
+                    array('name' => 'news.allow_attachments', 'value' => ($this->input->post('allow_attachments')) ? 1 : -1),
+				);
+
+                //destroy the saved update message in case they changed update preferences.
+                if ($this->cache->get('update_message'))
+                {
+                    if (!is_writeable(FCPATH.APPPATH.'cache/'))
+                    {
+                        $this->cache->delete('update_message');
+                    }
+                }
+                // Log the activity
+                $this->activity_model->log_activity($this->auth->user_id(), lang('bf_act_settings_saved').': ' . $this->input->ip_address(), 'news');
+
+                // save the settings to the DB
+				if ($this->settings_model->update_batch($data, 'name')) {
+				// Success, so reload the page, so they can see their settings
+					Template::set_message('News settings successfully saved.', 'success');
+					redirect(SITE_AREA .'/content/news');
+				}
+				else
+				{
+					Template::set_message('There was an error saving the news settings.', 'error');
+				}
+            }
+		}
+        $settings = $this->settings_lib->find_all_by('module','news');
+        Template::set('settings', $settings);
+
+        Template::set('toolbar_title', lang('sim_setting_title'));
+        Template::set_view('news/content/options_form');
+        Template::render();
+	}
+
 	//--------------------------------------------------------------------
 	
 	public function create() 
 	{
-		$this->auth->restrict('Site.News.Add');
-	
+		$settings = $this->settings_lib->find_all_by('module','news');
+        $this->auth->restrict('Site.News.Add');
+		
 		if ($this->input->post('submit'))
 		{
-			if ($id = $this->save_article())
+			$uploadData = array();
+			$upload = true;
+			if (isset($_FILES['attachment_path']) && !empty($_FILES['attachment_path'])) 
 			{
-				$article = $this->news_model->find($id);
-				$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
-				$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$log_name, 'users');
-				
-				Template::set_message('Article successfully created.', 'success');
-				Template::redirect(SITE_AREA .'/content/news');
+				$uploadData = $this->handleUpload();
+				if (isset($uploadData['error']) && !empty($uploadData['error'])) 
+				{
+					$upload = false;
+				}
+			}
+			if ($upload) {
+				if ($id = $this->save_article($uploadData))
+				{
+					$article = $this->news_model->find($id);
+					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
+					$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$log_name, 'users');
+					
+					Template::set_message('Article successfully created.', 'success');
+					Template::redirect(SITE_AREA .'/content/news');
+				}
+				else 
+				{
+					Template::set_message('There was a problem creating the user: '. $this->news_model->error);
+				}
 			}
 			else 
 			{
-				Template::set_message('There was a problem creating the user: '. $this->news_model->error);
+				Template::set_message('There was a problem saving the file attachment: '. $uploadData['error']);
 			}
 		}
 		Template::set('categories', $this->news_model->get_news_categories());
         Template::set('statuses', $this->news_model->get_news_statuses());
+        Template::set('settings', $settings);
         
 		// if a date field hasn't been included already then add in the jquery ui files
 		Assets::add_js(Template::theme_url('js/editors/xinha_conf.js'));
@@ -141,17 +208,33 @@ class Content extends Admin_Controller {
 		
 		if ($this->input->post('submit'))
 		{
-			if ($this->save_article('update', $article_id))
+			$uploadData = array();
+			$upload = true;
+			if (isset($_FILES['attachment_path']) && !empty($_FILES['attachment_path'])) 
 			{
-				$article = $this->news_model->find($article_id);
-				$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
-				$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_edit') .': '.$log_name, 'users');
-			
-				Template::set_message('Article successfully updated.', 'success');
+				$uploadData = $this->handleUpload();
+				if (isset($uploadData['error']) && !empty($uploadData['error'])) 
+				{
+					$upload = false;
+				}
+			}
+			if ($upload) {
+				if ($this->save_article($uploadData, 'update', $article_id))
+				{
+					$article = $this->news_model->find($article_id);
+					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
+					$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_edit') .': '.$log_name, 'users');
+				
+					Template::set_message('Article successfully updated.', 'success');
+				}
+				else 
+				{
+					Template::set_message('There was a problem updating the article: '. $this->news_model->error);
+				}
 			}
 			else 
 			{
-				Template::set_message('There was a problem updating the article: '. $this->news_model->error);
+				Template::set_message('There was a problem saving the file attachment: '. $uploadData['error']);
 			}
 		}
 		
@@ -319,10 +402,69 @@ class Content extends Admin_Controller {
 	}
 	
 	//--------------------------------------------------------------------
-
+	
+	public function remove_attachment() {
+		$id = $this->uri->segment(5);
+		$settings = $this->settings_lib->find_all_by('module','news');
+        $success = false;
+		
+		// Handle a single-user purge
+		if (!empty($article_id) && is_numeric($article_id))
+		{
+			$article = $this->news_model->find($article_id);
+			if (isset($article) && isset($article->attachment)) {
+				$attachment = unserialize($article->attachment);
+				// SET THE DEFAULT PATH SEPERATOR
+				if (substr(PHP_OS, 0, 3) == 'WIN') {
+					$path_sep = "\\";
+				} else {
+					$path_sep = "/";
+				}
+				if (file_exists($settings['nw_upload_dir_path'].$path_sep.$attachment['file_name'])) {
+					unlink($settings['nw_upload_dir_path'].$path_sep.$attachment['file_name']);
+				}
+				$data = array('attachment'=>'');
+				$success = $this->news_model->update($article_id, $data);
+			}
+		}
+		if (!$success) {
+			Template::set_message("Attachment removal failed.", 'error');
+		} else {
+			Template::set_message("Attachment removed.", 'success');
+		}
+		$this->edit();
+		
+	}
+	
 	//--------------------------------------------------------------------
 	
-	private function save_article($type='insert', $id=0) 
+	/*--------------------------------------------------------------------
+	/	PRIVATE FUNCTIONS
+	/-------------------------------------------------------------------*/
+	private function handle_upload()
+	{
+		$settings = $this->settings_lib->find_all_by('module','news');
+        
+		$config['upload_path'] = $settings['upload_dir_path'];
+		$config['allowed_types'] = 'gif|jpg|png';
+		$config['max_size']	= '500';
+		$config['max_width']  = '1024';
+		$config['max_height']  = '768';
+
+		$this->load->library('upload', $config);
+
+		if ( ! $this->upload->do_upload())
+		{
+			return array('error'=>$this->upload->display_errors());
+		}
+		else
+		{
+			return array('data',$this->upload->data());
+		}
+	}
+	//--------------------------------------------------------------------
+	
+	private function save_article($uploadData = false, $type='insert', $id=0) 
 	{
 		$db_prefix = $this->db->dbprefix;
 		
@@ -331,7 +473,6 @@ class Content extends Admin_Controller {
 			$this->form_validation->set_rules('title', 'Title', 'required|trim|max_length[255]|xss_clean');
 			$this->form_validation->set_rules('body', 'Body', 'required|trim|xss_clean');
 			$this->form_validation->set_rules('date', 'Article Date', 'required|trim|strip_tags|xss_clean');
-			$this->form_validation->set_rules('image_path', 'Image Attachment Path', 'trim|strip_tags|max_length[255]|xss_clean');
 			$this->form_validation->set_rules('tags', 'Tags', 'trim|strip_tags|max_length[255]|xss_clean');
 		} 
 		else 
@@ -339,10 +480,10 @@ class Content extends Admin_Controller {
 			$this->form_validation->set_rules('title', 'Title', 'trim|max_length[255]|xss_clean');
 			$this->form_validation->set_rules('body', 'Body', 'trim|xss_clean');
 			$this->form_validation->set_rules('date', 'Article Date', 'trim|strip_tags|xss_clean');
-			$this->form_validation->set_rules('image_path', 'Image Attachment Path', 'trim|strip_tags|max_length[255]|xss_clean');
 			$this->form_validation->set_rules('tags', 'Tags', 'trim|strip_tags|max_length[255]|xss_clean');
 		}
 		
+		$this->form_validation->set_rules('attachmnet', 'Attachment Path', 'trim|strip_tags|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('author', 'Author', 'trim|strip_tags|xss_clean');
 		$this->form_validation->set_rules('date_published', 'Publish Date', 'trim|strip_tags|xss_clean');
 		$this->form_validation->set_rules('category_id', 'Category', 'trim|strip_tags|xss_clean');
@@ -352,14 +493,25 @@ class Content extends Admin_Controller {
 		{
 			return false;
 		}
-		
+		$data = array('title'=>$this->input->post('title'),
+				'body'=>$this->input->post('body'),
+				'date'=>$this->input->post('date'),
+				'tags'=>$this->input->post('tags'),
+				'author'=>$this->input->post('author'),
+				'date_published'=>$this->input->post('date_published'),
+				'category_id'=>$this->input->post('category_id'),
+				'status_id'=>$this->input->post('status_id'));
+		if ($uploadData !== false) 
+		{
+			$data = $data + array('attachmnet'=>serialize($uploadData));
+		}		
 		if ($type == 'insert')
 		{
-			return $this->news_model->insert($_POST);
+			return $this->news_model->insert($data);
 		}
 		else	// Update
 		{	
-			return $this->news_model->update($id, $_POST);
+			return $this->news_model->update($id, $data);
 		}
 	}
 	
