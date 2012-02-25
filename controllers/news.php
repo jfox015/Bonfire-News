@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class News extends Admin_Controller {
+class News extends Front_Controller {
 
 	//--------------------------------------------------------------------
 	
@@ -28,7 +28,9 @@ class News extends Admin_Controller {
 	public function get_articles($offset=0,$limit=-1) {
 		
 		Assets::add_module_css('news','assets/css/news.css');
-		
+
+        $this->load->model('activities/Activity_model', 'activity_model', true);
+        $this->load->library('users/auth');
 		$articles = $this->news_model->find_all();
 		$output = '';
 		

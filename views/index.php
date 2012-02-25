@@ -23,7 +23,7 @@
 				} // END if
 			?>
 			<div id="image" class="news_image<?php echo($alignClass); ?>">
-			<img src="<?php echo($settings['upload_dir_url'].$attachment['file_name'])); ?>" width="<?php echo($attachment['image_width']); ?>" height="<?php echo($attachment['image_height']); ?>" alt="" title="" />
+			<img src="<?php echo($settings['upload_dir_url'].$attachment['file_name']); ?>" width="<?php echo($attachment['image_width']); ?>" height="<?php echo($attachment['image_height']); ?>" alt="" title="" />
 			<?php 
 			// IMAGE CAPTION CHECK
 			if (isset($article->image_caption) && !empty($article->image_caption)) : ?>
