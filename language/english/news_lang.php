@@ -33,6 +33,10 @@ $lang['us_title']					= "Title";
 $lang['us_date']					= "Article Date";
 $lang['us_body']					= "Article Body";
 $lang['us_image_path']				= "Attach Image";
+$lang['us_image_align']				= "Image Alignment";
+$lang['us_image_caption']			= "Caption";
+$lang['us_image_align_left']		= "Left (Default)";
+$lang['us_image_align_right']		= "Right";
 $lang['us_tags']					= "Tags";
 
 $lang['us_additional']				= "Additional Information";

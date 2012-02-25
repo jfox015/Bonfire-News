@@ -10,7 +10,7 @@ class News_model extends BF_Model {
 	protected $soft_deletes	= true;
 	protected $date_format	= 'int';
 	protected $set_modified = true;
-	protected $set_created = true;
+	protected $set_created 	= true;
 
 	public function __construct() 
 	{
@@ -58,7 +58,11 @@ class News_model extends BF_Model {
 		}
 		$data['date'] = strtotime($data['date']);
 
-        $data['image_path'] = (isset($data['image_path']) && !empty($data['image_path']) ? $data['image_path'] : '');
+        $data['attachment'] = (isset($data['attachment']) && !empty($data['attachment']) ? $data['attachment'] : '');
+        
+		$data['image_align'] = (isset($data['image_align']) && !empty($data['image_align']) ? $data['image_align'] : '');
+		
+		$data['image_caption'] = (isset($data['image_caption']) && !empty($data['image_caption']) ? $data['image_caption'] : '');
 
         $data['date_published'] = (isset($data['date_published']) && !empty($data['date_published']) ? strtotime($data['date_published']) : $data['date']);
 

@@ -473,17 +473,18 @@ class Content extends Admin_Controller {
 			$this->form_validation->set_rules('title', 'Title', 'required|trim|max_length[255]|xss_clean');
 			$this->form_validation->set_rules('body', 'Body', 'required|trim|xss_clean');
 			$this->form_validation->set_rules('date', 'Article Date', 'required|trim|strip_tags|xss_clean');
-			$this->form_validation->set_rules('tags', 'Tags', 'trim|strip_tags|max_length[255]|xss_clean');
-		} 
+			} 
 		else 
 		{
 			$this->form_validation->set_rules('title', 'Title', 'trim|max_length[255]|xss_clean');
 			$this->form_validation->set_rules('body', 'Body', 'trim|xss_clean');
 			$this->form_validation->set_rules('date', 'Article Date', 'trim|strip_tags|xss_clean');
-			$this->form_validation->set_rules('tags', 'Tags', 'trim|strip_tags|max_length[255]|xss_clean');
 		}
 		
-		$this->form_validation->set_rules('attachmnet', 'Attachment Path', 'trim|strip_tags|max_length[255]|xss_clean');
+		$this->form_validation->set_rules('image_caption', 'Caption', 'trim|strip_tags|max_length[255]|xss_clean');
+		$this->form_validation->set_rules('tags', 'Tags', 'trim|strip_tags|max_length[255]|xss_clean');
+		$this->form_validation->set_rules('attachmnet', 'Attachment Path', 'trim|strip_tags|xss_clean');
+		$this->form_validation->set_rules('image_align', 'Image Alignment', 'number|xss_clean');
 		$this->form_validation->set_rules('author', 'Author', 'trim|strip_tags|xss_clean');
 		$this->form_validation->set_rules('date_published', 'Publish Date', 'trim|strip_tags|xss_clean');
 		$this->form_validation->set_rules('category_id', 'Category', 'trim|strip_tags|xss_clean');
@@ -493,12 +494,18 @@ class Content extends Admin_Controller {
 		{
 			return false;
 		}
+		if (!function_exists('textDateToInt')) {
+			$this->load->helper('date');
+		}
+		$dates = textDateToInt(array('date'=>'','date_published'=>''),$this->input);
+		
 		$data = array('title'=>$this->input->post('title'),
 				'body'=>$this->input->post('body'),
-				'date'=>$this->input->post('date'),
+				'date'=>$dates['date'],
 				'tags'=>$this->input->post('tags'),
 				'author'=>$this->input->post('author'),
-				'date_published'=>$this->input->post('date_published'),
+				'image_align'=>$this->input->post('image_align'),
+				'date_published'=>$dates['date_published'],
 				'category_id'=>$this->input->post('category_id'),
 				'status_id'=>$this->input->post('status_id'));
 		if ($uploadData !== false) 

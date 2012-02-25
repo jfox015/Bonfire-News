@@ -22,7 +22,7 @@
 		<label class="required" for="body"><?php echo lang('us_body'); ?></label>
 		<?php echo form_textarea( array( 'name' => 'body', 'id' => 'body', 'rows' => '5', 'cols' => '80', 'value' => set_value('$article->body') ) )?>
 	</div>
-	
+		<!-- ATTACH IMAGE -->
 	<div>
 		<label for="attachment"><?php echo lang('us_image_path'); ?></label>
 		<input type="file" id="attachment" name="attachment" /><br />
@@ -32,6 +32,23 @@
 			<span class="subcaption">Current Attachment: <?php echo $attachment['file_name']." (".$attachment['file_size']."kB ".$attachment['file_type'].") | ".anchor('content/news/remove_attachment/'.$article->id,'Remove'); ?> </span>
 		<?php endif; ?>
 	</div>
+		<!-- IMAGE CAPTION -->
+	<div>
+		<label for="image_caption"><?php echo lang('us_image_caption'); ?></label>
+		<input type="text" name="image_caption" id="image_caption" value="<?php echo isset($article) ? $article->image_caption : set_value('image_caption') ?>" />
+	</div>
+		<!-- IMAGE ALIGNMENT -->
+	<div>
+		<label for="image_align"><?php echo lang('us_image_align'); ?></label>
+		<?php 
+		$alignments = array(-1=>'',1=>lang('us_image_align_left'),2=>lang('us_image_align_right')); ?>
+		<select name="image_align">
+		<?php foreach ($alignments as $id => $label) :?>
+			<option value="<?php echo $id; ?>" <?php echo (isset($article) ? ($id == $article->image_align) ? 'selected="selected"' : '' : ''); ?>><?php echo $label ?></option>
+		<?php endforeach; ?>
+		</select>
+	</div>
+	
 	
 	<div>
 		<label for="tags"><?php echo lang('us_tags'); ?></label>
@@ -113,5 +130,8 @@ head.ready(function(){
 	  Xinha.startEditors(xinha_editors);
 	}
 	xinha_init();
+	
+	$("#date").datepicker();
+	$("#date_published").datepicker();
 });
 </script>

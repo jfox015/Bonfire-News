@@ -27,6 +27,8 @@ class News extends Admin_Controller {
 	
 	public function get_articles($offset=0,$limit=-1) {
 		
+		Assets::add_module_css('news','assets/css/news.css');
+		
 		$articles = $this->news_model->find_all();
 		$output = '';
 		
@@ -36,7 +38,7 @@ class News extends Admin_Controller {
 			$this->db->limit($offset,$limit);
 		}
 		$this->db->order_by('date','desc');
-		$articles = $this->news_model->find_all();
+		$articles = $this->news_model->find_all_by('status_id',3);
 		if (is_array($articles) && count($articles)) {
 			foreach ($articles as $article) {
 				$article->author_name = $this->auth->user_name($article->author);
@@ -53,12 +55,16 @@ class News extends Admin_Controller {
 	
 	public function get_article($article_id = false) {
 		
+		Assets::add_module_css('news','assets/css/news.css');
+		
 		if ($article_id === false) {
 			return false;
 		}
 		$article = false;
+		$this->db->where('status_id',3);
 		if ($article = $this->find($article_id) !== false) {
-			return $this->load->view('news/index',$article,true);
+			$article->author_name = $this->auth->user_name($article->author);
+			return $this->load->view('news/index',$article, true);
 		} else {
 			return 'Article not found.';
 			$this->activity_model->log_activity($this->auth->user_id(), 'Get Article: '. $article_id .' failed. no article found.', 'news');
