@@ -199,8 +199,27 @@ class News_model extends BF_Model {
 		
 		return parent::find_by($field, $value);
 	}
-	
-	//--------------------------------------------------------------------
+
+    //--------------------------------------------------------------------
+    public function get_articles($offset = 0, $limit = -1, $published = true) {
+
+        if ($limit != -1 && $offset == 0) {
+        $this->db->limit($limit);
+        } else if ($limit != -1 && $offset > 0) {
+            $this->db->limit($offset,$limit);
+        }
+        $this->db->order_by('date','desc');
+        $this->db->where('status_id',3);
+        $query = $this->db->get($this->table);
+        if ($query->num_rows() > 0) {
+             $articles = $query->result();
+        }
+        //$articles = $this->news_model->find_all_by('status_id',3);
+        print ($this->db->last_query()."<br />");
+        return $articles;
+    }
+
+    //--------------------------------------------------------------------
 	
 	/*
 		Method: count_by_categories()

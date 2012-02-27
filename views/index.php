@@ -35,7 +35,7 @@
 		
 		<div id="body" class="news_body"><?php echo($article->body); ?></div>
 		
-		<div id="author" class="author"><?php echo(anchor('users/profile/'.$article->author,$article->author_name)); ?></div>
+		<div id="author" class="author"><?php echo(anchor('users/profile/'.$article->author,((isset($article->author_name))? $article->author_name: 'Unnamed Author'))); ?></div>
 		
 		<?php } else { ?>
 		<p>No article content was found.</p>

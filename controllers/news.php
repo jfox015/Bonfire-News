@@ -22,7 +22,32 @@ class News extends Front_Controller {
 		$articles = $this->get_articles();
 		Template::render();
 	}
-	
+
+    //--------------------------------------------------------------------
+
+    public function get_article_list($offset=0,$limit=-1) {
+
+        Assets::add_module_css('news','assets/css/news.css');
+
+        $this->load->model('activities/Activity_model', 'activity_model', true);
+        $this->load->library('users/auth');
+        $output = '';
+
+        if ($limit != -1 && $offset == 0) {
+            $this->db->limit($limit);
+        } else if ($limit != -1 && $offset > 0) {
+            $this->db->limit($offset,$limit);
+        }
+        $this->db->order_by('date','desc');
+        $articles = $this->news_model->find_all_by('status_id',3);
+        echo($this->db->last_query()."<br />");
+        if (!is_array($articles) || !count($articles)) {
+            $output = 'No Articles  found.';
+            $this->activity_model->log_activity($this->auth->user_id(), 'Get Articles: failed. No article were found.', 'news');
+        }
+        return $articles;
+    }
+
 	//--------------------------------------------------------------------
 	
 	public function get_articles($offset=0,$limit=-1) {
@@ -31,20 +56,13 @@ class News extends Front_Controller {
 
         $this->load->model('activities/Activity_model', 'activity_model', true);
         $this->load->library('users/auth');
-		$articles = $this->news_model->find_all();
+		//$articles = $this->news_model->find_all();
 		$output = '';
-		
-		if ($limit != -1 && $offset == 0) {
-			$this->db->limit($limit);
-		} else if ($limit != -1 && $offset > 0) {
-			$this->db->limit($offset,$limit);
-		}
-		$this->db->order_by('date','desc');
-		$articles = $this->news_model->find_all_by('status_id',3);
+		$articles = $this->news_model->get_articles(true,$offset,$limit);
 		if (is_array($articles) && count($articles)) {
 			foreach ($articles as $article) {
-				$article->author_name = $this->auth->user_name($article->author);
-				$output .= $this->load->view('news/index',$article,true);
+				$article->author_name = $this->auth->username($article->author);
+				$output .= $this->load->view('news/index',array('article'=>$article),true);
 			}
 		} else {
 			$output = 'No Articles not found.';
