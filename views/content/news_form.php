@@ -15,7 +15,7 @@
 
 	<div>
 		<label class="required"  for="date"><?php echo lang('us_date'); ?></label>
-		<input type="text" name="date" id="date" value="<?php echo isset($article) ? $article->date : set_value('date') ?>" />
+		<input type="text" name="date" id="date" value="<?php echo isset($article) ? date('m/d/Y',$article->date) : set_value('date') ?>" />
 	</div>
 	
 	<div>
@@ -48,7 +48,6 @@
 		<?php endforeach; ?>
 		</select>
 	</div>
-	
 	
 	<div>
 		<label for="tags"><?php echo lang('us_tags'); ?></label>
@@ -90,15 +89,15 @@
 		</div>
 		<div>
 			<label for="date_published"><?php echo lang('us_publish_date') ?></label>
-			<input type="text" name="date_published" id="date_published" value="<?php echo isset($article) ? $article->date_published : set_value('date_published') ?>" />
+			<input type="text" name="date_published" id="date_published" value="<?php echo isset($article) ? date('m/d/Y',$article->date_published) : set_value('date_published') ?>" />
 		</div>
 		<div>
 			<label for="created_on"><?php echo lang('us_created'); ?></label>
-			<span><?php echo date('m/d/Y h:i:s A',(isset($article) ? $article->created_on : '0')); ?> by <?php echo $this->auth->username((isset($article) ? $article->created_by : '1')); ?></span>
+			<span><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->created_on) : 'Unknown')); ?> by <?php echo (isset($article) ? $this->auth->username($article->created_by) : 'Unknown')); ?></span>
 		</div>
 		<div>
 			<label for="modified_on"><?php echo lang('us_modified'); ?></label>
-			<span><?php echo date('m/d/Y h:i:s A',(isset($article) ? $article->modified_on : '0')); ?> by <?php echo $this->auth->username((isset($article) ? $article->modified_by : '1')); ?></span>
+			<span><?php echo isset($article) ? date('m/d/Y h:i:s A',($article->modified_on) : 'Unknown')); ?> by <?php echo (isset($article) ? $this->auth->username($article->modified_by) : 'Unknown')); ?></span>
 		</div>
 
 	</fieldset>
