@@ -25,10 +25,10 @@
 			<img src="<?php echo($attachment['data']['file_path'].$attachment['data']['file_name']); ?>" width="<?php echo($attachment['image_width']); ?>" height="<?php echo($attachment['image_height']); ?>" alt="" title="" />
 			<?php 
 			// IMAGE CAPTION CHECK
-			if (isset($article->image_caption) && !empty($article->image_caption)) : ?>
+			if (isset($article->image_caption) && !empty($article->image_caption)) { ?>
 				<br /><span class="caption"><?php echo($article->image_caption); ?></span>
 			</div>
-			<?php endif; ?>
+			<?php } ?>
 		<?php endif; ?>
 		
 		<div id="body" class="news_body"><?php echo($article->body); ?></div>
