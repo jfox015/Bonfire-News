@@ -52,7 +52,7 @@ class News extends Front_Controller {
 	
 	public function get_articles($offset=0,$limit=-1) {
 		
-		Assets::add_module_css('news','assets/css/news.css');
+		Assets::add_module_css('news','news.css');
 
         $this->load->model('activities/Activity_model', 'activity_model', true);
         $this->load->library('users/auth');
@@ -75,7 +75,7 @@ class News extends Front_Controller {
 	
 	public function get_article($article_id = false) {
 		
-		Assets::add_module_css('news','assets/css/news.css');
+		Assets::add_module_css('news','news.css');
 		
 		if ($article_id === false) {
 			return false;

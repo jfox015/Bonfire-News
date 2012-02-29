@@ -20,7 +20,7 @@
 			<div class="list-view" id="article-list">
 			<?php foreach ($articles as $article) : ?>
 				<div class="list-item with-icon" data-id="<?php echo $article->id ?>" data-category="<?php echo $article->category ?>">
-					<?php echo gravatar_link('<img src="icon_news.png" />'); ?>
+					<?php echo '<img src="'.Template::theme_url('images/news.png').'" />'; ?>
 				
 					<p>						
 						<b><?php echo $article->title; ?></b><br/>
@@ -57,7 +57,7 @@
                         <span class="big-text"><b><?php echo $draft_articles ?></b></span> &nbsp; <?php echo anchor(SITE_AREA .'/content/news/drafts', 'Draft Articles', 'class="ajaxify"') ?>
                     </div>
 					<div class="column size1of2 last-column">
-						<img src="<?php echo Template::theme_url('images/news.png') ?>" style="vertical-align: bottom; position: relative; top: -5px; margin-right: 1em;" />	
+						<img src="<?php echo Template::theme_url('images/news.png') ?>" style="vertical-align: bottom; position: relative; top: -5px; margin-right: 1em;" />
 						
 						<span class="big-text"><b><?php echo $published_articles ?></b></span> &nbsp; <?php echo anchor(SITE_AREA .'/content/news/published', 'Published Articles', 'class="ajaxify"') ?>
 					</div>

@@ -152,9 +152,9 @@ class Content extends Admin_Controller {
 		{
 			$uploadData = array();
 			$upload = true;
-			if (isset($_FILES['attachment_path']) && !empty($_FILES['attachment_path'])) 
+			if (isset($_FILES['attachment']) && !empty($_FILES['attachment']))
 			{
-				$uploadData = $this->handleUpload();
+				$uploadData = $this->handle_upload($settings['news.upload_dir_path']);
 				if (isset($uploadData['error']) && !empty($uploadData['error'])) 
 				{
 					$upload = false;
@@ -197,7 +197,8 @@ class Content extends Admin_Controller {
 	
 	public function edit() 
 	{
-		$this->auth->restrict('Site.News.Manage');
+        $settings = $this->settings_lib->find_all_by('module','news');
+        $this->auth->restrict('Site.News.Manage');
 		
 		$article_id = $this->uri->segment(5);
 		if (empty($article_id))
@@ -210,9 +211,9 @@ class Content extends Admin_Controller {
 		{
 			$uploadData = array();
 			$upload = true;
-			if (isset($_FILES['attachment_path']) && !empty($_FILES['attachment_path'])) 
+			if (isset($_FILES['attachment']) && !empty($_FILES['attachment']))
 			{
-				$uploadData = $this->handleUpload();
+				$uploadData = $this->handle_upload($settings['news.upload_dir_path']);
 				if (isset($uploadData['error']) && !empty($uploadData['error'])) 
 				{
 					$upload = false;
@@ -420,8 +421,8 @@ class Content extends Admin_Controller {
 				} else {
 					$path_sep = "/";
 				}
-				if (file_exists($settings['nw_upload_dir_path'].$path_sep.$attachment['file_name'])) {
-					unlink($settings['nw_upload_dir_path'].$path_sep.$attachment['file_name']);
+				if (file_exists($settings['news.upload_dir_path'].$path_sep.$attachment['file_name'])) {
+					unlink($settings['news.upload_dir_path'].$path_sep.$attachment['file_name']);
 				}
 				$data = array('attachment'=>'');
 				$success = $this->news_model->update($article_id, $data);
@@ -441,19 +442,17 @@ class Content extends Admin_Controller {
 	/*--------------------------------------------------------------------
 	/	PRIVATE FUNCTIONS
 	/-------------------------------------------------------------------*/
-	private function handle_upload()
+	private function handle_upload($path = '')
 	{
-		$settings = $this->settings_lib->find_all_by('module','news');
-        
-		$config['upload_path'] = $settings['upload_dir_path'];
+		$config['upload_path'] = $path;
 		$config['allowed_types'] = 'gif|jpg|png';
-		$config['max_size']	= '500';
-		$config['max_width']  = '1024';
-		$config['max_height']  = '768';
+		$config['max_size']	= '50000';
+		$config['max_width']  = '800';
+		$config['max_height']  = '600';
 
 		$this->load->library('upload', $config);
 
-		if ( ! $this->upload->do_upload())
+		if ( ! $this->upload->do_upload('attachment'))
 		{
 			return array('error'=>$this->upload->display_errors());
 		}
@@ -483,7 +482,7 @@ class Content extends Admin_Controller {
 		
 		$this->form_validation->set_rules('image_caption', 'Caption', 'trim|strip_tags|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('tags', 'Tags', 'trim|strip_tags|max_length[255]|xss_clean');
-		$this->form_validation->set_rules('attachmnet', 'Attachment Path', 'trim|strip_tags|xss_clean');
+		$this->form_validation->set_rules('attachment', 'Attachment Path', 'trim|strip_tags|xss_clean');
 		$this->form_validation->set_rules('image_align', 'Image Alignment', 'number|xss_clean');
 		$this->form_validation->set_rules('author', 'Author', 'trim|strip_tags|xss_clean');
 		$this->form_validation->set_rules('date_published', 'Publish Date', 'trim|strip_tags|xss_clean');
@@ -510,7 +509,7 @@ class Content extends Admin_Controller {
 				'status_id'=>$this->input->post('status_id'));
 		if ($uploadData !== false) 
 		{
-			$data = $data + array('attachmnet'=>serialize($uploadData));
+			$data = $data + array('attachment'=>serialize($uploadData));
 		}		
 		if ($type == 'insert')
 		{

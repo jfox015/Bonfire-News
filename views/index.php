@@ -8,7 +8,6 @@
 		
 		<?php if (isset($article->attachment) && !empty($article->attachment)) : 
 			$attachment = unserialize($article->attachment);
-			if ($attachment['is_image'] == 1) :
 				// IMAGE ALIGNMENT CHECK
 				$alignClass = '';
 				if(isset($article->image_align) && $article->image_align != -1) {
@@ -23,12 +22,11 @@
 				} // END if
 			?>
 			<div id="image" class="news_image<?php echo($alignClass); ?>">
-			<img src="<?php echo($settings['upload_dir_url'].$attachment['file_name']); ?>" width="<?php echo($attachment['image_width']); ?>" height="<?php echo($attachment['image_height']); ?>" alt="" title="" />
+			<img src="<?php echo($attachment['data']['file_path'].$attachment['data']['file_name']); ?>" width="<?php echo($attachment['image_width']); ?>" height="<?php echo($attachment['image_height']); ?>" alt="" title="" />
 			<?php 
 			// IMAGE CAPTION CHECK
 			if (isset($article->image_caption) && !empty($article->image_caption)) : ?>
 				<br /><span class="caption"><?php echo($article->image_caption); ?></span>
-			<?php endif; ?>
 			</div>
 			<?php endif; ?>
 		<?php endif; ?>

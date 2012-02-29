@@ -6,7 +6,7 @@
 
 <p class="small"><?php echo lang('bf_required_note'); ?></p>
 
-<?php echo form_open($this->uri->uri_string(), 'class="constrained ajax-form"'); ?>
+<?php echo form_open_multipart($this->uri->uri_string(), 'class="constrained ajax-form"'); ?>
 
 	<div>
 		<label class="required"  for="title"><?php echo lang('us_title'); ?></label>
@@ -15,11 +15,11 @@
 
 	<div>
 		<label class="required"  for="date"><?php echo lang('us_date'); ?></label>
-		<input type="text" name="date" id="date" value="<?php echo isset($article) ? $article->date : set_value('date') ?>" />
+		<input type="text" name="date" id="date" value="<?php echo isset($article) ? date('m/d/Y',$article->date) : set_value('date') ?>" />
 	</div>
 	
 	<div>
-		<label class="required" for="body"><?php echo lang('us_body'); ?></label>
+		<label class="required"><?php echo lang('us_body'); ?></label>
 		<?php echo form_textarea( array( 'name' => 'body', 'id' => 'body', 'rows' => '5', 'cols' => '80', 'value' => set_value('$article->body') ) )?>
 	</div>
 		<!-- ATTACH IMAGE -->
@@ -39,7 +39,7 @@
 	</div>
 		<!-- IMAGE ALIGNMENT -->
 	<div>
-		<label for="image_align"><?php echo lang('us_image_align'); ?></label>
+		<label><?php echo lang('us_image_align'); ?></label>
 		<?php 
 		$alignments = array(-1=>'',1=>lang('us_image_align_left'),2=>lang('us_image_align_right')); ?>
 		<select name="image_align">
@@ -48,7 +48,6 @@
 		<?php endforeach; ?>
 		</select>
 	</div>
-	
 	
 	<div>
 		<label for="tags"><?php echo lang('us_tags'); ?></label>
@@ -60,7 +59,7 @@
 		<legend><?php echo lang('us_additional'); ?></legend>
 		
 		<div>
-			<label for="author"><?php echo lang('us_author'); ?></label>
+			<label><?php echo lang('us_author'); ?></label>
 			<?php  if ( has_permission('Site.News.Manage') ) :?>
 			
 			<?php else : 
@@ -69,7 +68,7 @@
 		</div>
 		
 		<div>
-			<label for="category_id"><?php echo lang('us_category'); ?></label>
+			<label><?php echo lang('us_category'); ?></label>
 			<?php if (is_array($categories) && count($categories)) : ?>
 				<select name="category_id">
 				<?php foreach ($categories as $category) :?>
@@ -79,9 +78,9 @@
             <?php endif; ?>
 		</div>
 		<div>
-			<label for="status_id"><?php echo lang('us_status'); ?></label>
+			<label><?php echo lang('us_status'); ?></label>
 			<?php if (is_array($statuses) && count($statuses)) : ?>
-				<select name="category_id">
+				<select name="status_id">
 				<?php foreach ($statuses as $status) :?>
 					<option value="<?php echo (int)$status->id; ?>" <?php echo (isset($article) ? ((int)$status->id == $article->status_id) ? 'selected="selected"' : '' : ''); ?>><?php echo $status->status ?></option>
 				<?php endforeach; ?>
@@ -90,15 +89,15 @@
 		</div>
 		<div>
 			<label for="date_published"><?php echo lang('us_publish_date') ?></label>
-			<input type="text" name="date_published" id="date_published" value="<?php echo isset($article) ? $article->date_published : set_value('date_published') ?>" />
+			<input type="text" name="date_published" id="date_published" value="<?php echo isset($article) ? date('m/d/Y',$article->date_published) : set_value('date_published') ?>" />
 		</div>
 		<div>
-			<label for="created_on"><?php echo lang('us_created'); ?></label>
-			<span><?php echo date('m/d/Y h:i:s A',(isset($article) ? $article->created_on : '0')); ?> by <?php echo $this->auth->username((isset($article) ? $article->created_by : '1')); ?></span>
+			<label><?php echo lang('us_created'); ?></label>
+			<span><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->created_on) : 'Unknown'); ?> by <?php echo (isset($article) ? $this->auth->username($article->created_by) : 'Unknown'); ?></span>
 		</div>
 		<div>
-			<label for="modified_on"><?php echo lang('us_modified'); ?></label>
-			<span><?php echo date('m/d/Y h:i:s A',(isset($article) ? $article->modified_on : '0')); ?> by <?php echo $this->auth->username((isset($article) ? $article->modified_by : '1')); ?></span>
+			<label><?php echo lang('us_modified'); ?></label>
+			<span><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->modified_on) : 'Unknown'); ?> by <?php echo (isset($article) ? $this->auth->username($article->modified_by) : 'Unknown'); ?></span>
 		</div>
 
 	</fieldset>
@@ -119,7 +118,10 @@
 
 <script type="text/javascript"> 
 head.ready(function(){
-	var xinha_plugins =['Linker'];
+    $("#date").datepicker();
+    $("#date_published").datepicker();
+
+    var xinha_plugins =['Linker'];
 	var xinha_editors =['body'];
 
 	function xinha_init()
@@ -131,7 +133,6 @@ head.ready(function(){
 	}
 	xinha_init();
 	
-	$("#date").datepicker();
-	$("#date_published").datepicker();
+
 });
 </script>
