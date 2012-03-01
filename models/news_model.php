@@ -201,15 +201,17 @@ class News_model extends BF_Model {
 	}
 
     //--------------------------------------------------------------------
-    public function get_articles($offset = 0, $limit = -1, $published = true) {
+    public function get_articles( $published = true, $limit = -1, $offset = 0) {
 
         if ($limit != -1 && $offset == 0) {
-        $this->db->limit($limit);
+            $this->db->limit($limit);
         } else if ($limit != -1 && $offset > 0) {
             $this->db->limit($offset,$limit);
         }
-        $this->db->order_by('date','desc');
-        $this->db->where('status_id',3);
+        $this->db->order_by('date', "asc");
+        if ($published === true) {
+            $this->db->where('status_id',3);
+        }
         $query = $this->db->get($this->table);
         if ($query->num_rows() > 0) {
              $articles = $query->result();
@@ -217,6 +219,28 @@ class News_model extends BF_Model {
         //$articles = $this->news_model->find_all_by('status_id',3);
         print ($this->db->last_query()."<br />");
         return $articles;
+    }
+
+    //--------------------------------------------------------------------
+    public function get_article($article_id = false, $published = true) {
+
+        $article = false;
+        if ($article_id === false) {
+            $this->errors = "No article ID was received.";
+            return false;
+        }
+        $this->db->where('id',$article_id);
+        if ($published === true) {
+            $this->db->where('status_id',3);
+        }
+        $query = $this->db->get($this->table);
+        if ($query->num_rows() > 0) {
+            $article = $query->row();
+        }
+        $query->free_result();
+        //$articles = $this->news_model->find_all_by('status_id',3);
+        //print ($this->db->last_query()."<br />");
+        return $article;
     }
 
     //--------------------------------------------------------------------

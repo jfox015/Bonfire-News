@@ -101,6 +101,8 @@ class Content extends Admin_Controller {
 			$this->form_validation->set_rules('allow_attachments', lang('nw_settings_attachAllow'), 'number|xss_clean');
 			$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), 'required|xss_clean');
 			$this->form_validation->set_rules('upload_dir_url', lang('nw_upload_dir_url'), 'number|xss_clean');
+			$this->form_validation->set_rules('max_img_width', lang('nw_max_img_width'), 'number|xss_clean');
+			$this->form_validation->set_rules('max_img_height', lang('nw_max_img_height'), 'number|xss_clean');
 
 			if ($this->form_validation->run() !== FALSE) {
 
@@ -108,6 +110,8 @@ class Content extends Admin_Controller {
                     array('name' => 'news.upload_dir_path', 'value' => $this->input->post('upload_dir_path')),
                     array('name' => 'news.upload_dir_url', 'value' => $this->input->post('upload_dir_url')),
                     array('name' => 'news.allow_attachments', 'value' => ($this->input->post('allow_attachments')) ? 1 : -1),
+                    array('name' => 'news.max_img_width', 'value' => $this->input->post('max_img_width')),
+                    array('name' => 'news.max_img_height', 'value' => $this->input->post('max_img_height')),
 				);
 
                 //destroy the saved update message in case they changed update preferences.
@@ -444,9 +448,11 @@ class Content extends Admin_Controller {
 	/-------------------------------------------------------------------*/
 	private function handle_upload($path = '')
 	{
-		$config['upload_path'] = $path;
+        $settings = $this->settings_lib->find_all_by('module','news');
+
+        $config['upload_path'] = (empty($path) ? $settings['news.upload_dir_path'] : $path);
 		$config['allowed_types'] = 'gif|jpg|png';
-		$config['max_size']	= '50000';
+		$config['max_size']	= '125000';
 		$config['max_width']  = '800';
 		$config['max_height']  = '600';
 
@@ -458,7 +464,35 @@ class Content extends Admin_Controller {
 		}
 		else
 		{
-			return array('data',$this->upload->data());
+			$data = $this->upload->data();
+            $max_width = intval($settings['news.max_img_width']);
+            $max_height = intval($settings['news.max_image_height']);
+            $img_width = intval($data['image_width']);
+            $img_height = intval($data['image_height']);
+            if ($img_width > $max_width || $img_height > $max_height) {
+                $config['image_library'] = 'gd2';
+                $config['quality']	= '75%';
+                $config['source_image']	= $data['full_path'];
+                $config['new_image']	= $data['file_path'];
+                $config['create_thumb'] = TRUE;
+                $config['thumb_marker'] = "_th";
+                $config['maintain_ratio'] = TRUE;
+                $config['master_dim'] = 'auto';
+                if ($img_height > $img_width) {
+                    $config['height']	= $max_height;
+                } else {
+                    $config['width']	 = $max_width;
+                }
+
+                $this->load->library('image_lib', $config);
+
+                if ( ! $this->image_lib->resize())
+                {
+                    return array('error'=>$this->image_lib->display_errors());
+                }
+                $data['image_thumb'] = $data['raw_name']."_th".$data['file_ext'];
+            }
+            return array('data'=>$data);
 		}
 	}
 	//--------------------------------------------------------------------
@@ -509,7 +543,7 @@ class Content extends Admin_Controller {
 				'status_id'=>$this->input->post('status_id'));
 		if ($uploadData !== false) 
 		{
-			$data = $data + array('attachment'=>serialize($uploadData));
+			$data = $data + array('attachment'=>serialize($uploadData['data']));
 		}		
 		if ($type == 'insert')
 		{

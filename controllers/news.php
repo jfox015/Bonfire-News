@@ -25,7 +25,7 @@ class News extends Front_Controller {
 
     //--------------------------------------------------------------------
 
-    public function get_article_list($offset=0,$limit=-1) {
+    public function get_article_list($limit=-1, $offset=0) {
 
         Assets::add_module_css('news','assets/css/news.css');
 
@@ -36,9 +36,9 @@ class News extends Front_Controller {
         if ($limit != -1 && $offset == 0) {
             $this->db->limit($limit);
         } else if ($limit != -1 && $offset > 0) {
-            $this->db->limit($offset,$limit);
+            $this->db->limit($limit, $offset);
         }
-        $this->db->order_by('date','desc');
+        $this->db->order_by('date', "asc");
         $articles = $this->news_model->find_all_by('status_id',3);
         echo($this->db->last_query()."<br />");
         if (!is_array($articles) || !count($articles)) {
@@ -50,7 +50,7 @@ class News extends Front_Controller {
 
 	//--------------------------------------------------------------------
 	
-	public function get_articles($offset=0,$limit=-1) {
+	public function get_articles($limit=-1, $offset=0) {
 		
 		Assets::add_module_css('news','news.css');
 
@@ -58,9 +58,11 @@ class News extends Front_Controller {
         $this->load->library('users/auth');
 		//$articles = $this->news_model->find_all();
 		$output = '';
-		$articles = $this->news_model->get_articles(true,$offset,$limit);
+        $articles = $this->news_model->get_articles(true,$limit,$offset);
 		if (is_array($articles) && count($articles)) {
-			foreach ($articles as $article) {
+            $settings = $this->settings_lib->find_all_by('module','news');
+            foreach ($articles as $article) {
+				$article->asset_url = $settings['news.upload_dir_url'];
 				$article->author_name = $this->auth->username($article->author);
 				$output .= $this->load->view('news/index',array('article'=>$article),true);
 			}
@@ -73,7 +75,7 @@ class News extends Front_Controller {
 	
 	//--------------------------------------------------------------------
 	
-	public function get_article($article_id = false) {
+	public function article($article_id = false) {
 		
 		Assets::add_module_css('news','news.css');
 		
@@ -81,14 +83,18 @@ class News extends Front_Controller {
 			return false;
 		}
 		$article = false;
-		$this->db->where('status_id',3);
-		if ($article = $this->find($article_id) !== false) {
-			$article->author_name = $this->auth->user_name($article->author);
-			return $this->load->view('news/index',$article, true);
+		if (($article = $this->news_model->get_article($article_id)) !== false) {
+            $this->load->library('users/auth');
+            $article->author_name = $this->auth->username($article->author);
+            $settings = $this->settings_lib->find_all_by('module','news');
+            $article->asset_url = $settings['news.upload_dir_url'];
+            Template::set('article',$article);
 		} else {
-			return 'Article not found.';
+            Template::set('error',"Article not found");
 			$this->activity_model->log_activity($this->auth->user_id(), 'Get Article: '. $article_id .' failed. no article found.', 'news');
 		}
+        Template::set_view('news/index');
+        Template::render();
 	}
 	
 }

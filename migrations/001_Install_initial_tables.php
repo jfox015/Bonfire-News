@@ -92,7 +92,9 @@ class Migration_Install_initial_tables extends Migration {
 			INSERT INTO `{$prefix}settings` (`name`, `module`, `value`) VALUES
 			 ('news.allow_attachments', 'news', '1'),
 			 ('news.upload_dir_path', 'news', ''),
-			 ('news.upload_dir_url', 'news', '');
+			 ('news.upload_dir_url', 'news', ''),
+			 ('news.max_img_width', 'news', '200'),
+			 ('news.max_img_height', 'news', '200');
 		";
         $this->db->query($default_settings);
 	}
