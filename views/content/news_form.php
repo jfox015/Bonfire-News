@@ -118,21 +118,14 @@
 
 <script type="text/javascript"> 
 head.ready(function(){
-    $(document).ready(function() {
-		$("#date").datepicker();
-		$("#date_published").datepicker();
+    $("#date").datepicker();
+    $("#date_published").datepicker();
 
-		var xinha_plugins =['Linker'];
-		var xinha_editors =['body'];
+    var myNicEditor = new nicEditor();
+    myNicEditor.setPanel('myNicPanel');
+    myNicEditor.options.iconsPath = '<?php echo Template::theme_url('images/nicEditorIcons.gif'); ?>';
+    myNicEditor.addInstance('body');
 
-		function xinha_init()
-		{
-		  if(!Xinha.loadPlugins(xinha_plugins, xinha_init)) return;
-		  var xinha_config = new Xinha.Config();
-		  xinha_editors = Xinha.makeEditors(xinha_editors, xinha_config, xinha_plugins);
-		  Xinha.startEditors(xinha_editors);
-		}
-		xinha_init();
-	}
 });
+
 </script>

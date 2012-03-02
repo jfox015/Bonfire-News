@@ -4,7 +4,7 @@
 			<!-- Header -->
 		<div id="title"><h1><?php echo($article->title); ?></h1></div>
 		
-		<div id="article_date" class="news_date"><?php echo(date('m/d/Y h:i:s A',$article->date)); ?></div>
+		<div id="article_date" class="news_date"><?php echo(date('m/d/Y h:i:s A',intval($article->date))); ?></div>
 
         <div id="body" class="news_body">
 		<?php 
@@ -41,8 +41,9 @@
 		
 		<?php echo($article->body); ?></div>
 		
+		<?php if (isset($article->author_name)) { ?><div id="tags" class="tags"><?php echo($article->tags); ?></div><?php } ?>
 		<div id="author" class="author"><?php echo(anchor('users/profile/'.$article->author,((isset($article->author_name))? $article->author_name: 'Unnamed Author'))); ?></div>
-		
+
 		<?php } else { ?>
 		<p>No article content was found.</p>
 		<?php } ?>

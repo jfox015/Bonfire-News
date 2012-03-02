@@ -31,11 +31,23 @@
 		<input type="text" id="upload_dir_url" name="upload_dir_url" value="<?php echo (isset($settings['news.upload_dir_url'])) ? $settings['news.upload_dir_url']: set_value('news.upload_dir_url'); ?>" /><br />
 		<span class="subcaption"><?php echo lang('nw_upload_dir_url_note'); ?></span>
 	</div>
-
-    <!-- Upload URL -->
+		<!-- Max Image Dimensions-->
     <div>
-        <label for="max_img_width"><?php echo lang('nw_resize_images'); ?></label>
-        Width: <input type="text" class="tiny" id="max_img_width" name="max_img_width" value="<?php echo (isset($settings['news.max_img_width'])) ? $settings['news.max_img_width']: set_value('news.max_img_width'); ?>" /> Height: <input type="text" class="tiny" id="max_img_height" name="max_img_height" value="<?php echo (isset($settings['news.max_img_height'])) ? $settings['news.max_img_height']: set_value('news.max_img_height'); ?>" /><br />
+        <label for="max_img_width"><?php echo lang('nw_image_dimensions'); ?></label>
+        <?php echo lang('nw_width'); ?>: <input type="text" class="tiny" id="max_img_width" name="max_img_width" value="<?php echo (isset($settings['news.max_img_width'])) ? $settings['news.max_img_width']: set_value('news.max_img_width'); ?>" /> 
+		<?php echo lang('nw_height'); ?>: <input type="text" class="tiny" id="max_img_height" name="max_img_height" value="<?php echo (isset($settings['news.max_img_height'])) ? $settings['news.max_img_height']: set_value('news.max_img_height'); ?>" />
+    </div>
+	
+		<!-- Max File Size -->
+    <div>
+        <label for="max_img_size"><?php echo lang('nw_max_img_size'); ?></label>
+        <input type="text" class="tiny" id="max_img_size" name="max_img_size" value="<?php echo (isset($settings['news.max_img_size'])) ? $settings['news.max_img_size']: set_value('news.max_img_size'); ?>" /> <span><?php echo lang('nw_max_img_size_note'); ?></span>
+    </div>
+		<!-- Max Rendered Dimensions in Articles-->
+    <div>
+        <label for="max_img_disp_width"><?php echo lang('nw_resize_images'); ?></label>
+        <?php echo lang('nw_width'); ?>: <input type="text" class="tiny" id="max_img_disp_width" name="max_img_disp_width" value="<?php echo (isset($settings['news.max_img_disp_width'])) ? $settings['news.max_img_disp_width']: set_value('news.max_img_disp_width'); ?>" /> 
+		<?php echo lang('nw_height'); ?>: <input type="text" class="tiny" id="max_img_disp_height" name="max_img_disp_height" value="<?php echo (isset($settings['news.max_img_disp_height'])) ? $settings['news.max_img_disp_height']: set_value('news.max_img_disp_height'); ?>" /><br />
         <span class="subcaption"><?php echo lang('nw_resize_images_note'); ?></span>
     </div>
 

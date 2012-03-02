@@ -15,10 +15,17 @@ $lang['nw_upload_dir_path']			= 'Upload directory path';
 $lang['nw_upload_dir_path_note']	= 'Full Server path to attachmnent upload directory';
 $lang['nw_upload_dir_url']			= 'Upload directory URL';
 $lang['nw_upload_dir_url_note']		= 'Web accessible URL to asset upload directory';
+$lang['nw_image_dimensions']		= 'Max image dimensions:';
 $lang['nw_resize_images']		    = 'Max image dimensions in articles:';
 $lang['nw_resize_images_note']		= 'For any images exceeding these dimensions, a thumbnail will be created and displayed in the article instead.';
+$lang['nw_max_img_size']		    = 'Max Image File Size';
+$lang['nw_max_img_size_note']		= 'in killobytes (kB)';
 $lang['nw_max_img_width']		    = 'Max Image Width';
+$lang['nw_max_img_disp_width']		= 'Max Image Display Width';
 $lang['nw_max_img_height']		    = 'Max Image Height';
+$lang['nw_max_img_disp_height']		= 'Max Image Display Height';
+$lang['nw_width']					= 'Width';
+$lang['nw_height']					= 'Height';
 
 $lang['us_draft_articles']			= "Draft articles.";
 $lang['us_action_draft']			= "Draft";

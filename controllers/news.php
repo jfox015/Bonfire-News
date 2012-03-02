@@ -31,7 +31,6 @@ class News extends Front_Controller {
 
         $this->load->model('activities/Activity_model', 'activity_model', true);
         $this->load->library('users/auth');
-        $output = '';
 
         if ($limit != -1 && $offset == 0) {
             $this->db->limit($limit);
@@ -40,9 +39,7 @@ class News extends Front_Controller {
         }
         $this->db->order_by('date', "asc");
         $articles = $this->news_model->find_all_by('status_id',3);
-        echo($this->db->last_query()."<br />");
         if (!is_array($articles) || !count($articles)) {
-            $output = 'No Articles  found.';
             $this->activity_model->log_activity($this->auth->user_id(), 'Get Articles: failed. No article were found.', 'news');
         }
         return $articles;
@@ -56,7 +53,6 @@ class News extends Front_Controller {
 
         $this->load->model('activities/Activity_model', 'activity_model', true);
         $this->load->library('users/auth');
-		//$articles = $this->news_model->find_all();
 		$output = '';
         $articles = $this->news_model->get_articles(true,$limit,$offset);
 		if (is_array($articles) && count($articles)) {
@@ -77,12 +73,10 @@ class News extends Front_Controller {
 	
 	public function article($article_id = false) {
 		
-		Assets::add_module_css('news','news.css');
-		
 		if ($article_id === false) {
 			return false;
 		}
-		$article = false;
+		Assets::add_module_css('news','news.css');
 		if (($article = $this->news_model->get_article($article_id)) !== false) {
             $this->load->library('users/auth');
             $article->author_name = $this->auth->username($article->author);
@@ -90,8 +84,7 @@ class News extends Front_Controller {
             $article->asset_url = $settings['news.upload_dir_url'];
             Template::set('article',$article);
 		} else {
-            Template::set('error',"Article not found");
-			$this->activity_model->log_activity($this->auth->user_id(), 'Get Article: '. $article_id .' failed. no article found.', 'news');
+            $this->activity_model->log_activity($this->auth->user_id(), 'Get Article: '. $article_id .' failed. no article found.', 'news');
 		}
         Template::set_view('news/index');
         Template::render();

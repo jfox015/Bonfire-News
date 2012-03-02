@@ -101,17 +101,23 @@ class Content extends Admin_Controller {
 			$this->form_validation->set_rules('allow_attachments', lang('nw_settings_attachAllow'), 'number|xss_clean');
 			$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), 'required|xss_clean');
 			$this->form_validation->set_rules('upload_dir_url', lang('nw_upload_dir_url'), 'number|xss_clean');
+			$this->form_validation->set_rules('max_img_size', lang('nw_max_img_size'), 'number|xss_clean');
 			$this->form_validation->set_rules('max_img_width', lang('nw_max_img_width'), 'number|xss_clean');
 			$this->form_validation->set_rules('max_img_height', lang('nw_max_img_height'), 'number|xss_clean');
+			$this->form_validation->set_rules('max_img_disp_width', lang('nw_max_img_disp_width'), 'number|xss_clean');
+			$this->form_validation->set_rules('max_img_disp_height', lang('nw_max_img_disp_height'), 'number|xss_clean');
 
 			if ($this->form_validation->run() !== FALSE) {
 
                 $data = array(
+                    array('name' => 'news.allow_attachments', 'value' => ($this->input->post('allow_attachments')) ? 1 : -1),
                     array('name' => 'news.upload_dir_path', 'value' => $this->input->post('upload_dir_path')),
                     array('name' => 'news.upload_dir_url', 'value' => $this->input->post('upload_dir_url')),
-                    array('name' => 'news.allow_attachments', 'value' => ($this->input->post('allow_attachments')) ? 1 : -1),
+                    array('name' => 'news.max_img_size', 'value' => $this->input->post('max_img_size')),
                     array('name' => 'news.max_img_width', 'value' => $this->input->post('max_img_width')),
                     array('name' => 'news.max_img_height', 'value' => $this->input->post('max_img_height')),
+                    array('name' => 'news.max_img_disp_width', 'value' => $this->input->post('max_img_disp_width')),
+                    array('name' => 'news.max_img_disp_height', 'value' => $this->input->post('max_img_disp_height')),
 				);
 
                 //destroy the saved update message in case they changed update preferences.
@@ -176,7 +182,7 @@ class Content extends Admin_Controller {
 				}
 				else 
 				{
-					Template::set_message('There was a problem creating the user: '. $this->news_model->error);
+					Template::set_message('There was a problem creating the article: '. $this->news_model->error);
 				}
 			}
 			else 
@@ -189,8 +195,7 @@ class Content extends Admin_Controller {
         Template::set('settings', $settings);
         
 		// if a date field hasn't been included already then add in the jquery ui files
-		Assets::add_js(Template::theme_url('js/editors/xinha_conf.js'));
-		Assets::add_js(Template::theme_url('js/editors/xinha/XinhaCore.js'));;
+		Assets::add_js(Template::theme_url('js/editors/nicEdit.js'));
 
 		Template::set('toolbar_title', lang('us_create_news'));
 		Template::set_view('content/news_form');
@@ -419,14 +424,12 @@ class Content extends Admin_Controller {
 			$article = $this->news_model->find($article_id);
 			if (isset($article) && isset($article->attachment)) {
 				$attachment = unserialize($article->attachment);
-				// SET THE DEFAULT PATH SEPERATOR
-				if (substr(PHP_OS, 0, 3) == 'WIN') {
-					$path_sep = "\\";
-				} else {
-					$path_sep = "/";
+				
+				if (file_exists($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['file_name'])) {
+					unlink($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['file_name']);
 				}
-				if (file_exists($settings['news.upload_dir_path'].$path_sep.$attachment['file_name'])) {
-					unlink($settings['news.upload_dir_path'].$path_sep.$attachment['file_name']);
+				if (isset($attachment['image_thumb']) && file_exists($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['image_thumb'])) {
+					unlink($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['image_thumb']);
 				}
 				$data = array('attachment'=>'');
 				$success = $this->news_model->update($article_id, $data);
@@ -450,11 +453,11 @@ class Content extends Admin_Controller {
 	{
         $settings = $this->settings_lib->find_all_by('module','news');
 
-        $config['upload_path'] = (empty($path) ? $settings['news.upload_dir_path'] : $path);
-		$config['allowed_types'] = 'gif|jpg|png';
-		$config['max_size']	= '125000';
-		$config['max_width']  = '800';
-		$config['max_height']  = '600';
+        $config['upload_path'] 		= (empty($path) ? $settings['news.upload_dir_path'] : $path);
+		$config['allowed_types'] 	= 'gif|jpg|png';
+		$config['max_size']			= intval($settings['news.max_img_size']);
+		$config['max_width']  		= intval($settings['news.max_img_width']);
+		$config['max_height']  		= intval($settings['news.max_img_height']);
 
 		$this->load->library('upload', $config);
 
@@ -465,24 +468,21 @@ class Content extends Admin_Controller {
 		else
 		{
 			$data = $this->upload->data();
-            $max_width = intval($settings['news.max_img_width']);
-            $max_height = intval($settings['news.max_image_height']);
-            $img_width = intval($data['image_width']);
-            $img_height = intval($data['image_height']);
+            $max_width		= intval($settings['news.max_img_disp_width']);
+            $max_height 	= intval($settings['news.max_img_disp_height']);
+            $img_width 		= intval($data['image_width']);
+            $img_height 	= intval($data['image_height']);
             if ($img_width > $max_width || $img_height > $max_height) {
-                $config['image_library'] = 'gd2';
-                $config['quality']	= '75%';
-                $config['source_image']	= $data['full_path'];
-                $config['new_image']	= $data['file_path'];
-                $config['create_thumb'] = TRUE;
-                $config['thumb_marker'] = "_th";
-                $config['maintain_ratio'] = TRUE;
-                $config['master_dim'] = 'auto';
-                if ($img_height > $img_width) {
-                    $config['height']	= $max_height;
-                } else {
-                    $config['width']	 = $max_width;
-                }
+                $config['image_library'] 	= 'gd2';
+                $config['quality']			= '75%';
+                $config['source_image']		= $data['full_path'];
+                $config['new_image']		= $data['file_path'];
+                $config['create_thumb'] 	= TRUE;
+                $config['thumb_marker'] 	= "_th";
+                $config['maintain_ratio']	= TRUE;
+                $config['master_dim'] 		= 'auto';
+                $config['height']			= $max_height;
+                $config['width']	 		= $max_width;
 
                 $this->load->library('image_lib', $config);
 

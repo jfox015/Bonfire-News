@@ -93,8 +93,11 @@ class Migration_Install_initial_tables extends Migration {
 			 ('news.allow_attachments', 'news', '1'),
 			 ('news.upload_dir_path', 'news', ''),
 			 ('news.upload_dir_url', 'news', ''),
-			 ('news.max_img_width', 'news', '200'),
-			 ('news.max_img_height', 'news', '200');
+			 ('news.max_img_size', 'news', '125000'),
+			 ('news.max_img_width', 'news', '1024'),
+			 ('news.max_img_disp_width', 'news', '200'),
+			 ('news.max_img_height', 'news', '768'),
+			 ('news.max_img_disp_height', 'news', '200');
 		";
         $this->db->query($default_settings);
 	}
@@ -108,6 +111,7 @@ class Migration_Install_initial_tables extends Migration {
         $this->dbforge->drop_table('news_articles');
 		$this->dbforge->drop_table('news_categories');
 		$this->dbforge->drop_table('news_status');
+        $this->db->query("DELETE FROM {$prefix}settings WHERE (module = 'news')");
 		
 		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Site.News.Manage'");
 		foreach ($query->result_array() as $row)
@@ -136,16 +140,6 @@ class Migration_Install_initial_tables extends Migration {
         }
         //delete the role
         $this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Site.News.Add')");
-
-
-        $query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOTPOL.News.View'");
-        foreach ($query->result_array() as $row)
-		{
-			$permission_id = $row['permission_id'];
-			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
-		}
-		//delete the role
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOTPOL.News.View')");
 	}
 	
 	//--------------------------------------------------------------------
