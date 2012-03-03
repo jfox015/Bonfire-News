@@ -41,7 +41,7 @@
 		
 		<?php echo($article->body); ?></div>
 		
-		<?php if (isset($article->author_name)) { ?><div id="tags" class="tags"><?php echo($article->tags); ?></div><?php } ?>
+		<?php if (isset($article->tags)) { ?><div id="tags" class="tags"><?php echo($article->tags); ?></div><?php } ?>
 		<div id="author" class="author"><?php echo(anchor('users/profile/'.$article->author,((isset($article->author_name))? $article->author_name: 'Unnamed Author'))); ?></div>
 
 		<?php } else { ?>

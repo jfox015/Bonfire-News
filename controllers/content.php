@@ -143,9 +143,10 @@ class Content extends Admin_Controller {
 				}
             }
 		}
-        $settings = $this->settings_lib->find_all_by('module','news');
+        
+		$settings = $this->settings_lib->find_all_by('module','news');
         Template::set('settings', $settings);
-
+        Assets::add_css(Template::theme_url('css/jquery.ui.datepicker.css'),'screen');
         Template::set('toolbar_title', lang('sim_setting_title'));
         Template::set_view('news/content/options_form');
         Template::render();
@@ -518,10 +519,10 @@ class Content extends Admin_Controller {
 		$this->form_validation->set_rules('tags', 'Tags', 'trim|strip_tags|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('attachment', 'Attachment Path', 'trim|strip_tags|xss_clean');
 		$this->form_validation->set_rules('image_align', 'Image Alignment', 'number|xss_clean');
-		$this->form_validation->set_rules('author', 'Author', 'trim|strip_tags|xss_clean');
-		$this->form_validation->set_rules('date_published', 'Publish Date', 'trim|strip_tags|xss_clean');
-		$this->form_validation->set_rules('category_id', 'Category', 'trim|strip_tags|xss_clean');
-		$this->form_validation->set_rules('status_id', 'Status', 'trim|strip_tags|max_length[20]|xss_clean');
+		$this->form_validation->set_rules('author', 'Author', 'number|xss_clean');
+		$this->form_validation->set_rules('date_published', 'Publish Date', 'number|xss_clean');
+		$this->form_validation->set_rules('category_id', 'Category', 'number|xss_clean');
+		$this->form_validation->set_rules('status_id', 'Status', 'number|xss_clean');
 
 		if ($this->form_validation->run() === false)
 		{
@@ -539,8 +540,9 @@ class Content extends Admin_Controller {
 				'author'=>$this->input->post('author'),
 				'image_align'=>$this->input->post('image_align'),
 				'date_published'=>$dates['date_published'],
-				'category_id'=>$this->input->post('category_id'),
-				'status_id'=>$this->input->post('status_id'));
+				'category_id'=>(($this->input->post('category_id'))?$this->input->post('category_id'):1),
+				'status_id'=>(($this->input->post('status_id'))?$this->input->post('status_id'):1));
+
 		if ($uploadData !== false) 
 		{
 			$data = $data + array('attachment'=>serialize($uploadData['data']));

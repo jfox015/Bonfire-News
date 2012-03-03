@@ -5,8 +5,13 @@ A custom news module for the Bonfire Admin Dashboard mod.
 ## Features
 
 - Create and manage news articles
-- Set statuses
+- Retrieve single or multiple articles as views or as a list array
+- Manage category and status
 - Add attachmments
+
+## Possible Features
+
+- Multiple Attachments
 
 ## Keep Current on the Mod
 
