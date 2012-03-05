@@ -100,67 +100,6 @@ class Content extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
-	public function news_options()
-	{
-		if ($this->input->post('submit'))
-		{
-			$this->form_validation->set_rules('allow_attachments', lang('nw_settings_attachAllow'), 'number|xss_clean');
-			$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), 'required|xss_clean');
-			$this->form_validation->set_rules('upload_dir_url', lang('nw_upload_dir_url'), 'number|xss_clean');
-			$this->form_validation->set_rules('max_img_size', lang('nw_max_img_size'), 'number|xss_clean');
-			$this->form_validation->set_rules('max_img_width', lang('nw_max_img_width'), 'number|xss_clean');
-			$this->form_validation->set_rules('max_img_height', lang('nw_max_img_height'), 'number|xss_clean');
-			$this->form_validation->set_rules('max_img_disp_width', lang('nw_max_img_disp_width'), 'number|xss_clean');
-			$this->form_validation->set_rules('max_img_disp_height', lang('nw_max_img_disp_height'), 'number|xss_clean');
-
-			if ($this->form_validation->run() !== FALSE)
-			{
-				$data = array(
-					array('name' => 'news.allow_attachments', 'value' => ($this->input->post('allow_attachments')) ? 1 : -1),
-					array('name' => 'news.upload_dir_path', 'value' => $this->input->post('upload_dir_path')),
-					array('name' => 'news.upload_dir_url', 'value' => $this->input->post('upload_dir_url')),
-					array('name' => 'news.max_img_size', 'value' => $this->input->post('max_img_size')),
-					array('name' => 'news.max_img_width', 'value' => $this->input->post('max_img_width')),
-					array('name' => 'news.max_img_height', 'value' => $this->input->post('max_img_height')),
-					array('name' => 'news.max_img_disp_width', 'value' => $this->input->post('max_img_disp_width')),
-					array('name' => 'news.max_img_disp_height', 'value' => $this->input->post('max_img_disp_height')),
-				);
-
-				// Destroy the saved update message in case they changed update preferences.
-				if ($this->cache->get('update_message'))
-				{
-					if (!is_writeable(FCPATH.APPPATH.'cache/'))
-					{
-						$this->cache->delete('update_message');
-					}
-				}
-				// Log the activity
-				$this->activity_model->log_activity($this->auth->user_id(), lang('bf_act_settings_saved').': ' . $this->input->ip_address(), 'news');
-
-				// save the settings to the DB
-				if ($this->settings_model->update_batch($data, 'name'))
-				{
-					// Success, so reload the page, so they can see their settings
-					Template::set_message('News settings successfully saved.', 'success');
-					redirect(SITE_AREA .'/content/news');
-				}
-				else
-				{
-					Template::set_message('There was an error saving the news settings.', 'error');
-				}
-			}
-		}
-
-		$settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
-		Template::set('settings', $settings);
-		Assets::add_css(Template::theme_url('css/jquery.ui.datepicker.css'),'screen');
-		Template::set('toolbar_title', lang('sim_setting_title'));
-		Template::set_view('news/content/options_form');
-		Template::render();
-	}
-
-	//--------------------------------------------------------------------
-
 	public function create()
 	{
 		$settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
