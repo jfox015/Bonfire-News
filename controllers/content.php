@@ -90,7 +90,6 @@ class Content extends Admin_Controller {
 		Template::set('category', $this->news_model->get_default_category());
 		Template::set('categories', $this->news_model->get_news_categories());
 		Template::set('status', $this->news_model->get_default_status());
-
 		Template::set('article_count', $this->news_model->count_all());
 
 		$this->load->helper('ui/ui');
@@ -152,7 +151,7 @@ class Content extends Admin_Controller {
 			}
 		}
 
-		$settings = $this->settings_lib->find_all_by('module','news');
+		$settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
 		Template::set('settings', $settings);
 		Assets::add_css(Template::theme_url('css/jquery.ui.datepicker.css'),'screen');
 		Template::set('toolbar_title', lang('sim_setting_title'));
@@ -164,7 +163,7 @@ class Content extends Admin_Controller {
 
 	public function create()
 	{
-		$settings = $this->settings_lib->find_all_by('module','news');
+		$settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
 		$this->auth->restrict('Site.News.Add');
 
 		if ($this->input->post('submit'))
@@ -365,7 +364,7 @@ class Content extends Admin_Controller {
 		{
 			// Find all deleted accounts
 			$articles = $this->news_model->where('news_articles.deleted', 1)->find_all(true);
-			
+
 			if (is_array($articles))
 			{
 				foreach ($articles as $article)
