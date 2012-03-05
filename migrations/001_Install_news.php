@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Migration_Install_initial_tables extends Migration {
+class Migration_Install_news extends Migration {
 	
 	public function up() 
 	{
