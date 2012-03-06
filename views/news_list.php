@@ -1,7 +1,7 @@
 		<!-- Begin Articles -->
-	<div id="articles">
+	<div class="widget">
         <h3>Recent News</h3>
-        <ul>
+        <ul class="articles">
 		<?php if (isset($articles) && is_array($articles) && count($articles)) { 
             foreach($articles as $article) {
                 echo ('<li>'.anchor('/news/article/'.$article->id,$article->title).'</li>');

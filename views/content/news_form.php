@@ -15,12 +15,12 @@
 
 	<div>
 		<label class="required"  for="date"><?php echo lang('us_date'); ?></label>
-		<input type="text" name="date" id="date" value="<?php echo isset($article) ? date('m/d/Y',$article->date) : set_value('date') ?>" />
+		<input type="text" name="date" id="date" value="<?php echo isset($article) ? date('m/d/Y',$article->date) : set_value(date('m/d/Y','date')) ?>" />
 	</div>
 	
 	<div>
 		<label class="required"><?php echo lang('us_body'); ?></label>
-		<?php echo form_textarea( array( 'name' => 'body', 'id' => 'body', 'rows' => '5', 'cols' => '80', 'value' => set_value('$article->body') ) )?>
+		<?php echo form_textarea( array( 'name' => 'body', 'id' => 'body', 'rows' => '5', 'cols' => '80', 'value' => isset($article) ? $article->body : set_value('body') ) )?>
 	</div>
 		<!-- ATTACH IMAGE -->
 	<div>
@@ -29,7 +29,7 @@
 		<?php if(isset($article) && isset($article->attachment) && !empty($article->attachment)) : 
 			$attachment = unserialize($article->attachment);
 			?>
-			<span class="subcaption">Current Attachment: <?php echo $attachment['file_name']." (".$attachment['file_size']."kB ".$attachment['file_type'].") | ".anchor('content/news/remove_attachment/'.$article->id,'Remove'); ?> </span>
+			<span class="subcaption">Current Attachment: <?php echo $attachment['file_name']." (".$attachment['file_size']."kB ".$attachment['file_type'].") | ".anchor(SITE_AREA.'/content/news/remove_attachment/'.$article->id,'Remove'); ?> </span>
 		<?php endif; ?>
 	</div>
 		<!-- IMAGE CAPTION -->
@@ -48,25 +48,31 @@
 		<?php endforeach; ?>
 		</select>
 	</div>
-	
+		<!-- TAGS -->
 	<div>
 		<label for="tags"><?php echo lang('us_tags'); ?></label>
 		<input type="text" id="tags" name="tags" value="<?php echo isset($article) ? $article->tags : set_value('tags') ?>" />
 	</div>
+		<!-- AUTHOR -->
+	<div>
+		<label><?php echo lang('us_author'); ?></label>
+		<?php  if ( has_permission('Site.News.Manage') ) :?>
+			<?php if (isset($users) && is_array($users) && count($users)) : ?>
+				<select name="author" id="author">
+				<?php foreach ($users as $user) :?>
+					<option value="<?php echo (int)$user->id; ?>" <?php echo (isset($user) ? ((int)$user->id == $article->author) ? 'selected="selected"' : '' : ''); ?>><?php echo $user->username ?></option>
+				<?php endforeach; ?>
+				</select>
+			<?php endif; ?>
+		<?php else : 
+			echo $article->author_name;
+		endif; ?>
+	</div>
 	
-
+	<?php  if ( has_permission('Site.News.Manage') ) :?>
 	<fieldset>
 		<legend><?php echo lang('us_additional'); ?></legend>
-		
-		<div>
-			<label><?php echo lang('us_author'); ?></label>
-			<?php  if ( has_permission('Site.News.Manage') ) :?>
-			
-			<?php else : 
 
-			endif; ?>
-		</div>
-		
 		<div>
 			<label><?php echo lang('us_category'); ?></label>
 			<?php if (is_array($categories) && count($categories)) : ?>
@@ -89,8 +95,9 @@
 		</div>
 		<div>
 			<label for="date_published"><?php echo lang('us_publish_date') ?></label>
-			<input type="text" name="date_published" id="date_published" value="<?php echo isset($article) ? date('m/d/Y',$article->date_published) : set_value('date_published') ?>" />
+			<input type="text" name="date_published" id="date_published" value="<?php echo isset($article) ? date('m/d/Y',$article->date_published) : set_value(date('m/d/Y','date_published')) ?>" />
 		</div>
+		<?php if (isset($article) && isset($article->id)) { ?>
 		<div>
 			<label><?php echo lang('us_created'); ?></label>
 			<span><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->created_on) : 'Unknown'); ?> by <?php echo (isset($article) ? $this->auth->username($article->created_by) : 'Unknown'); ?></span>
@@ -99,18 +106,19 @@
 			<label><?php echo lang('us_modified'); ?></label>
 			<span><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->modified_on) : 'Unknown'); ?> by <?php echo (isset($article) ? $this->auth->username($article->modified_by) : 'Unknown'); ?></span>
 		</div>
-
+		<?php } ?>
 	</fieldset>
+	<?php endif; ?>
 	
 	<div class="submits">
 		<input type="submit" name="submit" value="<?php echo lang('bf_action_save') ?> " /> <?php echo lang('bf_or') ?> <?php echo anchor(SITE_AREA .'/content/news', lang('bf_action_cancel')); ?>
 	</div>
 
-	<?php if (isset($article) && has_permission('Site.News.Manage') && $article->id != $this->auth->user_id()) : ?>
+	<?php if (isset($article) && has_permission('Site.News.Manage')) : ?>
 	<div class="box delete rounded">
-		<a class="button" id="delete-me" href="<?php echo site_url(SITE_AREA .'/content/news/delete/'. $article->id); ?>" onclick="return confirm('<?php echo lang('us_delete_account_confirm'); ?>')"><?php echo lang('us_delete_account'); ?></a>
+		<a class="button" id="delete-me" href="<?php echo site_url(SITE_AREA .'/content/news/delete/'. $article->id); ?>" onclick="return confirm('<?php echo lang('us_delete_article_confirm'); ?>')"><?php echo lang('us_delete_article'); ?></a>
 		
-		<?php echo lang('us_delete_account_note'); ?>
+		<?php echo lang('us_delete_article_note'); ?>
 	</div>
 	<?php endif; ?>
 
@@ -120,12 +128,6 @@
 head.ready(function(){
     $("#date").datepicker();
     $("#date_published").datepicker();
-
-    var myNicEditor = new nicEditor();
-    myNicEditor.setPanel('myNicPanel');
-    myNicEditor.options.iconsPath = '<?php echo Template::theme_url('images/nicEditorIcons.gif'); ?>';
-    myNicEditor.addInstance('body');
-
 });
 
 </script>

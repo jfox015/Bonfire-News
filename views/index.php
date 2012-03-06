@@ -4,7 +4,7 @@
 			<!-- Header -->
 		<div id="title"><h1><?php echo($article->title); ?></h1></div>
 		
-		<div id="article_date" class="news_date"><?php echo(date('m/d/Y h:i:s A',intval($article->date))); ?></div>
+		<div id="article_date" class="news_date"><?php echo(date('m/d/Y',intval($article->date))); ?></div>
 
         <div id="body" class="news_body">
 		<?php 

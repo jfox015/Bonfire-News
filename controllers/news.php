@@ -37,7 +37,7 @@ class News extends Front_Controller {
         } else if ($limit != -1 && $offset > 0) {
             $this->db->limit($limit, $offset);
         }
-        $this->db->order_by('date', "asc");
+        $this->db->order_by('date', 'desc');
         $articles = $this->news_model->find_all_by('status_id',3);
         if (!is_array($articles) || !count($articles)) {
             $this->activity_model->log_activity($this->auth->user_id(), 'Get Articles: failed. No article were found.', 'news');
@@ -63,7 +63,7 @@ class News extends Front_Controller {
 				$output .= $this->load->view('news/index',array('article'=>$article),true);
 			}
 		} else {
-			$output = 'No Articles not found.';
+			$output = 'No Articles found.';
 			$this->activity_model->log_activity($this->auth->user_id(), 'Get Articles: failed. No article were found.', 'news');
 		}
 		return $output;

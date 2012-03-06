@@ -208,7 +208,7 @@ class News_model extends BF_Model {
         } else if ($limit != -1 && $offset > 0) {
             $this->db->limit($offset,$limit);
         }
-        $this->db->order_by('date', "asc");
+        $this->db->order_by('date', 'desc');
         if ($published === true) {
             $this->db->where('status_id',3);
         }
@@ -217,7 +217,7 @@ class News_model extends BF_Model {
              $articles = $query->result();
         }
         //$articles = $this->news_model->find_all_by('status_id',3);
-        print ($this->db->last_query()."<br />");
+        //print ($this->db->last_query()."<br />");
         return $articles;
     }
 

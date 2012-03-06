@@ -5,8 +5,13 @@ $lang['article_unauthorized']		= 'Unauthorized. Sorry you do not have the approp
 $lang['us_empty_id']				= 'No Article Id was received.';
 $lang['us_create_news']				= 'Create News Article';
 $lang['us_create_news_note']		= '<h3>Create A New Article</h3><p>Create new articles to display news about the site and content.</p>';
+$lang['us_delete_article_note']		= '<h3>Delete this Article</h3><p>Deleting this article will remove it completely from the site.</p>';
 $lang['us_news_options_note']		= '<h3>News Options</h3><p>Manage attachment upload directories and news content options.</p>';
+$lang['us_purge_del_note']		= '<h3>Purge Deleted Accounts</h3><p>Purging deleted accounts is a permanent action. There is no going back, so please make sure..</p>';
 $lang['us_edit_news']				= 'Edit News Article';
+$lang['us_delete_article']			= 'Delete this Article';
+$lang['us_delete_article_confirm']	= 'Are you sure you want to delete this article?';
+$lang['us_purge_del_articles']		= 'Purge Articles';
 
 $lang['mw_setting_title']			= 'News Settings';
 $lang['us_news_options']			= 'News Options';
@@ -36,9 +41,9 @@ $lang['us_status_change']			= "Change Status";
 $lang['us_deleted_articles']		= "Deleted articles.";
 $lang['us_published_articles']		= "Published articles.";
 $lang['no_articles']				= "No articles were found.";
-$lang['us_no_deleted']				= "There are not any deleted articles in the database.";
-$lang['us_no_drafts']				= "There are not any drafts in the database.";
-$lang['us_no_published']			= "There are not any published articles in the database.";
+$lang['us_no_deleted']				= "There are no deleted articles in the database.";
+$lang['us_no_drafts']				= "There are no drafts in the database.";
+$lang['us_no_published']			= "There are no published articles in the database.";
 
 $lang['us_title']					= "Title";
 $lang['us_date']					= "Article Date";

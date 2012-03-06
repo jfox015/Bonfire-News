@@ -9,19 +9,19 @@
 	<table cellspacing="0">
 		<thead>
 			<tr>
-				<th style="width: 3em"></th>
-				<th style="width: 33%"><?php echo lang('us_title'); ?></th>
-				<th style="width: 33%"><?php echo lang('us_date'); ?></th>
-				<th class="text-right"><?php echo lang('us_author'); ?></th>
+				<th style="width: 40%"><?php echo lang('us_title'); ?></th>
+				<th style="width: 20%"><?php echo lang('us_author'); ?></th>
+				<th style="width: 20%"><?php echo lang('us_date'); ?></th>
+				<th style="width: 20%"></th>
 			</tr>
 		</thead>
 		<tbody>
 		<?php foreach ($articles as $article) : ?>
 			<tr>
 				<td><?php echo $article->title ?></td>
-				<td><?php echo $article->date ? $article->date : '--' ?></td>
-                <td><?php echo $this->auth->user_name($article->author) ?></td>
-                <td class="text-right">
+				<td><?php echo $this->auth->username($article->author) ?></td>
+				<td><?php echo $article->date ? date('m/d/Y h:i:s A',$article->date) : '--' ?></td>
+				<td class="text-right">
 					<?php echo anchor(SITE_AREA .'/content/news/purge/'. $article->id, lang('bf_action_purge'), 'class="ajaxify"') ?> |
 					<?php echo anchor(SITE_AREA .'/content/news/restore/'. $article->id, lang('bf_action_restore'), 'class="ajaxify"') ?>
 				</td>
@@ -33,7 +33,7 @@
 	<br/><br/>
 
 	<div class="box delete rounded">
-		<a class="button delete ajaxify" href="<?php echo site_url(SITE_AREA .'/content/news/purge'); ?>"><?php echo lang('us_purge_del_accounts'); ?></a>
+		<a class="button delete ajaxify" href="<?php echo site_url(SITE_AREA .'/content/news/purge'); ?>"><?php echo lang('us_purge_del_articles'); ?></a>
 
 		<?php echo lang('us_purge_del_note'); ?>
 	</div>
