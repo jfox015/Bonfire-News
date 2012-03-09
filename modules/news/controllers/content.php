@@ -23,6 +23,8 @@
 
 class Content extends Admin_Controller {
 
+	private $settings;
+
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -37,6 +39,8 @@ class Content extends Admin_Controller {
 		$this->lang->load('news');
 
 		$this->load->library('pagination');
+
+		$this->settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
 	}
 
 	//--------------------------------------------------------------------
@@ -102,7 +106,7 @@ class Content extends Admin_Controller {
 
 	public function create()
 	{
-		$settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
+		$settings = $this->settings;
 		$this->auth->restrict('Site.News.Add');
 
 		if ($this->input->post('submit'))
@@ -163,7 +167,9 @@ class Content extends Admin_Controller {
 	public function edit()
 	{
 
-		$settings = $this->settings_lib->find_all_by('module','news');
+		//$settings = $this->settings_lib->find_all_by('module','news');
+		$settings = $this->settings;
+
 		$this->auth->restrict('Site.News.Manage');
 		$article_id = $this->uri->segment(5);
 		if (empty($article_id))
@@ -176,7 +182,7 @@ class Content extends Admin_Controller {
 		{
 			$uploadData = array();
 			$upload = true;
-			if (isset($_FILES['attachment']) && !empty($_FILES['attachment']))
+			if (isset($_FILES['attachment']) && !empty($_FILES['attachment']['name']))
 			{
 				$uploadData = $this->handle_upload($settings['news.upload_dir_path']);
 				if (isset($uploadData['error']) && !empty($uploadData['error']))
@@ -417,8 +423,8 @@ class Content extends Admin_Controller {
 	/-------------------------------------------------------------------*/
 	private function handle_upload($path = '')
 	{
-		$settings = $this->settings_lib->find_all_by('module','news');
-
+//		$settings = $this->settings_lib->find_all_by('module','news');
+		$settings = $this->settings;
 		$config['upload_path']		= (empty($path) ? $settings['news.upload_dir_path'] : $path);
 		$config['allowed_types']	= 'gif|jpg|png';
 		$config['max_size']			= intval($settings['news.max_img_size']);
