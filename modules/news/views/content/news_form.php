@@ -134,19 +134,13 @@
 		<div class="control-group <?php echo form_error('category_id') ? 'error' : '' ?>">
 			<label for="category_id"><?php echo lang('us_category') ?></label>
 			<div class="controls">
-			<?php if (is_array($categories) && count($categories)) : ?>
+			<?php
+				if (is_array($categories) && count($categories)) :
 
-						<select class="span6" id="category_id" name="category_id">
-				<?php foreach ($categories as $category) :?>
-
-							<option value="<?php echo (int)$category->id; ?>" <?php echo (isset($article) ? ((int)$category->id == $article->category_id) ? 'selected="selected"' : '' : ''); ?>><?php echo $category->category ?></option>
-
-				<?php endforeach; ?>
-
-						</select>
-
-				<?php endif; ?>
-
+					$selection = ( isset ( $article->category_id ) ) ? (int) $article->category_id : 0;
+					echo form_dropdown('category_id', $categories, $selection , 'class="span6" id="category_id"');
+				endif;
+			?>
 				<?php if (form_error('category_id')) echo '<span class="help-inline">'. form_error('category_id') .'</span>'; ?>
 			</div>
 		</div>
@@ -155,19 +149,13 @@
 		<div class="control-group <?php echo form_error('status_id') ? 'error' : '' ?>">
 			<label for="status_id"><?php echo lang('us_status') ?></label>
 			<div class="controls">
-			<?php if (is_array($statuses) && count($statuses)) : ?>
+<?php
+				if (is_array($statuses) && count($statuses)) :
 
-						<select class="span6" id="status_id" name="status_id">
-				<?php foreach ($statuses as $status) :?>
-
-							<option value="<?php echo (int)$status->id; ?>" <?php echo (isset($article) ? ((int)$status->id == $article->status_id) ? 'selected="selected"' : '' : ''); ?>><?php echo $status->status ?></option>
-
-				<?php endforeach; ?>
-
-						</select>
-
-				<?php endif; ?>
-
+					$selection = ( isset ( $article->status_id ) ) ? (int) $article->status_id : 0;
+					echo form_dropdown('status_id', $statuses, $selection , 'class="span6" id="status_id"');
+				endif;
+?>
 				<?php if (form_error('status_id')) echo '<span class="help-inline">'. form_error('status_id') .'</span>'; ?>
 			</div>
 		</div>

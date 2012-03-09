@@ -384,9 +384,32 @@ class News_model extends BF_Model {
 
 	//--------------------------------------------------------------------
 
+  public function get_news_statuses_select ( )
+  {
+		$query = $this->db->select('id, status')->get('news_status');
+
+		if ( $query->num_rows() <= 0 )
+			return '';
+
+    $option = array();
+
+    foreach ($query->result() as $row)
+    {
+      $row_id          = (int) $row->id;
+      $option[$row_id] = $row->status;
+    }
+
+    $query->free_result();
+
+    return $option;
+  }
+
+	//--------------------------------------------------------------------
+
 	public function get_news_statuses()
 	{
 		$query = $this->db->select('id, status')->get('news_status');
+
     if ($query->num_rows() > 0)
 		{
 			return $query->result();

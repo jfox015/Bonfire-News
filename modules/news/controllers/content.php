@@ -139,8 +139,10 @@ class Content extends Admin_Controller {
 				Template::set_message('There was a problem saving the file attachment: '. $uploadData['error']);
 			}
 		}
-		Template::set('categories', $this->news_model->get_news_categories());
-		Template::set('statuses', $this->news_model->get_news_statuses());
+		//Template::set('categories', $this->news_model->get_news_categories());
+
+		Template::set('categories', $this->news_model->get_news_categories_select());
+		Template::set('statuses', $this->news_model->get_news_statuses_select() );
 		Template::set('settings', $settings);
 
 		if (!isset($this->user_model)) {
@@ -211,8 +213,8 @@ class Content extends Admin_Controller {
 		if (isset($article) && has_permission('Site.News.Manage'))
 		{
 			Template::set('article', $article);
-			Template::set('categories', $this->news_model->get_news_categories());
-			Template::set('statuses', $this->news_model->get_news_statuses());
+			Template::set('categories', $this->news_model->get_news_categories_select());
+			Template::set('statuses', $this->news_model->get_news_statuses_select() );
 			Template::set_view('content/news_form');
 			if (!isset($this->user_model)) {
 				$this->load->model('users/User_model','user_model');
