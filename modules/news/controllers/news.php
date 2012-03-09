@@ -9,9 +9,11 @@ class News extends Front_Controller {
 	{
 		parent::__construct();
 		$this->load->model('news_model');
+		$this->load->model('author_model');
+
 		$this->lang->load('news');
 
-		$this->settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
+		$this->settings = (array) $this->settings_model->select('name,value')->find_all_by('module', 'news');
 	}
 
 	//--------------------------------------------------------------------
@@ -61,7 +63,7 @@ class News extends Front_Controller {
 		Assets::add_module_css('news','news.css');
 
 		$this->load->model('activities/Activity_model', 'activity_model', true);
-		$this->load->library('users/auth');
+
 		$output = '';
 		$articles = $this->news_model->get_articles(true,$limit,$offset);
 
@@ -73,7 +75,8 @@ class News extends Front_Controller {
 			foreach ($articles as $article)
 			{
 				$article->asset_url = $settings['news.upload_dir_url'];
-				$article->author_name = $this->current_user->username; //($article->author);
+				$article->author_name = $this->author_model->find_author ($article->author);
+
 				$output .= $this->load->view('news/index',array('article'=>$article),true);
 			}
 		} else {
@@ -98,7 +101,7 @@ class News extends Front_Controller {
 		Assets::add_module_css('news','news.css');
 		if ( ($article = $this->news_model->get_article($article_id)) !== false )
 		{
-			$article->author_name = $this->current_user->username; //($article->author);
+			$article->author_name = $this->author_model->find_author ($article->author);
 			$settings = $this->settings_lib->find_all_by('module','news');
 			$article->asset_url = $settings['news.upload_dir_url'];
 			Template::set('article',$article);
@@ -112,4 +115,3 @@ class News extends Front_Controller {
 }
 
 // End News Front End Controller
-
