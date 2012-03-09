@@ -117,13 +117,14 @@ class Content extends Admin_Controller {
 					$upload = false;
 				}
 			}
-            if ((count($uploadData) && $upload) || (count($uploadData) == 0 && $upload))
+
+ 		if ((count($uploadData) && $upload) || (count($uploadData) == 0 && $upload))
 			{
 				if ($id = $this->save_article($uploadData))
 				{
 					$article = $this->news_model->find($id);
-					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
-					$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$log_name, 'users');
+					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->user_name : ($this->settings_lib->item('auth.use_usernames') ? $this->current_user->user_name : $this->current_user->email);
+					$this->activity_model->log_activity($this->current_user->id, lang('us_log_create').' '.$log_name, 'users');
 
 					Template::set_message('Article successfully created.', 'success');
 					Template::redirect(SITE_AREA .'/content/news');
@@ -139,12 +140,14 @@ class Content extends Admin_Controller {
 			}
 		}
 		Template::set('categories', $this->news_model->get_news_categories());
-        Template::set('statuses', $this->news_model->get_news_statuses());
-        Template::set('settings', $settings);
+		Template::set('statuses', $this->news_model->get_news_statuses());
+		Template::set('settings', $settings);
+
 		if (!isset($this->user_model)) {
 			$this->load->model('users/User_model','user_model');
 		}
-        Template::set('users', $this->user_model->find_all());
+
+		Template::set('users', $this->user_model->find_all());
 		// if a date field hasn't been included already then add in the jquery ui files
 		Assets::add_js(Template::theme_url('js/editors/nicEdit.js'));
 
@@ -157,8 +160,9 @@ class Content extends Admin_Controller {
 
 	public function edit()
 	{
-        $settings = $this->settings_lib->find_all_by('module','news');
-        $this->auth->restrict('Site.News.Manage');
+
+		$settings = $this->settings_lib->find_all_by('module','news');
+		$this->auth->restrict('Site.News.Manage');
 		$article_id = $this->uri->segment(5);
 		if (empty($article_id))
 		{
@@ -186,9 +190,9 @@ class Content extends Admin_Controller {
 					if(!isset($this->auth)) {
 						$this->load->library('users/auth');
 					}
-					$article->author_name = $this->auth->username($article->author);
-					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
-					$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_edit') .': '.$log_name, 'users');
+					$article->author_name = $this->current_user->username; //($article->author);
+					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->user_name : ($this->settings_lib->item('auth.use_usernames') ? $this->current_user->user_name : $this->current_user->email);
+					$this->activity_model->log_activity($this->current_user->id, lang('us_log_edit') .': '.$log_name, 'users');
 
 					Template::set_message('Article successfully updated.', 'success');
 				}
@@ -240,14 +244,14 @@ class Content extends Admin_Controller {
 				if ($this->news_model->delete($id))
 				{
 					$article = $this->news_model->find($id);
-					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->username() : $this->auth->email());
-					$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_delete') . ': '.$log_name, 'users');
+					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->user_name : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->username() : $this->current_user->email);
+					$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete') . ': '.$log_name, 'users');
 					Template::set_message('The article was successfully deleted.', 'success');
 				}
 				else
 				{
 					Template::set_message('Article could not be deleted: '. $this->news_model->error, 'error');
-				}							
+				}
 			}
 		}
 		else
@@ -304,13 +308,13 @@ class Content extends Admin_Controller {
 			{
 				foreach ($articles as $article)
 				{
-					
+
 					// DELETE ATTACHMENTS IF THEY EXIST
 					if (isset($article->attachment) && !empty($article->attachment)) {
 						$attachment = unserialize($article->attachment);
 
-                        $settings = $this->settings_lib->find_all_by('module','news');
-                        if (file_exists($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['file_name'])) {
+						$settings = $this->settings_lib->find_all_by('module','news');
+						if (file_exists($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['file_name'])) {
 							unlink($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['file_name']);
 						}
 						if (isset($attachment['image_thumb']) && file_exists($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['image_thumb'])) {

@@ -3,8 +3,8 @@
 class News extends Front_Controller {
 
 	//--------------------------------------------------------------------
-	
-	public function __construct() 
+
+	public function __construct()
 	{
 		parent::__construct();
 		$this->load->model('news_model');
@@ -13,7 +13,7 @@ class News extends Front_Controller {
 	}
 
 	//--------------------------------------------------------------------
-	
+
 	public function index()
 	{
 		// Load our current settings
@@ -23,73 +23,86 @@ class News extends Front_Controller {
 		Template::render();
 	}
 
-    //--------------------------------------------------------------------
+		//--------------------------------------------------------------------
 
-    public function get_article_list($limit=-1, $offset=0) {
+		public function get_article_list($limit=-1, $offset=0)
+		{
 
-        Assets::add_module_css('news','assets/css/news.css');
+				Assets::add_module_css('news','assets/css/news.css');
 
-        $this->load->model('activities/Activity_model', 'activity_model', true);
-        $this->load->library('users/auth');
+				$this->load->model('activities/Activity_model', 'activity_model', true);
 
-        if ($limit != -1 && $offset == 0) {
-            $this->db->limit($limit);
-        } else if ($limit != -1 && $offset > 0) {
-            $this->db->limit($limit, $offset);
-        }
-        $this->db->order_by('date', 'desc');
-        $articles = $this->news_model->find_all_by('status_id',3);
-        if (!is_array($articles) || !count($articles)) {
-            $this->activity_model->log_activity($this->auth->user_id(), 'Get Articles: failed. No article were found.', 'news');
-        }
-        return $articles;
-    }
+				if ($limit != -1 && $offset == 0) {
+								$this->db->limit($limit);
+				} else if ($limit != -1 && $offset > 0) {
+								$this->db->limit($limit, $offset);
+				}
 
-	//--------------------------------------------------------------------
-	
-	public function get_articles($limit=-1, $offset=0) {
-		
-		Assets::add_module_css('news','news.css');
+				$this->db->order_by('date', 'desc');
+				$articles = $this->news_model->find_all_by('status_id',3);
 
-        $this->load->model('activities/Activity_model', 'activity_model', true);
-        $this->load->library('users/auth');
-		$output = '';
-        $articles = $this->news_model->get_articles(true,$limit,$offset);
-		if (is_array($articles) && count($articles)) {
-            $settings = $this->settings_lib->find_all_by('module','news');
-            foreach ($articles as $article) {
-				$article->asset_url = $settings['news.upload_dir_url'];
-				$article->author_name = $this->auth->username($article->author);
-				$output .= $this->load->view('news/index',array('article'=>$article),true);
-			}
-		} else {
-			$output = 'No Articles found.';
-			$this->activity_model->log_activity($this->auth->user_id(), 'Get Articles: failed. No article were found.', 'news');
+				if (!is_array($articles) || !count($articles)) {
+								$this->activity_model->log_activity($this->current_user->id, 'Get Articles: failed. No article were found.', 'news');
+				}
+
+				return $articles;
 		}
-		return $output;
-	}
-	
-	//--------------------------------------------------------------------
-	
-	public function article($article_id = false) {
-		
-		if ($article_id === false) {
-			return false;
+
+		//--------------------------------------------------------------------
+
+		public function get_articles($limit=-1, $offset=0)
+		{
+
+				Assets::add_module_css('news','news.css');
+
+				$this->load->model('activities/Activity_model', 'activity_model', true);
+				$this->load->library('users/auth');
+				$output = '';
+				$articles = $this->news_model->get_articles(true,$limit,$offset);
+
+				if (is_array($articles) && count($articles))
+				{
+						$settings = $this->settings_lib->find_all_by('module','news');
+
+						foreach ($articles as $article)
+						{
+								$article->asset_url = $settings['news.upload_dir_url'];
+								$article->author_name = $this->current_user->username; //($article->author);
+								$output .= $this->load->view('news/index',array('article'=>$article),true);
+						}
+				} else {
+						$output = 'No Articles found.';
+						$this->activity_model->log_activity($this->current_user->id, 'Get Articles: failed. No article were found.', 'news');
+				}
+
+				return $output;
+
 		}
-		Assets::add_module_css('news','news.css');
-		if (($article = $this->news_model->get_article($article_id)) !== false) {
-            $this->load->library('users/auth');
-            $article->author_name = $this->auth->username($article->author);
-            $settings = $this->settings_lib->find_all_by('module','news');
-            $article->asset_url = $settings['news.upload_dir_url'];
-            Template::set('article',$article);
-		} else {
-            $this->activity_model->log_activity($this->auth->user_id(), 'Get Article: '. $article_id .' failed. no article found.', 'news');
+
+		//--------------------------------------------------------------------
+
+		public function article($article_id = false)
+		{
+
+				if ($article_id === false)
+				{
+					return false;
+				}
+
+				Assets::add_module_css('news','news.css');
+				if (($article = $this->news_model->get_article($article_id)) !== false)
+				{
+						$article->author_name = $this->current_user->username; //($article->author);
+						$settings = $this->settings_lib->find_all_by('module','news');
+						$article->asset_url = $settings['news.upload_dir_url'];
+						Template::set('article',$article);
+				} else {
+						$this->activity_model->log_activity($this->current_user->id, 'Get Article: '. $article_id .' failed. no article found.', 'news');
+				}
+						Template::set_view('news/index');
+						Template::render();
+				}
+
 		}
-        Template::set_view('news/index');
-        Template::render();
-	}
-	
-}
 
 // End User Admin class
