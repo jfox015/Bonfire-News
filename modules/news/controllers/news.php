@@ -10,6 +10,7 @@ class News extends Front_Controller {
 		parent::__construct();
 		$this->load->model('news_model');
 		$this->load->model('author_model');
+		$this->load->helper('news');
 
 		$this->lang->load('news');
 
@@ -115,3 +116,4 @@ class News extends Front_Controller {
 }
 
 // End News Front End Controller
+

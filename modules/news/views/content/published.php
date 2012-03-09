@@ -25,7 +25,7 @@
     <tr>
 						<td><input type="checkbox" name="checked[]" value="<?php echo $article->id ?>" /></td>
 						<td><?php echo $article->title ?></td>
-						<td><?php echo $article->author ?></td>
+						<td><?php echo find_author_name ( $article->author ); /*$this->author_model->find_author ($article->author);*/ ?></td>
 						<td><?php echo $article->date ? date('m/d/Y h:i:s A',$article->date) : '--' ?></td>
 						<td class="text-right">
 								<?php echo anchor(SITE_AREA .'/content/news/set_status/'. $article->id. '/1', lang('us_action_draft'), 'class="ajaxify"') ?> |

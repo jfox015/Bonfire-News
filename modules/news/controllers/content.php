@@ -35,6 +35,8 @@ class Content extends Admin_Controller {
 		$this->auth->restrict('Site.News.Manage');
 
 		$this->load->model('news/news_model');
+		$this->load->model('news/author_model');
+		$this->load->helper('news/news');
 
 		$this->lang->load('news');
 
@@ -198,7 +200,7 @@ class Content extends Admin_Controller {
 					if(!isset($this->auth)) {
 						$this->load->library('users/auth');
 					}
-					$article->author_name = $this->current_user->username; //($article->author);
+					$article->author_name = $this->author_model->find_author ($article->author);
 					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->user_name : ($this->settings_lib->item('auth.use_usernames') ? $this->current_user->user_name : $this->current_user->email);
 					$this->activity_model->log_activity($this->current_user->id, lang('us_log_edit') .': '.$log_name, 'users');
 
