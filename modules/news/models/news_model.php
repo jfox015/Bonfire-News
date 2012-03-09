@@ -205,6 +205,8 @@ class News_model extends BF_Model {
 	public function get_articles( $published = true, $limit = -1, $offset = 0)
 	{
 
+		$articles = null;
+
 		if ($limit != -1 && $offset == 0)
 		{
 			$this->db->limit($limit);
