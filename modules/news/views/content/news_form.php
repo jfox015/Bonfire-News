@@ -113,7 +113,7 @@
 <?php
 				if (isset($users) && is_array($users) && count($users)) :
 
-					$selection = ( isset ( $article->author ) ) ? (int) $article->author : $article->author_name;
+					$selection = ( isset ($article) && !empty( $article->author ) ) ? (int) $article->author : $current_user->username;
 					echo form_dropdown('author', $users, $selection , 'class="span6" id="author"');
 				endif;
 ?>
@@ -135,7 +135,7 @@
 			<?php
 				if (is_array($categories) && count($categories)) :
 
-					$selection = ( isset ( $article->category_id ) ) ? (int) $article->category_id : 0;
+					$selection = ( isset ($article) && !empty($article->category_id ) ) ? (int) $article->category_id : 0;
 					echo form_dropdown('category_id', $categories, $selection , 'class="span6" id="category_id"');
 				endif;
 			?>
@@ -150,7 +150,7 @@
 <?php
 				if (is_array($statuses) && count($statuses)) :
 
-					$selection = ( isset ( $article->status_id ) ) ? (int) $article->status_id : 0;
+					$selection = ( isset ($article) && !empty($article->status_id ) ) ? (int) $article->status_id : 0;
 					echo form_dropdown('status_id', $statuses, $selection , 'class="span6" id="status_id"');
 				endif;
 ?>
@@ -163,7 +163,7 @@
 		<div class="control-group <?php echo form_error('date_published') ? 'error' : '' ?>">
 			<label for="date_published"><?php echo lang('us_publish_date') ?></label>
 			<div class="controls">
-				<input class="span3" type="text" name="date_published" id="date_published" value="<?php echo isset($article) ? date('m/d/Y',$article->date_published) : set_value(date('m/d/Y',time() )) ?>" />
+				<input class="span3" type="text" name="date_published" id="date_published" value="<?php echo ( isset($article) && !empty($article->date_published) ) ? date('m/d/Y',$article->date_published) : set_value(date('m/d/Y',time() )) ?>" />
 				<?php if (form_error('date_published')) echo '<span class="help-inline">'. form_error('date_published') .'</span>'; ?>
 			</div>
 		</div>

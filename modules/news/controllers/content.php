@@ -43,6 +43,24 @@ class Content extends Admin_Controller {
 		$this->load->library('pagination');
 
 		$this->settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
+
+		$path = $this->settings['news.upload_dir_path'];
+
+		$path = realpath ( APPPATH . '../..' . $path );
+
+		if ( !is_dir ( $path ) )
+		{
+			Template::set_message('Upload path is not correct : '. $path );
+			die ( $path );
+		}
+
+		if ( !is_writable ( $path ) )
+		{
+			Template::set_message('Upload path is not writeable : '. $path );
+			die ( $path );
+		}
+
+		$this->settings['news.upload_dir_path'] = $path;
 	}
 
 	//--------------------------------------------------------------------
@@ -434,7 +452,9 @@ class Content extends Admin_Controller {
 	{
 //		$settings = $this->settings_lib->find_all_by('module','news');
 		$settings = $this->settings;
-		$config['upload_path']		= (empty($path) ? $settings['news.upload_dir_path'] : $path);
+
+
+		$config['upload_path']		= (empty($path) ? realpath ( $settings['news.upload_dir_path'] ) : $path);
 		$config['allowed_types']	= 'gif|jpg|png';
 		$config['max_size']			= intval($settings['news.max_img_size']);
 		$config['max_width']		= intval($settings['news.max_img_width']);
