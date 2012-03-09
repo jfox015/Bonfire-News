@@ -50,4 +50,26 @@ class Author_model extends BF_Model
 		return $name->username;
 	}
 
+	//--------------------------------------------------------------------
+
+  public function get_users_select ( )
+  {
+		$query = $this->db->select('id, username')->get( $this->table );
+
+		if ( $query->num_rows() <= 0 )
+			return '';
+
+    $option = array();
+
+    foreach ($query->result() as $row)
+    {
+      $row_id          = (int) $row->id;
+      $option[$row_id] = $row->username;
+    }
+
+    $query->free_result();
+
+    return $option;
+  }
+
 }

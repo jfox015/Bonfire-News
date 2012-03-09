@@ -129,8 +129,8 @@ class Content extends Admin_Controller {
 				if ($id = $this->save_article($uploadData))
 				{
 					$article = $this->news_model->find($id);
-					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->user_name : ($this->settings_lib->item('auth.use_usernames') ? $this->current_user->user_name : $this->current_user->email);
-					$this->activity_model->log_activity($this->current_user->id, lang('us_log_create').' '.$log_name, 'users');
+
+					$this->activity_model->log_activity($this->current_user->id, lang('us_log_create').': ' . $this->current_user->email . ' : ' . $this->input->ip_address(), 'users');
 
 					Template::set_message('Article successfully created.', 'success');
 					Template::redirect(SITE_AREA .'/content/news');
@@ -155,7 +155,10 @@ class Content extends Admin_Controller {
 			$this->load->model('users/User_model','user_model');
 		}
 
-		Template::set('users', $this->user_model->find_all());
+//		Template::set('users', $this->user_model->find_all());
+
+		Template::set('users', $this->author_model->get_users_select() );
+
 		// if a date field hasn't been included already then add in the jquery ui files
 		Assets::add_js(Template::theme_url('js/editors/nicEdit.js'));
 
@@ -197,12 +200,14 @@ class Content extends Admin_Controller {
 				if ($this->save_article($uploadData, 'update', $article_id))
 				{
 					$article = $this->news_model->find($article_id);
-					if(!isset($this->auth)) {
+
+					if(!isset($this->auth))
+					{
 						$this->load->library('users/auth');
 					}
+
 					$article->author_name = $this->author_model->find_author ($article->author);
-					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->user_name : ($this->settings_lib->item('auth.use_usernames') ? $this->current_user->user_name : $this->current_user->email);
-					$this->activity_model->log_activity($this->current_user->id, lang('us_log_edit') .': '.$log_name, 'users');
+					$this->activity_model->log_activity($this->current_user->id, lang('us_log_edit').': ' . $this->current_user->email . ' : ' . $this->input->ip_address(), 'users');
 
 					Template::set_message('Article successfully updated.', 'success');
 				}
@@ -224,10 +229,13 @@ class Content extends Admin_Controller {
 			Template::set('categories', $this->news_model->get_news_categories_select());
 			Template::set('statuses', $this->news_model->get_news_statuses_select() );
 			Template::set_view('content/news_form');
-			if (!isset($this->user_model)) {
+
+			if (!isset($this->user_model))
+			{
 				$this->load->model('users/User_model','user_model');
 			}
-			Template::set('users', $this->user_model->find_all());
+
+			Template::set('users', $this->author_model->get_users_select() );
 		}
 		else
 		{
@@ -254,8 +262,7 @@ class Content extends Admin_Controller {
 				if ($this->news_model->delete($id))
 				{
 					$article = $this->news_model->find($id);
-					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->current_user->user_name : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->username() : $this->current_user->email);
-					$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete') . ': '.$log_name, 'users');
+					$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete').': ' . $id . $this->current_user->email . ' : ' . $this->input->ip_address(), 'users');
 					Template::set_message('The article was successfully deleted.', 'success');
 				}
 				else

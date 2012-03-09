@@ -104,27 +104,25 @@
 			</div>
 		</div>
 
-		<?php
-/*
-		<?php  if ( has_permission('Site.News.Manage') ) :?>
+
+	<?php  if ( has_permission('Site.News.Manage') ) :?>
+
 		<div class="control-group <?php echo form_error('author') ? 'error' : '' ?>">
 			<label for="author"><?php echo lang('us_author') ?></label>
 			<div class="controls">
-			<?php if (isset($users) && is_array($users) && count($users)) : ?>
-				<select class="span6" name="author" id="author">
-				<?php foreach ($users as $user) :?>
-					<option value="<?php echo (int)$user->id; ?>" <?php echo (isset($user) ? ((int)$user->id == $article->author) ? 'selected="selected"' : '' : ''); ?>><?php echo $user->username ?></option>
-				<?php endforeach; ?>
-				</select>
-			<?php endif; ?>
-		<?php else :
-			echo $article->author_name;
-			?>
+<?php
+				if (isset($users) && is_array($users) && count($users)) :
+
+					$selection = ( isset ( $article->author ) ) ? (int) $article->author : $article->author_name;
+					echo form_dropdown('author', $users, $selection , 'class="span6" id="author"');
+				endif;
+?>
+				<?php if (form_error('author')) echo '<span class="help-inline">'. form_error('author') .'</span>'; ?>
 			</div>
 		</div>
-<?php 		endif; ?>
-*/
-?>
+
+<?php endif; ?>
+
 	</fieldset>
 
 	<?php  if ( has_permission('Site.News.Manage') ) :?>
@@ -175,14 +173,14 @@
 		<div class="control-group">
 			<label for="date_published"><?php echo lang('us_created') ?></label>
 			<div class="controls">
-				<span><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->created_on) : 'Unknown'); ?> by <?php echo (isset($article) ? $this->current_user->username /*($article->created_by)*/ : 'Unknown'); ?></span>
+				<span><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->created_on) : 'Unknown'); ?> by <?php echo (isset($article) ? find_author_name($article->created_by) : 'Unknown'); ?></span>
 			</div>
 		</div>
 
 		<div class="control-group">
 			<label for="date_published"><?php echo lang('us_modified') ?></label>
 			<div class="controls">
-			<span><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->modified_on) : 'Unknown'); ?> by <?php echo (isset($article) ? $this->current_user->username /*($article->modified_by)*/ : 'Unknown'); ?></span>
+			<span><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->modified_on) : 'Unknown'); ?> by <?php echo (isset($article) ? find_author_name($article->modified_by) : 'Unknown'); ?></span>
 			</div>
 		</div>
 

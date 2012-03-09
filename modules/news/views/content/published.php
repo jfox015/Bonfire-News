@@ -1,5 +1,6 @@
 <div class="alert alert-info fade in">
-	<?php echo anchor(SITE_AREA .'/content/news', 'Return to News Article Management'); ?>
+	<a class="close" data-dismiss="alert">&times;</a>
+	<h4 class="alert-heading"><?php echo anchor(SITE_AREA .'/content/news', 'Return to News Article Management'); ?></h4>
 </div>
 
 <div class="admin-box">
