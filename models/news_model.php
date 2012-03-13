@@ -203,7 +203,8 @@ class News_model extends BF_Model {
     //--------------------------------------------------------------------
     public function get_articles( $published = true, $limit = -1, $offset = 0) {
 
-        if ($limit != -1 && $offset == 0) {
+        $articles = array();
+		if ($limit != -1 && $offset == 0) {
             $this->db->limit($limit);
         } else if ($limit != -1 && $offset > 0) {
             $this->db->limit($offset,$limit);

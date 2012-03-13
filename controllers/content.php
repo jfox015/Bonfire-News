@@ -53,48 +53,122 @@ class Content extends Admin_Controller {
 			show_404();
 		}
 	}
-
 	//--------------------------------------------------------------------
 
 	public function index()
 	{
-		$offset = $this->uri->segment(4);
+		
+		$categories = $this->news_model->get_news_categories();
+		Template::set('categories', $categories);
+		
+		$statuses = $this->news_model->get_news_statuses();
+		Template::set('statuses', $statuses);
 
-		Assets::add_js($this->load->view('content/news_js', null, true), 'inline');
+		$this->load->model('users/user_model');
+		$users = $this->user_model->find_all();
+		Template::set('users', $users);
 
+		$offset = $this->uri->segment(5);
+
+		// Do we have any actions?
+		if ($action = $this->input->post('submit'))
+		{
+			$checked = $this->input->post('checked');
+
+			switch(strtolower($action))
+			{
+				case 'publish':
+					$this->publish($checked);
+					break;
+				case 'review':
+					$this->review($checked);
+					break;
+				case 'archive':
+					$this->archive($checked);
+					break;
+				case 'delete':
+					$this->delete($checked);
+					break;
+			}
+		}
+
+		$where = array();
+
+		// Filters
+		$filter = $this->input->get('filter');
+		switch($filter)
+		{
+			case 'draft':
+				$where['news_articles.status_id'] = 1;
+				break;
+			case 'review':
+				$where['news_articles.status_id'] = 2;
+				break;
+			case 'deleted':
+				$where['news_articles.deleted'] = 1;
+				break;
+			case 'archived':
+				$where['news_articles.status_id'] = 4;
+				break;
+			case 'category':
+				$category_id = (int)$this->input->get('category_id');
+				$where['news_articles.category_id'] = $category_id;
+
+				foreach ($categories as $category)
+				{
+					if ($category->id == $category_id)
+					{
+						Template::set('filter_category', $category->category);
+						break;
+					}
+				}
+				break;
+			case 'author':
+				$user_id = (int)$this->input->get('user_id');
+				$where['news_articles.author'] = $user_id;
+
+				foreach ($users as $user)
+				{
+					if ($user->id == $user_id)
+					{
+						Template::set('filter_author', $user->display_name);
+						break;
+					}
+				}
+				break;
+			default:
+				$where['news_articles.deleted'] = 0;
+				$this->user_model->where('news_articles.deleted', 0);
+				$where['news_articles.status_id'] = 3;
+				$this->user_model->where('news_articles.status_id', 3);
+				break;
+		}
+
+		$this->load->helper('ui/ui');
+
+		$this->news_model->limit($this->limit, $offset)->where($where);
+		$this->news_model->select('news_articles.id, title, author, date, date_published, category_id, status_id');
+
+		Template::set('articles', $this->news_model->find_all());
+
+		// Pagination
+		$this->load->library('pagination');
+
+		$this->news_model->where($where);
 		$total_articles = $this->news_model->count_all();
+
 
 		$this->pager['base_url'] = site_url(SITE_AREA .'/content/news/index');
 		$this->pager['total_rows'] = $total_articles;
 		$this->pager['per_page'] = $this->limit;
-		$this->pager['uri_segment'] = 4;
+		$this->pager['uri_segment']	= 5;
 
 		$this->pagination->initialize($this->pager);
 
-		// Was a filter set?
-		if ($this->input->post('filter_submit') && $this->input->post('filter_by_category_id'))
-		{
-			$category_id = $this->input->post('filter_by_category_id');
+		Template::set('current_url', current_url());
+		Template::set('filter', $filter);
 
-			$this->db->where('category_id', $category_id);
-			Template::set('filter', $category_id);
-		}
-
-		$this->db->order_by('date', 'desc');
-
-		Template::set('articles', $this->news_model->limit($this->limit, $offset)->find_all());
-		Template::set('total_articles', $total_articles);
-		Template::set('draft_articles', $this->news_model->count_all_by_field('status_id',1,false));
-		Template::set('published_articles', $this->news_model->count_all_by_field('status_id',3,false));
-		Template::set('deleted_articles', $this->news_model->count_all(true));
-		Template::set('category', $this->news_model->get_default_category());
-		Template::set('categories', $this->news_model->get_news_categories());
-		Template::set('status', $this->news_model->get_default_status());
-		Template::set('article_count', $this->news_model->count_all());
-
-		$this->load->helper('ui/ui');
-
-		Template::set('toolbar_title', lang('article_management'));
+		Template::set('toolbar_title', lang('us_article_management'));
 		Template::render();
 	}
 
@@ -271,7 +345,6 @@ class Content extends Admin_Controller {
 
 	public function drafts()
 	{
-		// $this->db->where('news_articles.deleted', 0);
 		Template::set('articles', $this->news_model->find_all_by('status_id',1));
 		Template::render();
 	}
@@ -280,7 +353,6 @@ class Content extends Admin_Controller {
 
 	public function published()
 	{
-		//$this->db->where('news_articles.deleted', 0);
 		Template::set('articles', $this->news_model->find_all_by('status_id',3));
 		Template::render();
 	}
@@ -310,11 +382,11 @@ class Content extends Admin_Controller {
 						$attachment = unserialize($article->attachment);
 
                         $settings = $this->settings_lib->find_all_by('module','news');
-                        if (file_exists($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['file_name'])) {
-							unlink($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['file_name']);
+                        if (file_exists($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['file_name'])) {
+							unlink($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['file_name']);
 						}
-						if (isset($attachment['image_thumb']) && file_exists($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['image_thumb'])) {
-							unlink($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['image_thumb']);
+						if (isset($attachment['image_thumb']) && file_exists($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['image_thumb'])) {
+							unlink($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['image_thumb']);
 						}
 					}
 					$this->news_model->delete($article->id, true);
@@ -380,13 +452,13 @@ class Content extends Admin_Controller {
 			{
 				$attachment = unserialize($article->attachment);
 
-				if (file_exists($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['file_name']))
+				if (file_exists($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['file_name']))
 				{
-					unlink($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['file_name']);
+					unlink($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['file_name']);
 				}
-				if (isset($attachment['image_thumb']) && file_exists($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['image_thumb']))
+				if (isset($attachment['image_thumb']) && file_exists($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['image_thumb']))
 				{
-					unlink($settings['news.upload_dir_path'].PATH_SEPERATOR.$attachment['image_thumb']);
+					unlink($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['image_thumb']);
 				}
 				$data = array('attachment'=>'');
 				$success = $this->news_model->update($article_id, $data);
@@ -489,11 +561,11 @@ class Content extends Admin_Controller {
 		{
 			return false;
 		}
-		if (!function_exists('textDateToInt'))
+		if (!function_exists('text_date_to_int'))
 		{
 			$this->load->helper('date');
 		}
-		$dates = textDateToInt(array('date'=>'','date_published'=>''),$this->input);
+		$dates = text_date_to_int(array('date'=>'','date_published'=>''),$this->input);
 		$data = array(
 					'title'=>$this->input->post('title'),
 					'body'=>$this->input->post('body'),
