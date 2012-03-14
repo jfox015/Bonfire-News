@@ -37,6 +37,8 @@ class Content extends Admin_Controller {
 		$this->lang->load('news');
 
 		$this->load->library('pagination');
+
+		Template::set_block('sub_nav', 'content/_sub_nav');
 	}
 
 	//--------------------------------------------------------------------
@@ -219,8 +221,10 @@ class Content extends Admin_Controller {
 			$this->load->model('users/User_model','user_model');
 		}
         Template::set('users', $this->user_model->find_all());
+		Assets::add_css(Template::theme_url('css/jquery.ui.datepicker.css'),'screen');
+		Assets::add_js(Template::theme_url('js/jquery-ui-1.8.8.min.js'));
 		// if a date field hasn't been included already then add in the jquery ui files
-		Assets::add_js(Template::theme_url('js/editors/nicEdit.js'));
+		//Assets::add_js(Template::theme_url('js/editors/nicEdit.js'));
 
 		Template::set('toolbar_title', lang('us_create_news'));
 		Template::set_view('content/news_form');

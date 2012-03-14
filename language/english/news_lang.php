@@ -16,6 +16,7 @@ $lang['us_purge_del_articles']		= 'Purge Articles';
 /* New index */
 $lang['us_article_id']				= 'Article ID';
 $lang['us_articles']				= 'Articles';
+$lang['us_article']					= 'Article';
 
 $lang['mw_setting_title']			= 'News Settings';
 $lang['us_news_options']			= 'News Options';

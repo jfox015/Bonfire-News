@@ -14,7 +14,7 @@
         <legend></legend>
 		    <!-- Allow Attachments -->
         <div class="control-group <?php echo form_error('allow_attachments') ? 'error' : '' ?>">
-            <label><?php echo lang('nw_settings_attachAllow') ?></label>
+            <label class="control-label"><?php echo lang('nw_settings_attachAllow') ?></label>
             <div class="controls">
                 <?php
                 $use_selection = ((isset($settings['news.allow_attachments']) && $settings['news.allow_attachments'] == 1) || !isset($settings['news.allow_attachments'])) ? true : false;
@@ -26,7 +26,7 @@
 
 		    <!-- Upload Path -->
         <div class="control-group <?php echo form_error('upload_dir_path') ? 'error' : '' ?>">
-            <label><?php echo lang('nw_upload_dir_path') ?></label>
+            <label class="control-label"><?php echo lang('nw_upload_dir_path') ?></label>
             <div class="controls">
                 <input type="text" id="upload_dir_path" name="upload_dir_path" value="<?php echo (isset($settings['news.upload_dir_path'])) ? $settings['news.upload_dir_path']: set_value('news.upload_dir_path'); ?>" /><br />
                 <span class="subcaption"><?php echo lang('nw_upload_dir_path_note'); ?></span>
@@ -36,7 +36,7 @@
 
 		    <!-- Upload URL -->
         <div class="control-group <?php echo form_error('upload_dir_url') ? 'error' : '' ?>">
-            <label><?php echo lang('nw_upload_dir_url') ?></label>
+            <label class="control-label"><?php echo lang('nw_upload_dir_url') ?></label>
             <div class="controls">
                 <input type="text" id="upload_dir_url" name="upload_dir_url" value="<?php echo (isset($settings['news.upload_dir_url'])) ? $settings['news.upload_dir_url']: set_value('news.upload_dir_url'); ?>" /><br />
                 <span class="subcaption"><?php echo lang('nw_upload_dir_url_note'); ?></span>
@@ -46,7 +46,7 @@
 
 		    <!-- Max Image Dimensions-->
         <div class="control-group <?php echo form_error('upload_dir_url') ? 'error' : '' ?>">
-            <label><?php echo lang('nw_image_dimensions') ?></label>
+            <label class="control-label"><?php echo lang('nw_image_dimensions') ?></label>
             <div class="controls">
                 <?php echo lang('nw_width'); ?>: <input type="text" style="width: 3em;" id="max_img_width" name="max_img_width" value="<?php echo (isset($settings['news.max_img_width'])) ? $settings['news.max_img_width']: set_value('news.max_img_width'); ?>" />
                 <?php if (form_error('max_img_width')) echo '<span class="help-inline">'. form_error('max_img_width') .'</span>'; ?>
@@ -57,7 +57,7 @@
 
 		    <!-- Max File Size -->
         <div class="control-group <?php echo form_error('upload_dir_url') ? 'error' : '' ?>">
-            <label><?php echo lang('nw_max_img_size') ?></label>
+            <label class="control-label"><?php echo lang('nw_max_img_size') ?></label>
             <div class="controls">
                 <input type="text" class="tiny" id="max_img_size" name="max_img_size" value="<?php echo (isset($settings['news.max_img_size'])) ? $settings['news.max_img_size']: set_value('news.max_img_size'); ?>" /> <span><?php echo lang('nw_max_img_size_note'); ?></span>
             </div>
@@ -65,7 +65,7 @@
 
 		    <!-- Max Rendered Dimensions in Articles-->
         <div class="control-group <?php echo form_error('upload_dir_url') ? 'error' : '' ?>">
-            <label><?php echo lang('nw_resize_images') ?></label>
+            <label class="control-label"><?php echo lang('nw_resize_images') ?></label>
             <div class="controls">
                 <?php echo lang('nw_width'); ?>: <input type="text" style="width: 3em;" id="max_img_disp_width" name="max_img_disp_width" value="<?php echo (isset($settings['news.max_img_disp_width'])) ? $settings['news.max_img_disp_width']: set_value('news.max_img_disp_width'); ?>" />
                 <?php if (form_error('max_img_disp_width')) echo '<span class="help-inline">'. form_error('max_img_disp_width') .'</span>'; ?>
@@ -79,9 +79,9 @@
     </fieldset>
 
 
-    <div class="form-actions">
-        <input type="submit" name="submit" class="btn primary" value="<?php echo lang('bf_action_save') ?> " /> <?php echo lang('bf_or') ?> <?php echo anchor(SITE_AREA .'/settings', lang('bf_action_cancel')); ?>
-    </div>
+	<div class="form-actions">
+		<input type="submit" name="submit" class="btn btn-primary" value="<?php echo lang('bf_action_save') .' '. lang('bf_context_settings') ?>" />
+	</div>
 
 <?php echo form_close(); ?>
 
