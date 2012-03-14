@@ -69,8 +69,8 @@ $lang['us_status']					= "Status";
 $lang['us_publish_date']			= "Publish Date";
 $lang['us_created']					= "Created";
 $lang['us_modified']				= "Last Updated:";
-$lang['us_action_publish']				= "Publish";
-$lang['us_action_review']				= "Review";
+$lang['us_action_publish']			= "Publish";
+$lang['us_action_review']			= "Review";
 
 // Settings
 

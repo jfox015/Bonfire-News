@@ -25,7 +25,7 @@
         <div class="control-group <?php echo form_error('date') ? 'error' : '' ?>">
             <label><?php echo lang('us_date') ?></label>
             <div class="controls">
-                <input type="text" name="date" id="date" value="<?php echo isset($article) ? date('m/d/Y',$article->date) : set_value(date('m/d/Y','date')) ?>" />
+                <input type="text" name="date" id="date" value="<?php echo (isset($article) && isset($article->date) && !empty($article->date)) ? date('m/d/Y',$article->date) : (isset($this->input->post('date')) ? set_value(date('m/d/Y','date')) : '') ?>" />
 				<?php if (form_error('date')) echo '<span class="help-inline">'. form_error('date') .'</span>'; ?>
             </div>
         </div>
@@ -157,7 +157,7 @@
 		<div class="control-group <?php echo form_error('date_published') ? 'error' : '' ?>">
 			<label><?php echo lang('us_publish_date') ?></label>
 			<div class="controls">
-				<input type="text" name="date_published" id="date_published" value="<?php echo isset($article) ? date('m/d/Y',$article->date_published) : set_value(date('m/d/Y','date_published')) ?>" />
+				<input type="text" name="date_published" id="date_published" value="<?php echo (isset($article) && isset($article->date_published) && !empty($article->date_published)) ? date('m/d/Y',$article->date_published) : (isset($this->input->post('date_published')) ? set_value(date('m/d/Y','date_published')) : '') ?>" />
 				<?php if (form_error('date_published')) echo '<span class="help-inline">'. form_error('date_published') .'</span>'; ?>
 			</div>
 		</div>
@@ -184,16 +184,7 @@
 	<div class="form-actions">
         <input type="submit" name="submit" class="btn primary" value="<?php echo lang('bf_action_save') ?> " /> <?php echo lang('bf_or') ?> <?php echo anchor(SITE_AREA .'/settings', lang('bf_action_cancel')); ?>
     </div>
-
-	<?php if (isset($article) && has_permission('Site.News.Manage')) : ?>
-	<div class="box delete rounded">
-		<a class="button" id="delete-me" href="<?php echo site_url(SITE_AREA .'/content/news/delete/'. $article->id); ?>" onclick="return confirm('<?php echo lang('us_delete_article_confirm'); ?>')"><?php echo lang('us_delete_article'); ?></a>
-		
-		<?php echo lang('us_delete_article_note'); ?>
-	</div>
-	<?php endif; ?>
 	
-	</fieldset>
 <?php echo form_close(); ?>
 
 <script type="text/javascript"> 
@@ -201,5 +192,4 @@ head.ready(function(){
     $("#date").datepicker();
     $("#date_published").datepicker();
 });
-
 </script>
