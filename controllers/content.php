@@ -198,8 +198,9 @@ class Content extends Admin_Controller {
 				if ($id = $this->save_article($uploadData))
 				{
 					$article = $this->news_model->find($id);
-					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
-					$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$log_name, 'users');
+					//$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
+					$this->load->model('activities/activity_model');
+					$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$this->current_user->display_name, 'users');
 
 					Template::set_message('Article successfully created.', 'success');
 					Template::redirect(SITE_AREA .'/content/news');
