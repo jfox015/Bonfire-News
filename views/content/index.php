@@ -86,7 +86,7 @@
 							echo '---';
 						}
 					?></td>
-				<td><?php echo $article->title ?></td>
+				<td><?php echo anchor(SITE_AREA.'/content/news/edit/'. $article->id,$article->title) ?></td>
 				<td><?php echo($this->user_model->find($article->author)->display_name); ?></td>
 				<td><?php
 						if ($article->date_published != '0000-00-00 00:00:00')
