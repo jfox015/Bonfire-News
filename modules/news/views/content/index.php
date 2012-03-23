@@ -1,89 +1,149 @@
-<div class="view split-view">
-	<!-- Articles List -->
-	<div class="view">
+<div class="admin-box">
+	<h3><?php echo lang('us_articles') ?></h3>
 
-		<div class="panel-header list-search">
-
-			<select id="category-filter" style="display: inline-block; max-width: 40%;">
-				<option value="0"><?php echo lang('bf_action_show') .' '. lang('us_category'); ?>...</option>
+	<ul class="nav nav-tabs" >
+		<li <?php echo $filter=='' ? 'class="active"' : ''; ?>><a href="<?php echo $current_url; ?>">Published Articles</a></li>
+		<li <?php echo $filter=='author' ? 'class="active"' : ''; ?> class="dropdown">
+			<a href="#" class="drodown-toggle" data-toggle="dropdown">
+				By Author <?php echo isset($filter_author) ? ": $filter_author" : ''; ?>
+				<b class="caret light-caret"></b>
+			</a>
+			<ul class="dropdown-menu">
+			<?php foreach ($users as $user) : ?>
+				<li>
+					<a href="<?php echo $current_url .'?filter=user&user_id='. $user->id ?>">
+						<?php echo $user->display_name; ?>
+					</a>
+				</li>
+			<?php endforeach; ?>
+			</ul>
+		</li>
+		<li <?php echo $filter=='author' ? 'class="active"' : ''; ?> class="dropdown">
+			<a href="#" class="drodown-toggle" data-toggle="dropdown">
+				By Category <?php echo isset($filter_category) ? ": $filter_category" : ''; ?>
+				<b class="caret light-caret"></b>
+			</a>
+			<ul class="dropdown-menu">
 			<?php foreach ($categories as $category) : ?>
-				<option value="<?php echo $category->id ?>"><?php echo $category->category ?></option>
+				<li>
+					<a href="<?php echo $current_url .'?filter=category&category_id='. $category->id ?>">
+						<?php echo $category->category; ?>
+					</a>
+				</li>
 			<?php endforeach; ?>
-			</select>
+			</ul>
+		</li>
+		<li <?php echo $filter=='draft' ? 'class="active"' : ''; ?>><a href="<?php echo $current_url .'?filter=draft'; ?>"><?php echo lang('us_action_draft') ?></a></li>
+		<li <?php echo $filter=='review' ? 'class="active"' : ''; ?>><a href="<?php echo $current_url .'?filter=review'; ?>"><?php echo lang('us_action_review') ?></a></li>
+		<li <?php echo $filter=='archived' ? 'class="active"' : ''; ?>><a href="<?php echo $current_url .'?filter=archived'; ?>"><?php echo lang('us_action_archived') ?></a></li>
+		<li <?php echo $filter=='deleted' ? 'class="active"' : ''; ?>><a href="<?php echo $current_url .'?filter=deleted'; ?>"><?php echo lang('us_deleted_articles') ?></a></li>
+		
+	</ul>
 
-			<?php render_search_box(); ?>
-		</div>
+	<?php echo form_open(current_url()) ;?>
 
-		<?php if (isset($articles) && is_array($articles)) : ?>
-
-		<div class="scrollable">
-			<div class="list-view" id="article-list">
-			<?php foreach ($articles as $article) : ?>
-				<div class="list-item with-icon" data-id="<?php echo $article->id ?>" data-category="<?php echo $article->category ?>">
-					<?php echo '<img src="'.Template::theme_url('images/news.png').'" />'; ?>
-
-					<p>
-						<b><?php echo $article->title; ?></b><br/>
-						<span><?php echo date('m/d/Y', $article->date); ?></span>
-					</p>
-				</div>
-			<?php endforeach; ?>
-			</div>	<!-- /list -->
-		</div>
-
-		<?php else : ?>
-
-			<div class="notification information">
-				<p><?php echo lang('no_articles'); ?></p>
-			</div>
-
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th class="column-check"><input class="check-all" type="checkbox" /></th>
+				<th><?php echo lang('us_article_id'); ?></th>
+				<th><?php echo lang('us_date'); ?></th>
+				<th><?php echo lang('us_title'); ?></th>
+				<th><?php echo lang('us_author'); ?></th>
+				<th><?php echo lang('us_publish_date'); ?></th>
+				<th><?php echo lang('us_status'); ?></th>
+			</tr>
+		</thead>
+		<?php if (isset($articles) && is_array($articles) && count($articles)) : ?>
+		<tfoot>
+			<tr>
+				<td colspan="7">
+					<?php echo lang('bf_with_selected') ?>
+					<input type="submit" name="submit" class="btn btn-success" value="<?php echo lang('us_action_publish') ?>">
+					<input type="submit" name="submit" class="btn btn-primary" value="<?php echo lang('us_action_review') ?>">
+					<input type="submit" name="submit" class="btn btn-warning" value="<?php echo lang('us_action_archive') ?>">
+					<input type="submit" name="delete" class="btn btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" style="margin-bottom: 0px; " onclick="return confirm('<?php echo lang('bf_action_delete'); ?>')">
+				</td>
+			</tr>
+		</tfoot>
 		<?php endif; ?>
-	</div>	<!-- /articles-list -->
+		<tbody>
 
-	<!-- Article Editor -->
-	<div id="content" class="view">
-		<div class="scrollable" id="ajax-content">
-			<div class="padded">
+		<?php if (isset($articles) && is_array($articles) && count($articles)) : ?>
+			<?php foreach ($articles as $article) : ?>
+			<tr>
+				<td>
+					<input type="checkbox" name="checked[]" value="<?php echo $article->id ?>" />
+				</td>
+				<td><?php echo $article->id ?></td>
+				<td><?php
+						if ($article->date != '0000-00-00 00:00:00')
+						{
+							echo date('m/d/Y', $article->date);
+						}
+						else
+						{
+							echo '---';
+						}
+					?></td>
+				<td><?php echo anchor(SITE_AREA.'/content/news/edit/'. $article->id,$article->title) ?></td>
+				<td><?php echo($this->user_model->find($article->author)->display_name); ?></td>
+				<td><?php
+						if ($article->date_published != '0000-00-00 00:00:00')
+						{
+							echo date('m/d/Y', $article->date_published);
+						}
+						else
+						{
+							echo '---';
+						}
+					?></td>
+				<td><?php 
+					$class = '';
+					switch ($article->status_id)
+					{
+						case 1:
+							$class = " label-info";
+							break;
+						case 2:
+							$class = " label-warning";
+							break;
+						case 4:
+							$class = "";
+							break;
+						case 3:
+						default:
+							$class = " label-success";
+							break;
+					}
+				?>
+					<span class="label<?php echo($class); ?>">
+					<?php 
+					if (isset($statuses) && is_array($statuses) && count($statuses)) 
+					{
+						foreach ($statuses as $status) 
+						{
+							if ($article->status_id == $status->id) 
+							{
+								echo($status->status);
+								break;
+							}
+						}
+					}
+					?>
+					</span>
+				</td>
+			</tr>
+			<?php endforeach; ?>
+		<?php else: ?>
+			<tr>
+				<td colspan="7">No articles found that match your selection.</td>
+			</tr>
+		<?php endif; ?>
+		</tbody>
+	</table>
+	<?php echo form_close(); ?>
 
-				<div class="row" style="margin-bottom: 2.5em">
-					<div class="column size1of2">
-						<img src="<?php echo Template::theme_url('images/news.png') ?>" style="vertical-align: bottom; position: relative; top: -5px; margin-right: 1em;" />
+	<?php echo $this->pagination->create_links(); ?>
 
-						<span class="big-text"><b><?php echo $article_count ?></b></span> &nbsp; Total Articles
-					</div>
-                    <div class="column size1of2 last-column">
-                        <img src="<?php echo Template::theme_url('images/news.png') ?>" style="vertical-align: bottom; position: relative; top: -5px; margin-right: 1em;" />
-
-                        <span class="big-text"><b><?php echo $draft_articles ?></b></span> &nbsp; <?php echo anchor(SITE_AREA .'/content/news/drafts', 'Draft Articles', 'class="ajaxify"') ?>
-                    </div>
-					<div class="column size1of2 last-column">
-						<img src="<?php echo Template::theme_url('images/news.png') ?>" style="vertical-align: bottom; position: relative; top: -5px; margin-right: 1em;" />
-
-						<span class="big-text"><b><?php echo $published_articles ?></b></span> &nbsp; <?php echo anchor(SITE_AREA .'/content/news/published', 'Published Articles', 'class="ajaxify"') ?>
-					</div>
-
-					<div class="column size1of2 last-column">
-						<img src="<?php echo Template::theme_url('images/news.png') ?>" style="vertical-align: bottom; position: relative; top: -5px; margin-right: 1em;" />
-
-						<span class="big-text"><b><?php echo $deleted_articles ?></b></span> &nbsp; <?php echo anchor(SITE_AREA .'/content/news/deleted', 'Deleted Articles', 'class="ajaxify"') ?>
-					</div>
-				</div>
-
-
-				<div class="box create rounded">
-					<a class="button good ajaxify" href="<?php echo site_url(SITE_AREA .'/content/news/create'); ?>"><?php echo lang('us_create_news'); ?></a>
-
-					<?php echo lang('us_create_news_note'); ?>
-				</div>
-
-                <div class="box create rounded">
-                    <a class="button good ajaxify" href="<?php echo site_url(SITE_AREA .'/settings/news/index'); ?>"><?php echo lang('us_news_options'); ?></a>
-
-                    <?php echo lang('us_news_options_note'); ?>
-                </div>
-
-
-			</div>	<!-- /inner -->
-		</div>	<!-- /scrollable -->
-	</div>	<!-- /content -->
-</div> <!-- /v-split -->
+</div>
