@@ -33,6 +33,9 @@ class Content extends Admin_Controller {
 		$this->auth->restrict('Site.News.Manage');
 
 		$this->load->model('news/news_model');
+		$this->load->model('news/author_model');
+		
+		$this->load->helper('news');
 
 		$this->lang->load('news');
 

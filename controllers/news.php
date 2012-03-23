@@ -8,6 +8,7 @@ class News extends Front_Controller {
 	{
 		parent::__construct();
 		$this->load->model('news_model');
+		$this->load->helper('news');
 		$this->lang->load('news');
 
 	}
@@ -59,7 +60,7 @@ class News extends Front_Controller {
             $settings = $this->settings_lib->find_all_by('module','news');
             foreach ($articles as $article) {
 				$article->asset_url = $settings['news.upload_dir_url'];
-				$article->author_name = $this->auth->username($article->author);
+				$article->author_name = find_author_name($article->author);
 				$output .= $this->load->view('news/index',array('article'=>$article),true);
 			}
 		} else {
