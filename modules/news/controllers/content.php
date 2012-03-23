@@ -23,7 +23,14 @@
 
 class Content extends Admin_Controller {
 
+	/**
+	 * @var array  Holds Settings from Database.
+	 */
 	private  $_settings;
+
+	/**
+	 * @var string Holds the Realpath for uploading Attachments
+	 */
 	private  $_news_dir;
 
 	//--------------------------------------------------------------------
@@ -49,13 +56,16 @@ class Content extends Admin_Controller {
 		Assets::add_css( array(
 			Template::theme_url('js/editors/markitup/skins/markitup/style.css'),
 			Template::theme_url('js/editors/markitup/sets/default/style.css'),
-			css_path() . 'chosen.css'
+			css_path() . 'chosen.css',
+			css_path() . 'bootstrap-datepicker.css'
+
 		));
 
 		Assets::add_js( array(
 			Template::theme_url('js/editors/markitup/jquery.markitup.js'),
 			Template::theme_url('js/editors/markitup/sets/default/set.js'),
-			js_path() . 'chosen.jquery.min.js'
+			js_path() . 'chosen.jquery.min.js',
+			js_path() . 'bootstrap-datepicker.js'
 		));
 
 		$the_path = $this->_settings['news.upload_dir_path'];
@@ -212,6 +222,7 @@ class Content extends Admin_Controller {
 
 		if ($this->input->post('submit'))
 		{
+			//@TODO: Add Callback for file uploading instead of doing all this crazy stuff.
 			$uploadData = array();
 			$upload = true;
 			if (isset($_FILES['attachment']) && !empty($_FILES['attachment']))
@@ -286,7 +297,7 @@ class Content extends Admin_Controller {
 		{
 			$uploadData = array();
 			$upload = true;
-
+			//@TODO: Add Callback for file uploading instead of doing all this crazy stuff.
 			if (isset($_FILES['attachment']) && !empty($_FILES['attachment']))
 			{
 				$uploadData = $this->handle_upload( );
@@ -576,6 +587,9 @@ class Content extends Admin_Controller {
 
 	private function save_article($uploadData = false, $type='insert', $id=0)
 	{
+		/**
+		 * Donnu why this is here?
+		 */
 		$db_prefix = $this->db->dbprefix;
 
 		if ($type == 'insert')
@@ -643,6 +657,14 @@ class Content extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * My Format Date function that really does nothing but turns a string into a int.
+	 *
+	 * @TODO: Actually rewrite this to do what it's supposed to do.
+	 * @param string $date  The date to be converted
+	 * @param bool $text    Unused atm
+	 * @return int          Returns strtotime'd date.
+	 */
 	private function format_dates ( $date = '', $text = true )
 	{
 		if ( $date == '' )
@@ -650,22 +672,18 @@ class Content extends Admin_Controller {
 			return time();
 		}
 
-		if (!function_exists('human_to_unix'))
-		{
-			$this->load->helper('date');
-		}
-
-
-		if ( is_string($date) )
-			$text = true;
-
-		return ( $text === true ) ? strtotime($date) : strtotime($date);
+		return strtotime($date);
 
 	}
 
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Deletes Attachments or dies trying to. ( Chuck Norris would just chop them off I'm sure )
+	 *
+	 * @param $attachment Serialized data for attachment
+	 */
 	private function delete_attachments( $attachment )
 	{
 		$attachment = unserialize( $attachment );

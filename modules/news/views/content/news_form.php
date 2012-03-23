@@ -238,9 +238,13 @@
 
 <?php
 
-	$inline = ' $(".editor").markItUp( mySettings ); ' . PHP_EOL;
-	//$inline .='$("#date, #date_published").datepicker();' . PHP_EOL;
-	$inline .='$(".chzn-select").chosen();' . PHP_EOL;
+	$inline = <<<EOL
+
+	$(".editor").markItUp( mySettings );
+	$(".chzn-select").chosen();
+	$("#date, #date_published").datepicker();
+
+EOL;
 
 	Assets::add_js( $inline, 'inline' );
 	unset ( $inline );

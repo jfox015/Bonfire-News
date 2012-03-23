@@ -239,7 +239,7 @@ class News_model extends BF_Model {
 		$article = false;
 		if ($article_id === false)
 		{
-			$this->errors = "No article ID was received.";
+			$this->errors = 'No article ID was received.';
 			return false;
 		}
 
@@ -351,22 +351,15 @@ class News_model extends BF_Model {
 
 	public function get_news_categories_select ( )
 	{
-		$query = $this->db->select('id, category')->get('news_categories');
+		$table          = $this->table;
+		$this->table	= 'news_categories';
 
-		if ( $query->num_rows() <= 0 )
-			return '';
+		$options = $this->format_dropdown('id', 'category');
 
-		$option = array();
+		$this->table    = $table;
+		unset ( $table );
 
-		foreach ($query->result() as $row)
-		{
-			$row_id          = (int) $row->id;
-			$option[$row_id] = $row->category;
-		}
-
-		$query->free_result();
-
-		return $option;
+		return $options;
 	}
 
 	//--------------------------------------------------------------------
@@ -387,22 +380,15 @@ class News_model extends BF_Model {
 
 	public function get_news_statuses_select ( )
 	{
-		$query = $this->db->select('id, status')->get('news_status');
+		$table          = $this->table;
+		$this->table	= 'news_status';
 
-		if ( $query->num_rows() <= 0 )
-			return '';
+		$options = $this->format_dropdown('id', 'status');
 
-		$option = array();
+		$this->table    = $table;
+		unset ( $table );
 
-		foreach ($query->result() as $row)
-		{
-			$row_id          = (int) $row->id;
-			$option[$row_id] = $row->status;
-		}
-
-		$query->free_result();
-
-		return $option;
+		return $options;
 	}
 
 	//--------------------------------------------------------------------
