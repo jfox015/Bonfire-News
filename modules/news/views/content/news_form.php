@@ -40,13 +40,15 @@
 				<?php if (form_error('body')) echo '<span class="help-inline">'. form_error('body') .'</span>'; ?>
             </div>
         </div>
-		
-	
-		<?php 
-		// ATTACHMENTS
-		if (isset($settings['news.allow_attachments']) && $settings['news.allow_attachments'] == 1) 
-		{
-		?>
+
+
+
+		<?php if (isset($settings['news.allow_attachments']) && $settings['news.allow_attachments'] == 1) : ?>
+    </fieldset>
+    <fieldset>
+	    <legend>Image Attachments</legend>
+
+		<!-- // ATTACHMENTS -->
 
 		<!-- Image Upload -->
 		<div class="control-group <?php echo form_error('attachment') ? 'error' : '' ?>">
@@ -106,9 +108,13 @@
             </div>
         </div>
 
-	<?php
-	} // END if
-	?>
+	<?php endif; ?>
+
+    </fieldset>
+    <fieldset>
+	    <legend>Author and Randomness</legend>
+
+
 		<!-- TAGS -->
 	<div class="control-group <?php echo form_error('tags') ? 'error' : '' ?>">
 		<label class="control-label"><?php echo lang('us_tags') ?></label>
@@ -126,7 +132,7 @@
 <?php
 			if (isset($users) && is_array($users) && count($users)) :
 
-				$selection = ( isset ($article) && !empty( $article->author ) ) ? (int) $article->author : $current_user->username;
+				$selection = ( isset ($article) && !empty( $article->author ) ) ? (int) $article->author : $current_user->display_name;
 				echo form_dropdown('author', $users, $selection , 'class="chzn-select" id="author"');
 			endif;
 /*

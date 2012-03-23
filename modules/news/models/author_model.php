@@ -28,48 +28,80 @@
 class Author_model extends BF_Model
 {
 
+	/**
+	 * @var string  User Table Name
+	 */
 	protected $table		= 'users';
 
+	/**
+	 * @var string  User Name DB Row to Select
+	 */
+	private   $display_name;
 	//--------------------------------------------------------------------
 
+	/**
+	 * Simple Constructor to fetch username,  need to check settings to see if we have a Option for Display Name set.
+	 * @TODO: Check settings_lib for auth.use_displayname?
+	 */
 	public function __construct()
 	{
 		parent::__construct();
+
+		$this->display_name = 'display_name';
+
+		if ($this->settings_lib->item('auth.use_usernames') == 0 )
+		{
+			$this->display_name = 'username';
+		}
+
 	}
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Returns Name of Author of article.
+	 *
+	 * @param int $id  User ID of Author
+	 *
+	 * @return mixed   False if no ID is provided, else String of Display Name of User.
+	 */
 	public function find_author( $id = 0 )
 	{
 		if ( (int)$id == 0 )
 			return false;
 
-		$this->select('username');
+		$this->select( $this->display_name );
 
 		$name = parent::find($id);
-		return $name->username;
+		return $name->{$this->display_name};
 	}
 
 	//--------------------------------------------------------------------
 
-  public function get_users_select ( )
-  {
-		$query = $this->db->select('id, username')->get( $this->table );
+	/**
+	 * Returns array of Users formatted for Select Menu Dropdown
+	 *
+	 * @return array Returns array of Users formatted for Select Menu Dropdown
+	 */
+	public function get_users_select ( )
+	{
+
+		$query = $this->db->select('id, ' . $this->display_name )->get( $this->table );
 
 		if ( $query->num_rows() <= 0 )
 			return '';
 
-    $option = array();
+		$option = array();
 
-    foreach ($query->result() as $row)
-    {
-      $row_id          = (int) $row->id;
-      $option[$row_id] = $row->username;
-    }
+		foreach ($query->result() as $row)
+		{
+			$row_id          = (int) $row->id;
+			$option[$row_id] = $row->{$this->display_name};
+		}
 
-    $query->free_result();
+		$query->free_result();
 
-    return $option;
-  }
+		return $option;
+	}
 
 }
