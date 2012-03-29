@@ -20,13 +20,7 @@ Follow the official Twitter feed [ootpFox07](http://twitter.com/#!/ootpFox07).
 ## Team
 
 - [Jeff Fox](http://www.aeoliandigital.com/) - Lead Developer
-- [Shawn Crigger](http://www.s-vizion.com/)  - Annoying Forking Developer
 
-## Just a side note
-
-This is my personal fork of **Jeff Fox's** execellent News Module,  my Fork is different then the offical and original version,  if it does not work on your system or a kitten dies when you install it
-I plead NOLA :P 
- 
 ## Contribute to the development
 
 This mod is a 100% free and open source project. The source code is publicly available on GitHub.com. If you want to contribute to the development, simply fork the project, hack the code and send pull requests with your updates.

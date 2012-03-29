@@ -23,6 +23,16 @@
 
 class Content extends Admin_Controller {
 
+	/**
+	 * @var array  Holds Settings from Database.
+	 */
+	private  $_settings;
+
+	/**
+	 * @var string Holds the Realpath for uploading Attachments
+	 */
+	private  $_news_dir;
+
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -32,11 +42,40 @@ class Content extends Admin_Controller {
 		$this->auth->restrict('Site.Content.View');
 		$this->auth->restrict('Site.News.Manage');
 
-		$this->load->model('news/news_model');
+		$this->load->model( array('news/news_model', 'news/author_model' ));
 
 		$this->lang->load('news');
 
+		$this->load->helper('author');
+
 		$this->load->library('pagination');
+
+		$this->_settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
+
+		$js_path =
+		Assets::add_css( array(
+			Template::theme_url('js/editors/markitup/skins/markitup/style.css'),
+			Template::theme_url('js/editors/markitup/sets/default/style.css'),
+			css_path() . 'chosen.css',
+			css_path() . 'bootstrap-datepicker.css'
+
+		));
+
+		Assets::add_js( array(
+			Template::theme_url('js/editors/markitup/jquery.markitup.js'),
+			Template::theme_url('js/editors/markitup/sets/default/set.js'),
+			js_path() . 'chosen.jquery.min.js',
+			js_path() . 'bootstrap-datepicker.js'
+		));
+
+		$the_path = $this->_settings['news.upload_dir_path'];
+		$this->_news_dir = realpath( APPPATH . '../..' . $the_path );
+
+		if ( !is_dir( $this->_news_dir ) && !is_writeable( $this->_news_dir ) )
+		{
+			Template::set_message('Attachment Upload Directory is not write-able: ' . $this->_news_dir, 'error');
+			log_message('error', 'Attachment Upload Directory is not write-able: ' . $this->_news_dir);
+		}
 
 		Template::set_block('sub_nav', 'content/_sub_nav');
 	}
@@ -159,7 +198,6 @@ class Content extends Admin_Controller {
 		$this->news_model->where($where);
 		$total_articles = $this->news_model->count_all();
 
-
 		$this->pager['base_url'] = site_url(SITE_AREA .'/content/news/index');
 		$this->pager['total_rows'] = $total_articles;
 		$this->pager['per_page'] = $this->limit;
@@ -178,28 +216,31 @@ class Content extends Admin_Controller {
 
 	public function create()
 	{
-		$settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
+		$settings = $this->_settings;
 		$this->auth->restrict('Site.News.Add');
 
 		if ($this->input->post('submit'))
 		{
+			//@TODO: Add Callback for file uploading instead of doing all this crazy stuff.
 			$uploadData = array();
 			$upload = true;
 			if (isset($_FILES['attachment']) && !empty($_FILES['attachment']))
 			{
-				$uploadData = $this->handle_upload($settings['news.upload_dir_path']);
+				$uploadData = $this->handle_upload( );
 				if (isset($uploadData['error']) && !empty($uploadData['error']))
 				{
 					$upload = false;
 				}
 			}
-            if ((count($uploadData) && $upload) || (count($uploadData) == 0 && $upload))
+
+			if ((count($uploadData) && $upload) || (count($uploadData) == 0 && $upload))
 			{
 				if ($id = $this->save_article($uploadData))
 				{
 					$article = $this->news_model->find($id);
-					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
-					$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_create').' '.$log_name, 'users');
+					//$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
+					$this->load->model('activities/activity_model');
+					$this->activity_model->log_activity($this->current_user->id, lang('us_log_create').' '.$this->current_user->display_name, 'users');
 
 					Template::set_message('Article successfully created.', 'success');
 					Template::redirect(SITE_AREA .'/content/news');
@@ -214,17 +255,22 @@ class Content extends Admin_Controller {
 				Template::set_message('There was a problem saving the file attachment: '. $uploadData['error']);
 			}
 		}
+
+		Template::set('categories', $this->news_model->get_news_categories_select());
+		Template::set('statuses', $this->news_model->get_news_statuses_select() );
+		Template::set('users', $this->author_model->get_users_select() );
+		Template::set('settings', $settings);
+
+/*
 		Template::set('categories', $this->news_model->get_news_categories());
-        Template::set('statuses', $this->news_model->get_news_statuses());
-        Template::set('settings', $settings);
+		Template::set('statuses', $this->news_model->get_news_statuses());
+		Template::set('settings', $settings);
+		Template::set('users', $this->user_model->find_all());
+*/
+
 		if (!isset($this->user_model)) {
 			$this->load->model('users/User_model','user_model');
 		}
-        Template::set('users', $this->user_model->find_all());
-		Assets::add_css(Template::theme_url('css/jquery.ui.datepicker.css'),'screen');
-		Assets::add_js(Template::theme_url('js/jquery-ui-1.8.8.min.js'));
-		// if a date field hasn't been included already then add in the jquery ui files
-		//Assets::add_js(Template::theme_url('js/editors/nicEdit.js'));
 
 		Template::set('toolbar_title', lang('us_create_news'));
 		Template::set_view('content/news_form');
@@ -235,8 +281,9 @@ class Content extends Admin_Controller {
 
 	public function edit()
 	{
-        $settings = $this->settings_lib->find_all_by('module','news');
-        $this->auth->restrict('Site.News.Manage');
+		$settings = $this->_settings;
+//		$settings = $this->settings_lib->find_all_by('module','news');
+		$this->auth->restrict('Site.News.Manage');
 		$article_id = $this->uri->segment(5);
 		if (empty($article_id))
 		{
@@ -248,25 +295,27 @@ class Content extends Admin_Controller {
 		{
 			$uploadData = array();
 			$upload = true;
+			//@TODO: Add Callback for file uploading instead of doing all this crazy stuff.
 			if (isset($_FILES['attachment']) && !empty($_FILES['attachment']))
 			{
-				$uploadData = $this->handle_upload($settings['news.upload_dir_path']);
+				$uploadData = $this->handle_upload( );
 				if (isset($uploadData['error']) && !empty($uploadData['error']))
 				{
 					$upload = false;
 				}
 			}
+
 			if ((count($uploadData) && $upload) || (count($uploadData) == 0 && $upload)) {
 
 				if ($this->save_article($uploadData, 'update', $article_id))
 				{
 					$article = $this->news_model->find($article_id);
-					if(!isset($this->auth)) {
-						$this->load->library('users/auth');
-					}
-					$article->author_name = $this->auth->username($article->author);
-					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
-					$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_edit') .': '.$log_name, 'users');
+					$this->load->model('activities/activity_model');
+
+					$article->author_name = find_author_name($article->author);
+					//$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
+					$log_name = $this->current_user->email;
+					$this->activity_model->log_activity($this->current_user->id, lang('us_log_edit') .': '.$log_name, 'users');
 
 					Template::set_message('Article successfully updated.', 'success');
 				}
@@ -285,6 +334,14 @@ class Content extends Admin_Controller {
 		if (isset($article) && has_permission('Site.News.Manage'))
 		{
 			Template::set('article', $article);
+
+			Template::set('categories', $this->news_model->get_news_categories_select());
+			Template::set('statuses', $this->news_model->get_news_statuses_select() );
+			Template::set('users', $this->author_model->get_users_select() );
+			Template::set('settings', $settings);
+			Template::set_view('content/news_form');
+
+			/*
 			Template::set('categories', $this->news_model->get_news_categories());
 			Template::set('statuses', $this->news_model->get_news_statuses());
 			Template::set_view('content/news_form');
@@ -292,6 +349,7 @@ class Content extends Admin_Controller {
 				$this->load->model('users/User_model','user_model');
 			}
 			Template::set('users', $this->user_model->find_all());
+			*/
 		}
 		else
 		{
@@ -299,6 +357,7 @@ class Content extends Admin_Controller {
 			redirect(SITE_AREA .'/content/news');
 		}
 
+		Template::set('settings', $settings );
 		Template::set('toolbar_title', lang('us_edit_news'));
 		Template::render();
 	}
@@ -318,8 +377,11 @@ class Content extends Admin_Controller {
 				if ($this->news_model->delete($id))
 				{
 					$article = $this->news_model->find($id);
-					$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->username() : $this->auth->email());
-					$this->activity_model->log_activity($this->auth->user_id(), lang('us_log_delete') . ': '.$log_name, 'users');
+					$this->load->model('activities/activity_model');
+
+					$log_name = $this->current_user->email;
+
+					$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete') . ': '.$log_name, 'users');
 					Template::set_message('The article was successfully deleted.', 'success');
 				}
 				else
@@ -380,18 +442,10 @@ class Content extends Admin_Controller {
 			{
 				foreach ($articles as $article)
 				{
-					
 					// DELETE ATTACHMENTS IF THEY EXIST
-					if (isset($article->attachment) && !empty($article->attachment)) {
-						$attachment = unserialize($article->attachment);
-
-                        $settings = $this->settings_lib->find_all_by('module','news');
-                        if (file_exists($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['file_name'])) {
-							unlink($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['file_name']);
-						}
-						if (isset($attachment['image_thumb']) && file_exists($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['image_thumb'])) {
-							unlink($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['image_thumb']);
-						}
+					if (isset($article->attachment) && !empty($article->attachment))
+					{
+						$this->delete_attachments ( $article->attachment );
 					}
 					$this->news_model->delete($article->id, true);
 				}
@@ -445,7 +499,8 @@ class Content extends Admin_Controller {
 	public function remove_attachment()
 	{
 		$id = $this->uri->segment(5);
-		$settings = $this->settings_lib->find_all_by('module','news');
+		$settings = $this->_settings;
+
 		$success = false;
 
 		// Handle a single-user purge
@@ -454,16 +509,7 @@ class Content extends Admin_Controller {
 			$article = $this->news_model->find($article_id);
 			if (isset($article) && isset($article->attachment))
 			{
-				$attachment = unserialize($article->attachment);
-
-				if (file_exists($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['file_name']))
-				{
-					unlink($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['file_name']);
-				}
-				if (isset($attachment['image_thumb']) && file_exists($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['image_thumb']))
-				{
-					unlink($settings['news.upload_dir_path'].DIRECTORY_SEPERATOR.$attachment['image_thumb']);
-				}
+				$this->delete_attachments ( $article->attachment );
 				$data = array('attachment'=>'');
 				$success = $this->news_model->update($article_id, $data);
 			}
@@ -487,9 +533,10 @@ class Content extends Admin_Controller {
 	/-------------------------------------------------------------------*/
 	private function handle_upload($path = '')
 	{
-		$settings = $this->settings_lib->find_all_by('module','news');
+		$settings  = $this->_settings;
+		$file_path = $this->_news_dir;
 
-		$config['upload_path']		= (empty($path) ? $settings['news.upload_dir_path'] : $path);
+		$config['upload_path']		= $file_path;
 		$config['allowed_types']	= 'gif|jpg|png';
 		$config['max_size']			= intval($settings['news.max_img_size']);
 		$config['max_width']		= intval($settings['news.max_img_width']);
@@ -537,6 +584,9 @@ class Content extends Admin_Controller {
 
 	private function save_article($uploadData = false, $type='insert', $id=0)
 	{
+		/**
+		 * Donnu why this is here?
+		 */
 		$db_prefix = $this->db->dbprefix;
 
 		if ($type == 'insert')
@@ -544,9 +594,7 @@ class Content extends Admin_Controller {
 			$this->form_validation->set_rules('title', 'Title', 'required|trim|max_length[255]|xss_clean');
 			$this->form_validation->set_rules('body', 'Body', 'required|trim|xss_clean');
 			$this->form_validation->set_rules('date', 'Article Date', 'required|trim|strip_tags|xss_clean');
-			}
-		else
-		{
+		} else {
 			$this->form_validation->set_rules('title', 'Title', 'trim|max_length[255]|xss_clean');
 			$this->form_validation->set_rules('body', 'Body', 'trim|xss_clean');
 			$this->form_validation->set_rules('date', 'Article Date', 'trim|strip_tags|xss_clean');
@@ -565,25 +613,24 @@ class Content extends Admin_Controller {
 		{
 			return false;
 		}
-		if (!function_exists('text_date_to_int'))
-		{
-			$this->load->helper('date');
-		}
-		$dates = text_date_to_int(array('date'=>'','date_published'=>''),$this->input);
+
+		$date            = $this->format_dates ( $this->input->post('date') );
+		$date_published  = $this->format_dates ( $this->input->post('date_published') );
+
 		$data = array(
 					'title'=>$this->input->post('title'),
 					'body'=>$this->input->post('body'),
-					'date'=>$dates['date'],
+					'date'=>$date,
 					'tags'=>$this->input->post('tags'),
 					'author'=>$this->input->post('author'),
 					'image_align'=>$this->input->post('image_align'),
-					'date_published'=>$dates['date_published'],
+					'date_published'=>$date_published,
 					'category_id'=>(($this->input->post('category_id'))?$this->input->post('category_id'):1),
 					'status_id'=>(($this->input->post('status_id'))?$this->input->post('status_id'):1)
 				);
 
-		if ($uploadData !== false && is_array($uploadData) && count($uploadData) > 0)
 
+		if ($uploadData !== false && is_array($uploadData) && count($uploadData) > 0)
 		{
 			$data = $data + array('attachment'=>serialize($uploadData['data']));
 		}
@@ -598,6 +645,64 @@ class Content extends Admin_Controller {
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * My Format Date function that really does nothing but turns a string into a int.
+	 *
+	 * @TODO: Actually rewrite this to do what it's supposed to do.
+	 * @param string $date  The date to be converted
+	 * @param bool $text    Unused atm
+	 * @return int          Returns strtotime'd date.
+	 */
+	private function format_dates ( $date = '', $text = true )
+	{
+		if ( $date == '' )
+		{
+			return time();
+		}
+
+		return strtotime($date);
+
+	}
+
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Deletes Attachments or dies trying to. ( Chuck Norris would just chop them off I'm sure )
+	 *
+	 * @param $attachment Serialized data for attachment
+	 */
+	private function delete_attachments( $attachment )
+	{
+		$attachment = unserialize( $attachment );
+		$file_dir = $this->_news_dir;
+
+		if (file_exists( $file_dir . DIRECTORY_SEPERATOR. $attachment['file_name']) )
+		{
+			$deleted = unlink( $file_dir . DIRECTORY_SEPERATOR.$attachment['file_name']);
+			if ( $deleted === false )
+			{
+				Template::set_message('Problem deleting attachment file:' . $attachment['file_name'], 'error');
+				log_message('error', 'Problem deleting attachment file:' . $attachment['file_name'] );
+			}
+			unset ( $deleted );
+		}
+
+		if ( isset($attachment['image_thumb']) && file_exists( $file_dir .DIRECTORY_SEPERATOR.$attachment['image_thumb']))
+		{
+			$deleted = unlink($file_dir . DIRECTORY_SEPERATOR . $attachment['image_thumb'] );
+			if ( $deleted === false )
+			{
+				Template::set_message('Problem deleting attachment file:' . $attachment['image_thumb'], 'error');
+				log_message('error', 'Problem deleting attachment file:' . $attachment['image_thumb'] );
+			}
+
+		}
+	}
+
+	//--------------------------------------------------------------------
 }
 
-// End User Admin class
+// End of News Content Controller
+// End of file modules/news/controllers/content.php

@@ -1,14 +1,16 @@
 <?php if (validation_errors()) : ?>
-<div class="notification error">
-	<?php echo validation_errors(); ?>
-</div>
+	<div class="alert alert-block alert-error fade in">
+		<a class="close" data-dismiss="alert">&times;</a>
+		<?php echo validation_errors(); ?>
+	</div>
+
 <?php endif; ?>
 
 <div class="admin-box">
 
     <h3>Article Details</h3>
 
-    <?php echo form_open($this->uri->uri_string(), 'class="form-horizontal"'); ?>
+    <?php echo form_open_multipart($this->uri->uri_string(), 'class="form-horizontal"'); ?>
 
     <fieldset>
         <legend>General Information</legend>
@@ -16,14 +18,14 @@
         <div class="control-group <?php echo form_error('title') ? 'error' : '' ?>">
              <label class="control-label"><?php echo lang('us_title') ?></label>
             <div class="controls">
-                <input type="text" name="title" id="title" value="<?php echo isset($article) ? $article->title : set_value('title') ?>" />
+                <input type="text" class="span8" name="title" id="title" value="<?php echo isset($article) ? $article->title : set_value('title') ?>" />
 				<?php if (form_error('title')) echo '<span class="help-inline">'. form_error('title') .'</span>'; ?>
             </div>
         </div>
 
 			<!-- Date -->
         <div class="control-group <?php echo form_error('date') ? 'error' : '' ?>">
-             <label class="control-label"><?php echo lang('us_date') ?></label>
+             <label class="control-label" for="date"><?php echo lang('us_date') ?></label>
             <div class="controls">
                 <input type="text" name="date" id="date" value="<?php echo (isset($article) && isset($article->date) && !empty($article->date)) ? date('m/d/Y',$article->date) : ($this->input->post('date') ? set_value(date('m/d/Y','date')) : '') ?>" />
 				<?php if (form_error('date')) echo '<span class="help-inline">'. form_error('date') .'</span>'; ?>
@@ -32,39 +34,55 @@
 
 			<!-- Body -->
         <div class="control-group <?php echo form_error('body') ? 'error' : '' ?>">
-             <label class="control-label"><?php echo lang('us_body') ?></label>
+             <label class="control-label" ><?php echo lang('us_body') ?></label>
             <div class="controls">
-                <?php echo form_textarea( array( 'name' => 'body', 'id' => 'body', 'rows' => '5', 'cols' => '80', 'value' => isset($article) ? $article->body : set_value('body') ) )?>
+                <?php echo form_textarea( array( 'class' => 'editor', 'name' => 'body', 'id' => 'body', 'rows' => '8', 'cols' => '80', 'value' => isset($article) ? $article->body : set_value('body') ) )?>
 				<?php if (form_error('body')) echo '<span class="help-inline">'. form_error('body') .'</span>'; ?>
             </div>
         </div>
-		
-	
-		<?php 
-		// ATTACHMENTS
-		if (isset($settings['news.allow_attachments']) && $settings['news.allow_attachments'] == 1) 
-		{
-		?>
-			<!-- Image Upload -->
+
+
+
+		<?php if (isset($settings['news.allow_attachments']) && $settings['news.allow_attachments'] == 1) : ?>
+    </fieldset>
+    <fieldset>
+	    <legend>Image Attachments</legend>
+
+		<!-- // ATTACHMENTS -->
+
+		<!-- Image Upload -->
 		<div class="control-group <?php echo form_error('attachment') ? 'error' : '' ?>">
              <label class="control-label"><?php echo lang('us_image_path') ?></label>
             <div class="controls">
                 <input type="file" id="attachment" name="attachment" />
-				<span class="help-inline"><?php if (form_error('attachment')) 
-				{
-					echo form_error('attachment'); 
-				}
-				else
-				{ 
-					if(isset($article) && isset($article->attachment) && !empty($article->attachment)) : 
-						$attachment = unserialize($article->attachment);
-						echo 'Current Attachment: '.$attachment['file_name']." (".$attachment['file_size']."kB ".$attachment['file_type'].") | ".anchor(SITE_AREA.'/content/news/remove_attachment/'.$article->id,'Remove');
-					endif; 
-				} // END if
-				?>				
-				</span>
+	            <span class="help-inline"> <?php if (form_error('attachment')) echo form_error('attachment'); ?></span>
 			</div>
         </div>
+
+
+<!-- Current Image -->
+		<?php if(isset($article) && isset($article->attachment) && !empty($article->attachment)) :
+			$attachment = unserialize($article->attachment);
+		?>
+
+			<!-- Image Upload -->
+			<div class="control-group">
+				<label class="control-label">Current Attachment</label>
+				<div class="controls">
+					<ul class="thumbnails">
+						<li class="span3">
+							<div class="thumbnail">
+							<a class="lightbox" href="<?= base_url() . $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" target="_blank" >
+								<img src="<?= base_url() . $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" />
+							</a>
+							<h5><?= $attachment['file_name'].' ('.$attachment['file_size'].'kB '.$attachment['file_type'].') | '.anchor(SITE_AREA.'/content/news/remove_attachment/'.$article->id,'Remove'); ?></h5>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+		<?php endif; ?>
 
 			<!-- IMAGE CAPTION -->
 		<div class="control-group <?php echo form_error('image_caption') ? 'error' : '' ?>">
@@ -90,9 +108,13 @@
             </div>
         </div>
 
-	<?php
-	} // END if
-	?>
+	<?php endif; ?>
+
+    </fieldset>
+    <fieldset>
+	    <legend>Author and Randomness</legend>
+
+
 		<!-- TAGS -->
 	<div class="control-group <?php echo form_error('tags') ? 'error' : '' ?>">
 		<label class="control-label"><?php echo lang('us_tags') ?></label>
@@ -106,14 +128,23 @@
 	<div class="control-group <?php echo form_error('author') ? 'error' : '' ?>">
 		 <label class="control-label"><?php echo lang('us_author') ?></label>
 		<div class="controls">
-			<?php  if ( has_permission('Site.News.Manage') ) :?>
+			<?php if ( has_permission('Site.News.Manage') ) : ?>
+<?php
+			if (isset($users) && is_array($users) && count($users)) :
+
+				$selection = ( isset ($article) && !empty( $article->author ) ) ? (int) $article->author : $current_user->display_name;
+				echo form_dropdown('author', $users, $selection , 'class="chzn-select" id="author"');
+			endif;
+/*
 				<?php if (isset($users) && is_array($users) && count($users)) : ?>
-					<select name="author" id="author">
+					<select name="author" id="author" class="chzn-select">
 					<?php foreach ($users as $user) :?>
 						<option value="<?php echo (int)$user->id; ?>" <?php echo ((isset($article) && isset($article->author) && isset($user)) ? ((int)$user->id == $article->author) ? 'selected="selected"' : '' : ''); ?>><?php echo $user->username ?></option>
 					<?php endforeach; ?>
 					</select>
 				<?php endif; ?>
+*/
+?>
 				<?php if (form_error('author')) echo '<span class="help-inline">'. form_error('author') .'</span>'; ?>
 			<?php else : 
 				echo $article->author_name;
@@ -128,13 +159,22 @@
 		<div class="control-group <?php echo form_error('category_id') ? 'error' : '' ?>">
 			 <label class="control-label"><?php echo lang('us_category') ?></label>
 			<div class="controls">
+				<?php
+				if (is_array($categories) && count($categories)) :
+
+					$selection = ( isset ($article) && !empty($article->category_id ) ) ? (int) $article->category_id : 0;
+					echo form_dropdown('category_id', $categories, $selection , 'class="chzn-select" id="category_id"');
+				endif;
+
+/*
 				<?php if (is_array($categories) && count($categories)) : ?>
-					<select name="category_id">
+					<select name="category_id" id="category_id" class="chzn-select">
 					<?php foreach ($categories as $category) :?>
 						<option value="<?php echo (int)$category->id; ?>" <?php echo (isset($article) ? ((int)$category->id == $article->category_id) ? 'selected="selected"' : '' : ''); ?>><?php echo $category->category ?></option>
 					<?php endforeach; ?>
 					</select>
 				<?php endif; ?>
+*/?>
 				<?php if (form_error('category_id')) echo '<span class="help-inline">'. form_error('category_id') .'</span>'; ?>
 			</div>
 		</div>
@@ -143,13 +183,25 @@
 		<div class="control-group <?php echo form_error('status_id') ? 'error' : '' ?>">
 			 <label class="control-label"><?php echo lang('us_status') ?></label>
 			<div class="controls">
+				<?php
+				if (is_array($statuses) && count($statuses)) :
+
+					$selection = ( isset ($article) && !empty($article->status_id ) ) ? (int) $article->status_id : 0;
+					echo form_dropdown('status_id', $statuses, $selection , 'class="chzn-select" id="status_id"');
+				endif;
+				?>
+				<?php
+				/*
 				<?php if (is_array($statuses) && count($statuses)) : ?>
-					<select name="status_id">
+					<select name="status_id" id="status_id" class="chzn-select">
 					<?php foreach ($statuses as $status) :?>
 						<option value="<?php echo (int)$status->id; ?>" <?php echo (isset($article) ? ((int)$status->id == $article->status_id) ? 'selected="selected"' : '' : ''); ?>><?php echo $status->status ?></option>
 					<?php endforeach; ?>
 					</select>
 				<?php endif; ?>
+*/
+				?>
+
 					<?php if (form_error('status_id')) echo '<span class="help-inline">'. form_error('status_id') .'</span>'; ?>
 			</div>
 		</div>
@@ -162,34 +214,45 @@
 			</div>
 		</div>
 
-		<?php if (isset($article) && isset($article->id)) { ?>
-		<div class="control-group <?php echo form_error('') ? 'error' : '' ?>">
+		<?php if (isset($article) && isset($article->id)) : ?>
+		<div class="control-group">
 			 <label class="control-label"><?php echo lang('us_created') ?></label>
 			<div class="controls">
-				<?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->created_on) : 'Unknown'); ?> by <?php echo (isset($article) ? $this->auth->username($article->created_by) : 'Unknown'); ?></div>
+				<span class="inline-help">
+					<?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->created_on) : 'Unknown'); ?> by <?php echo (isset($article) ? find_author_name($article->created_by) : 'Unknown'); ?>
+				</span>
 			</div>
-		</div>
+			</div>
 		
-		<div class="control-group <?php echo form_error('') ? 'error' : '' ?>">
+		<div class="control-group">
 			 <label class="control-label"><?php echo lang('us_modified') ?></label>
 			<div class="controls">
-				<span><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->modified_on) : 'Unknown'); ?> by <?php echo (isset($article) ? $this->auth->username($article->modified_by) : 'Unknown'); ?></span>
+				<span class="inline-help"><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->modified_on) : 'Unknown'); ?> by <?php echo (isset($article) ? find_author_name($article->modified_by) : 'Unknown'); ?></span>
 			</div>
 		</div>
-		<?php } ?>
+		<?php endif; ?>
 		
-	</fieldset>
+
 	<?php endif; ?>
 
 	<div class="form-actions">
 		<input type="submit" name="submit" class="btn btn-primary" value="<?php echo lang('bf_action_save') .' '. lang('us_article') ?>" />
 	</div>
-	
+
+</fieldset>
 <?php echo form_close(); ?>
 
-<script type="text/javascript"> 
-head.ready(function(){
-    $("#date").datepicker();
-    $("#date_published").datepicker();
-});
-</script>
+<?php
+
+	$inline = <<<EOL
+
+	$(".editor").markItUp( mySettings );
+	$(".chzn-select").chosen();
+	$("#date, #date_published").datepicker();
+
+EOL;
+
+	Assets::add_js( $inline, 'inline' );
+	unset ( $inline );
+
+?>

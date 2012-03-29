@@ -65,7 +65,7 @@ class News_model extends BF_Model {
 
 		$data['image_caption'] = (isset($data['image_caption']) && !empty($data['image_caption']) ? $data['image_caption'] : '');
 
-        $data['date_published'] = (isset($data['date_published']) && !empty($data['date_published']) ? strtotime($data['date_published']) : $data['date']);
+		$data['date_published'] = (isset($data['date_published']) && !empty($data['date_published']) ? strtotime($data['date_published']) : $data['date']);
 
 		$data['author'] = $data['created_by'] = $data['modified_by'] = (isset($data['author']) && !empty($data['author'])) ? $data['author'] : (($auth != NULL) ? $auth->user_id() : 1);
 
@@ -213,22 +213,22 @@ class News_model extends BF_Model {
 		{
 			$this->db->limit($offset,$limit);
 		}
-			$this->db->order_by('date', 'desc');
+		$this->db->order_by('date', 'desc');
 
-			if ($published === true)
-			{
-				$this->db->where('status_id',3);
-			}
+		if ($published === true)
+		{
+			$this->db->where('status_id',3);
+		}
 
-			$query = $this->db->get($this->table);
-			if ($query->num_rows() > 0)
-			{
-				$articles = $query->result();
-			}
+		$query = $this->db->get($this->table);
+		if ($query->num_rows() > 0)
+		{
+			$articles = $query->result();
+		}
 
-			//$articles = $this->news_model->find_all_by('status_id',3);
-			//print ($this->db->last_query()."<br />");
-			return $articles;
+		//$articles = $this->news_model->find_all_by('status_id',3);
+		//print ($this->db->last_query()."<br />");
+		return $articles;
 	}
 
 	//--------------------------------------------------------------------
@@ -239,7 +239,9 @@ class News_model extends BF_Model {
 		$article = false;
 		if ($article_id === false)
 		{
-			$this->errors = "No article ID was received.";
+
+			$this->errors = 'No article ID was received.';
+
 			return false;
 		}
 
@@ -325,7 +327,7 @@ class News_model extends BF_Model {
 	{
 
 		$query = $this->db->select('id')->where('default',1)->get('news_categories');
-    if ($query->num_rows() > 0)
+		if ($query->num_rows() > 0)
 		{
 			return $query->row()->id;
 		} else {
@@ -345,65 +347,51 @@ class News_model extends BF_Model {
 		} else {
 			return null;
 		}
-  }
+	}
 
 	//--------------------------------------------------------------------
 
-  public function get_news_categories_select ( )
-  {
-		$query = $this->db->select('id, category')->get('news_categories');
+	public function get_news_categories_select ( )
+	{
+		$table          = $this->table;
+		$this->table	= 'news_categories';
 
-		if ( $query->num_rows() <= 0 )
-			return '';
+		$options = $this->format_dropdown('id', 'category');
 
-    $option = array();
+		$this->table    = $table;
+		unset ( $table );
 
-    foreach ($query->result() as $row)
-    {
-      $row_id          = (int) $row->id;
-      $option[$row_id] = $row->category;
-    }
-
-    $query->free_result();
-
-    return $option;
-  }
+		return $options;
+	}
 
 	//--------------------------------------------------------------------
 
 	public function get_default_status()
 	{
 		$query = $this->db->select('id')->where('default',1)->get('news_status');
-    if ( $query->num_rows() > 0 )
+		if ( $query->num_rows() > 0 )
 		{
 			return $query->row()->id;
 		} else {
 			return 1;
 		}
 
-  }
+	}
 
 	//--------------------------------------------------------------------
 
-  public function get_news_statuses_select ( )
-  {
-		$query = $this->db->select('id, status')->get('news_status');
+	public function get_news_statuses_select ( )
+	{
+		$table          = $this->table;
+		$this->table	= 'news_status';
 
-		if ( $query->num_rows() <= 0 )
-			return '';
+		$options = $this->format_dropdown('id', 'status');
 
-    $option = array();
+		$this->table    = $table;
+		unset ( $table );
 
-    foreach ($query->result() as $row)
-    {
-      $row_id          = (int) $row->id;
-      $option[$row_id] = $row->status;
-    }
-
-    $query->free_result();
-
-    return $option;
-  }
+		return $options;
+	}
 
 	//--------------------------------------------------------------------
 
@@ -411,7 +399,7 @@ class News_model extends BF_Model {
 	{
 		$query = $this->db->select('id, status')->get('news_status');
 
-    if ($query->num_rows() > 0)
+		if ($query->num_rows() > 0)
 		{
 			return $query->result();
 		} else {

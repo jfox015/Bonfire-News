@@ -57,12 +57,12 @@
 		<?php if (isset($articles) && is_array($articles) && count($articles)) : ?>
 		<tfoot>
 			<tr>
-				<td colspan="6">
+				<td colspan="7">
 					<?php echo lang('bf_with_selected') ?>
-					<input type="submit" name="submit" class="btn" value="<?php echo lang('us_action_publish') ?>">
-					<input type="submit" name="submit" class="btn" value="<?php echo lang('us_action_review') ?>">
-					<input type="submit" name="submit" class="btn" value="<?php echo lang('us_action_archive') ?>">
-					<input type="submit" name="delete" class="btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" onclick="return confirm('<?php echo lang('us_delete_account_confirm'); ?>')">
+					<input type="submit" name="submit" class="btn btn-success" value="<?php echo lang('us_action_publish') ?>">
+					<input type="submit" name="submit" class="btn btn-primary" value="<?php echo lang('us_action_review') ?>">
+					<input type="submit" name="submit" class="btn btn-warning" value="<?php echo lang('us_action_archive') ?>">
+					<input type="submit" name="delete" class="btn btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" style="margin-bottom: 0px; " onclick="return confirm('<?php echo lang('bf_action_delete'); ?>')">
 				</td>
 			</tr>
 		</tfoot>
@@ -86,7 +86,7 @@
 							echo '---';
 						}
 					?></td>
-				<td><?php echo $article->title ?></td>
+				<td><?php echo anchor(SITE_AREA.'/content/news/edit/'. $article->id,$article->title) ?></td>
 				<td><?php echo($this->user_model->find($article->author)->display_name); ?></td>
 				<td><?php
 						if ($article->date_published != '0000-00-00 00:00:00')
@@ -137,7 +137,7 @@
 			<?php endforeach; ?>
 		<?php else: ?>
 			<tr>
-				<td colspan="6">No articles found that match your selection.</td>
+				<td colspan="7">No articles found that match your selection.</td>
 			</tr>
 		<?php endif; ?>
 		</tbody>
