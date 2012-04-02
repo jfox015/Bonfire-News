@@ -37,41 +37,43 @@ $lang['nw_max_img_disp_height']		= 'Max Image Display Height';
 $lang['nw_width']					= 'Width';
 $lang['nw_height']					= 'Height';
 
-$lang['us_draft_articles']			= "Draft articles.";
-$lang['us_action_draft']			= "Draft";
-$lang['us_action_review']			= "In Review";
-$lang['us_action_publish']			= "Publish";
-$lang['us_action_archive']			= "Archive";
-$lang['us_action_archived']			= "Archived";
-$lang['us_status_change']			= "Change Status";
-$lang['us_deleted_articles']		= "Deleted.";
+$lang['us_draft_articles']			= 'Draft articles.';
+$lang['us_action_draft']			= 'Draft';
+$lang['us_action_review']			= 'In Review';
+$lang['us_action_publish']			= 'Publish';
+$lang['us_action_archive']			= 'Archive';
+$lang['us_action_archived']			= 'Archived';
+$lang['us_status_change']			= 'Change Status';
+$lang['us_deleted_articles']		= 'Deleted.';
 
-$lang['us_published_articles']		= "Published articles.";
-$lang['no_articles']				= "No articles were found.";
-$lang['us_no_deleted']				= "There are not any deleted articles in the database.";
-$lang['us_no_drafts']				= "There are not any drafts in the database.";
-$lang['us_no_published']			= "There are not any published articles in the database.";
+$lang['us_published_articles']		= 'Published articles.';
+$lang['no_articles']				= 'No articles were found.';
+$lang['us_no_deleted']				= 'There are not any deleted articles in the database.';
+$lang['us_no_drafts']				= 'There are not any drafts in the database.';
+$lang['us_no_published']			= 'There are not any published articles in the database.';
 
-$lang['us_title']					= "Title";
-$lang['us_date']					= "Article Date";
-$lang['us_body']					= "Article Body";
-$lang['us_image_path']				= "Attach Image";
-$lang['us_image_align']				= "Image Alignment";
-$lang['us_image_caption']			= "Caption";
-$lang['us_image_align_left']		= "Left (Default)";
-$lang['us_image_align_right']		= "Right";
-$lang['us_tags']					= "Tags";
+$lang['us_title']					= 'Title';
+$lang['us_date']					= 'Article Date';
+$lang['us_body']					= 'Article Body';
+$lang['us_image_path']				= 'Attach Image';
+$lang['us_image_align']				= 'Image Alignment';
+$lang['us_image_caption']			= 'Caption';
+$lang['us_image_align_left']		= 'Left (Default)';
+$lang['us_image_align_right']		= 'Right';
+$lang['us_tags']					= 'Tags';
 
-$lang['us_additional']				= "Additional Information";
+$lang['us_additional']				= 'Additional Information';
 
-$lang['us_author']					= "Author";
-$lang['us_category']				= "Category";
-$lang['us_status']					= "Status";
-$lang['us_publish_date']			= "Publish Date";
-$lang['us_created']					= "Created";
-$lang['us_modified']				= "Last Updated:";
-$lang['us_action_publish']			= "Publish";
-$lang['us_action_review']			= "Review";
+$lang['us_author']					= 'Author';
+$lang['us_category']				= 'Category';
+$lang['us_status']					= 'Status';
+$lang['us_publish_date']			= 'Publish Date';
+$lang['us_created']					= 'Created';
+$lang['us_modified']				= 'Last Updated:';
+$lang['us_action_publish']			= 'Publish';
+$lang['us_action_review']			= 'Review';
 
+$lang['us_image_title'] = 'Image Title';
+$lang['us_image_alttag'] = 'Image Alt Tag';
 // Settings
 
