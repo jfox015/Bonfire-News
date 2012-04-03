@@ -35,6 +35,16 @@ class Content extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Checks Auth Permissions and setups all java-scripts and other stuff
+	 *
+	 * @property CI_Pagination $pagination
+	 * @property MY_Model      $my_model
+	 * @property news_model    $news_model
+	 * @property author_model  $author_model
+	 *
+	 * @return   void
+	 */
 	public function __construct()
 	{
 		parent::__construct();
@@ -282,8 +292,8 @@ class Content extends Admin_Controller {
 	public function edit()
 	{
 		$settings = $this->_settings;
-//		$settings = $this->settings_lib->find_all_by('module','news');
 		$this->auth->restrict('Site.News.Manage');
+
 		$article_id = $this->uri->segment(5);
 		if (empty($article_id))
 		{
@@ -591,23 +601,25 @@ class Content extends Admin_Controller {
 
 		if ($type == 'insert')
 		{
-			$this->form_validation->set_rules('title', 'Title', 'required|trim|max_length[255]|xss_clean');
-			$this->form_validation->set_rules('body', 'Body', 'required|trim|xss_clean');
-			$this->form_validation->set_rules('date', 'Article Date', 'required|trim|strip_tags|xss_clean');
+			$this->form_validation->set_rules('title', 'lang:us_title', 'required|trim|max_length[255]|xss_clean');
+			$this->form_validation->set_rules('body', 'lang:us_body', 'required|trim|xss_clean');
+			$this->form_validation->set_rules('date', 'lang:us_date', 'required|trim|strip_tags|xss_clean');
 		} else {
-			$this->form_validation->set_rules('title', 'Title', 'trim|max_length[255]|xss_clean');
-			$this->form_validation->set_rules('body', 'Body', 'trim|xss_clean');
-			$this->form_validation->set_rules('date', 'Article Date', 'trim|strip_tags|xss_clean');
+			$this->form_validation->set_rules('title', 'lang:us_title', 'trim|max_length[255]|xss_clean');
+			$this->form_validation->set_rules('body', 'lang:us_body', 'trim|xss_clean');
+			$this->form_validation->set_rules('date', 'lang:us_date', 'trim|strip_tags|xss_clean');
 		}
 
-		$this->form_validation->set_rules('image_caption', 'Caption', 'trim|strip_tags|max_length[255]|xss_clean');
-		$this->form_validation->set_rules('tags', 'Tags', 'trim|strip_tags|max_length[255]|xss_clean');
-		$this->form_validation->set_rules('attachment', 'Attachment Path', 'trim|strip_tags|xss_clean');
-		$this->form_validation->set_rules('image_align', 'Image Alignment', 'number|xss_clean');
-		$this->form_validation->set_rules('author', 'Author', 'number|xss_clean');
-		$this->form_validation->set_rules('date_published', 'Publish Date', 'number|xss_clean');
-		$this->form_validation->set_rules('category_id', 'Category', 'number|xss_clean');
-		$this->form_validation->set_rules('status_id', 'Status', 'number|xss_clean');
+		$this->form_validation->set_rules('image_caption', 'lang:us_image_caption', 'trim|strip_tags|max_length[255]|xss_clean');
+		$this->form_validation->set_rules('image_title', 'lang:us_image_title', 'trim|strip_tags|max_length[255]|xss_clean');
+		$this->form_validation->set_rules('image_alttag', 'lang:us_image_alttag', 'trim|strip_tags|max_length[255]|xss_clean');
+		$this->form_validation->set_rules('tags', 'lang:us_tags', 'trim|strip_tags|max_length[255]|xss_clean');
+		$this->form_validation->set_rules('attachment', 'lang:us_image_path', 'trim|strip_tags|xss_clean');
+		$this->form_validation->set_rules('image_align', 'lang:us_image_align', 'number|xss_clean');
+		$this->form_validation->set_rules('author', 'lang:us_author', 'number|xss_clean');
+		$this->form_validation->set_rules('date_published', 'lang:us_publish_date', 'number|xss_clean');
+		$this->form_validation->set_rules('category_id', 'lang:us_category', 'number|xss_clean');
+		$this->form_validation->set_rules('status_id', 'lang:us_status', 'number|xss_clean');
 
 		if ($this->form_validation->run() === false)
 		{

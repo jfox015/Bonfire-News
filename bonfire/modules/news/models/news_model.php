@@ -239,9 +239,7 @@ class News_model extends BF_Model {
 		$article = false;
 		if ($article_id === false)
 		{
-
-			$this->errors = 'No article ID was received.';
-
+			$this->errors = "No article ID was received.";
 			return false;
 		}
 
@@ -382,15 +380,22 @@ class News_model extends BF_Model {
 
 	public function get_news_statuses_select ( )
 	{
-		$table          = $this->table;
-		$this->table	= 'news_status';
+		$query = $this->db->select('id, status')->get('news_status');
 
-		$options = $this->format_dropdown('id', 'status');
+		if ( $query->num_rows() <= 0 )
+			return '';
 
-		$this->table    = $table;
-		unset ( $table );
+		$option = array();
 
-		return $options;
+		foreach ($query->result() as $row)
+		{
+			$row_id          = (int) $row->id;
+			$option[$row_id] = $row->status;
+		}
+
+		$query->free_result();
+
+		return $option;
 	}
 
 	//--------------------------------------------------------------------
