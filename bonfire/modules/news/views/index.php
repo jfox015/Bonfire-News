@@ -6,7 +6,7 @@
 		  <div class="span12">
 
 			<div class="page-header" style="padding-top: 25px;">
-					<h1><?= $article->title; ?>
+					<h1><?php echo $article->title; ?>
 						<small id="article_date" class="news_date"><?php echo(date('m/d/Y',intval($article->date))); ?></small>
 					</h1>
 				</div>
@@ -45,12 +45,12 @@
 				</div>
 		<?php endif;  ?>
 		
-		<?= $article->body ?>
+		<?php echo $article->body ?>
 
 		</div>
 		
 		<?php if ( isset ( $article->tags ) ) : ?>
-		<div id="tags" class="tags"><?= $article->tags ?></div>
+		<div id="tags" class="tags"><?php echo $article->tags ?></div>
 		<?php endif;  ?>
 			<?php
 			/*

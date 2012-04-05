@@ -18,7 +18,7 @@
             <div class="controls">
                 <?php
                 $use_selection = ((isset($settings['news.allow_attachments']) && $settings['news.allow_attachments'] == 1) || !isset($settings['news.allow_attachments'])) ? true : false;
-                echo form_checkbox('allow_attachments',1, $use_selection,'id="allow_attachments"');
+                echo form_checkbox('allow_attachments',1, $use_selection, '', 'id="allow_attachments"');
                 ?>
                 <?php if (form_error('allow_attachments')) echo '<span class="help-inline">'. form_error('allow_attachments') .'</span>'; ?>
             </div>

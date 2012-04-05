@@ -86,146 +86,90 @@
 
 		<?php endif; ?>
 
-	<!-- IMAGE CAPTION -->
-	<div class="control-group <?= iif ( form_error('image_caption'), 'error'); ?>">
-		<label class="control-label"><?= lang('us_image_caption') ?></label>
-        <div class="controls">
-            <input type="text" class="span8" name="image_caption" id="image_caption" value="<?php echo isset($article) ? $article->image_caption : set_value('image_caption') ?>" />
-			<?php if (form_error('image_caption')) echo '<span class="help-inline">'. form_error('image_caption') .'</span>'; ?>
-        </div>
-    </div>
+		<!-- IMAGE CAPTION -->
+		<div class="control-group <?= iif ( form_error('image_caption'), 'error'); ?>">
+			<label class="control-label"><?= lang('us_image_caption') ?></label>
+			<div class="controls">
+				<input type="text" class="span8" name="image_caption" id="image_caption" value="<?php echo isset($article) ? $article->image_caption : set_value('image_caption') ?>" />
+				<?php if (form_error('image_caption')) echo '<span class="help-inline">'. form_error('image_caption') .'</span>'; ?>
+			</div>
+		</div>
 
-	<!-- IMAGE title -->
-	<div class="control-group <?= iif ( form_error('image_title'), 'error'); ?>">
-		<label class="control-label"><?= lang('us_image_title') ?></label>
-        <div class="controls">
-            <input type="text" class="span8" name="image_title" id="image_title" value="<?php echo isset($article->image_title) ? $article->image_title : set_value('image_title') ?>" />
-			<?php if (form_error('image_title')) echo '<span class="help-inline">'. form_error('image_title') .'</span>'; ?>
-        </div>
-    </div>
+		<!-- IMAGE title -->
+		<div class="control-group <?= iif ( form_error('image_title'), 'error'); ?>">
+			<label class="control-label"><?= lang('us_image_title') ?></label>
+			<div class="controls">
+				<input type="text" class="span8" name="image_title" id="image_title" value="<?php echo isset($article->image_title) ? $article->image_title : set_value('image_title') ?>" />
+				<?php if (form_error('image_title')) echo '<span class="help-inline">'. form_error('image_title') .'</span>'; ?>
+			</div>
+		</div>
 
-	<!-- IMAGE alttag -->
-	<div class="control-group <?= iif ( form_error('image_alttag'), 'error'); ?>">
-		<label class="control-label"><?= lang('us_image_alttag') ?></label>
-        <div class="controls">
-            <input type="text" class="span8" name="image_alttag" id="image_alttag" value="<?php echo isset($article->image_alttag) ? $article->image_alttag : set_value('image_alttag') ?>" />
-			<?php if (form_error('image_alttag')) echo '<span class="help-inline">'. form_error('image_alttag') .'</span>'; ?>
-        </div>
-    </div>
+		<!-- IMAGE alttag -->
+		<div class="control-group <?= iif ( form_error('image_alttag'), 'error'); ?>">
+			<label class="control-label"><?= lang('us_image_alttag') ?></label>
+			<div class="controls">
+				<input type="text" class="span8" name="image_alttag" id="image_alttag" value="<?php echo isset($article->image_alttag) ? $article->image_alttag : set_value('image_alttag') ?>" />
+				<?php if (form_error('image_alttag')) echo '<span class="help-inline">'. form_error('image_alttag') .'</span>'; ?>
+			</div>
+		</div>
 
 		<!-- IMAGE ALIGNMENT -->
-		<div class="control-group <?= iif ( form_error('image_align'), 'error'); ?>">
-			<label class="control-label"><?= lang('us_image_align') ?></label>
-            <div class="controls">
-                <?php 
-				$alignments = array(-1=>'',1=>lang('us_image_align_left'),2=>lang('us_image_align_right')); ?>
-				<select name="image_align">
-				<?php foreach ($alignments as $id => $label) :?>
-					<option value="<?php echo $id; ?>" <?php echo (isset($article) ? ($id == $article->image_align) ? 'selected="selected"' : '' : ''); ?>><?php echo $label ?></option>
-				<?php endforeach; ?>
-				</select>
-				<?php if (form_error('image_align')) echo '<span class="help-inline">'. form_error('image_align') .'</span>'; ?>
-            </div>
-        </div>
+		<?php 
+		$alignments = array(-1=>'',1=>lang('us_image_align_left'),2=>lang('us_image_align_right')); 
+		$selection = ( isset ($article) && !empty( $article->image_align ) ) ? (int) $article->image_align : 1;
+		echo form_dropdown('image_align', $alignments, $selection , lang('us_image_align'), ' class="chzn-select" id="image_align"');
+		?>
 
-	<?php endif; ?>
+	<?php endif; // END image alignments if ?>
 
     </fieldset>
     <fieldset>
 	    <legend>Author and Randomness</legend>
 
-
-	<!-- TAGS -->
-	<div class="control-group <?= iif ( form_error('tags'), 'error'); ?>">
-		<label class="control-label"><?= lang('us_tags') ?></label>
-		<div class="controls">
-			<input type="text" id="tags" name="tags" value="<?php echo isset($article) ? $article->tags : set_value('tags') ?>" />
-			<?php if (form_error('tags')) echo '<span class="help-inline">'. form_error('tags') .'</span>'; ?>
+		<!-- TAGS -->
+		<div class="control-group <?= iif ( form_error('tags'), 'error'); ?>">
+			<label class="control-label"><?= lang('us_tags') ?></label>
+			<div class="controls">
+				<input type="text" id="tags" name="tags" value="<?php echo isset($article) ? $article->tags : set_value('tags') ?>" />
+				<?php if (form_error('tags')) echo '<span class="help-inline">'. form_error('tags') .'</span>'; ?>
+			</div>
 		</div>
-	</div>
-		
-		<!-- AUTHOR -->
-	<div class="control-group <?= iif ( form_error('author'), 'error'); ?>">
-		<label class="control-label"><?= lang('us_author') ?></label>
-		<div class="controls">
-			<?php if ( has_permission('Site.News.Manage') ) : ?>
-<?php
+			
+			<!-- AUTHOR -->
+		<?php if ( has_permission('Site.News.Manage') ) : ?>
+			<?php
 			if (isset($users) && is_array($users) && count($users)) :
-
 				$selection = ( isset ($article) && !empty( $article->author ) ) ? (int) $article->author : $current_user->username;
-				echo form_dropdown('author', $users, $selection , 'class="chzn-select" id="author"');
+				echo form_dropdown('author', $users, $selection , lang('sl_author'), 'class="chzn-select" id="author"');
 			endif;
-/*
-				<?php if (isset($users) && is_array($users) && count($users)) : ?>
-					<select name="author" id="author" class="chzn-select">
-					<?php foreach ($users as $user) :?>
-						<option value="<?php echo (int)$user->id; ?>" <?php echo ((isset($article) && isset($article->author) && isset($user)) ? ((int)$user->id == $article->author) ? 'selected="selected"' : '' : ''); ?>><?php echo $user->username ?></option>
-					<?php endforeach; ?>
-					</select>
-				<?php endif; ?>
-*/
-?>
-				<?php if (form_error('author')) echo '<span class="help-inline">'. form_error('author') .'</span>'; ?>
-			<?php else : 
-				echo $article->author_name;
-			endif; ?>
-		</div>
-	</div>
+			?>
+		<?php else : 
+			echo '<div>'.$article->author_name.'</div>';
+		endif; ?>
+	
 	</fieldset>
 	<?php  if ( has_permission('Site.News.Manage') ) :?>
 	<fieldset>
 		<legend><?php echo lang('us_additional'); ?></legend>
-
-		<div class="control-group <?= iif ( form_error('category_id'), 'error' ) ?>">
-			 <label class="control-label"><?= lang('us_category') ?></label>
-			<div class="controls">
-				<?php
-				if (is_array($categories) && count($categories)) :
-
-					$selection = ( isset ($article) && !empty($article->category_id ) ) ? (int) $article->category_id : 0;
-					echo form_dropdown('category_id', $categories, $selection , 'class="chzn-select" id="category_id"');
-				endif;
-
-/*
-				<?php if (is_array($categories) && count($categories)) : ?>
-					<select name="category_id" id="category_id" class="chzn-select">
-					<?php foreach ($categories as $category) :?>
-						<option value="<?php echo (int)$category->id; ?>" <?php echo (isset($article) ? ((int)$category->id == $article->category_id) ? 'selected="selected"' : '' : ''); ?>><?php echo $category->category ?></option>
-					<?php endforeach; ?>
-					</select>
-				<?php endif; ?>
-*/?>
-				<?php if (form_error('category_id')) echo '<span class="help-inline">'. form_error('category_id') .'</span>'; ?>
-			</div>
-		</div>
 		
-		
-		<div class="control-group <?= iif ( form_error('status_id'), 'error'); ?>">
-			 <label class="control-label"><?= lang('us_status') ?></label>
-			<div class="controls">
-				<?php
-				if (is_array($statuses) && count($statuses)) :
+			<!-- CATEGORIES -->
+		<?php
+		if (is_array($categories) && count($categories)) :
 
-					$selection = ( isset ($article) && !empty($article->status_id ) ) ? (int) $article->status_id : 0;
-					echo form_dropdown('status_id', $statuses, $selection , 'class="chzn-select" id="status_id"');
-				endif;
-				?>
-				<?php
-				/*
-				<?php if (is_array($statuses) && count($statuses)) : ?>
-					<select name="status_id" id="status_id" class="chzn-select">
-					<?php foreach ($statuses as $status) :?>
-						<option value="<?php echo (int)$status->id; ?>" <?php echo (isset($article) ? ((int)$status->id == $article->status_id) ? 'selected="selected"' : '' : ''); ?>><?php echo $status->status ?></option>
-					<?php endforeach; ?>
-					</select>
-				<?php endif; ?>
-*/
-				?>
-
-					<?php if (form_error('status_id')) echo '<span class="help-inline">'. form_error('status_id') .'</span>'; ?>
-			</div>
-		</div>
+			$selection = ( isset ($article) && !empty($article->category_id ) ) ? (int) $article->category_id : 0;
+			echo form_dropdown('category_id', $categories, $selection , lang('sl_category'), 'class="chzn-select" id="category_id"');
+		endif; ?>
 		
+			<!-- STATUSES -->
+		<?php
+		if (is_array($statuses) && count($statuses)) :
+
+			$selection = ( isset ($article) && !empty($article->status_id ) ) ? (int) $article->status_id : 0;
+			echo form_dropdown('status_id', $statuses, $selection , lang('sl_status'), 'class="chzn-select" id="status_id"');
+		endif;
+		?>
+		
+			<!-- PUBLISH DATE -->
 		<div class="control-group <?= iif ( form_error('date_published'), 'error'); ?>">
 			 <label class="control-label"><?= lang('us_publish_date') ?></label>
 			<div class="controls">
@@ -234,6 +178,7 @@
 			</div>
 		</div>
 
+			<!-- CREATED  -->
 		<?php if (isset($article) && isset($article->id)) : ?>
 		<div class="control-group">
 			 <label class="control-label"><?= lang('us_created') ?></label>
@@ -244,6 +189,7 @@
 			</div>
 			</div>
 		
+			<!-- MODIFIED -->
 		<div class="control-group">
 			 <label class="control-label"><?= lang('us_modified') ?></label>
 			<div class="controls">
@@ -252,7 +198,6 @@
 		</div>
 		<?php endif; ?>
 		
-
 	<?php endif; ?>
 
 	<div class="form-actions">

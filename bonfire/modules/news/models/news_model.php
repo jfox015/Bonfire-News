@@ -6,7 +6,7 @@
 */
 class News_model extends BF_Model {
 
-	protected $table		    = 'news_articles';
+	protected $table		= 'news_articles';
 	protected $soft_deletes	= true;
 	protected $date_format	= 'int';
 	protected $set_modified = true;
