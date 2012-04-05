@@ -16,8 +16,8 @@
         <legend>General Information</legend>
 
 		<!-- Title -->
-        <div class="control-group <?= iif ( form_error('title'), 'error'); ?>">
-			<label class="control-label"><?= lang('us_title') ?></label>
+        <div class="control-group <?php echo iif ( form_error('title'), 'error'); ?>">
+			<label class="control-label"><?php echo lang('us_title') ?></label>
             <div class="controls">
                 <input type="text" class="span8" name="title" id="title" value="<?php echo isset($article) ? $article->title : set_value('title') ?>" />
 				<?php if (form_error('title')) echo '<span class="help-inline">'. form_error('title') .'</span>'; ?>
@@ -25,8 +25,8 @@
         </div>
 
 		<!-- Date -->
-        <div class="control-group <?= iif ( form_error('date'), 'error'); ?>">
-             <label class="control-label" for="date"><?= lang('us_date') ?></label>
+        <div class="control-group <?php echo iif ( form_error('date'), 'error'); ?>">
+             <label class="control-label" for="date"><?php echo lang('us_date') ?></label>
             <div class="controls">
                 <input type="text" name="date" id="date" value="<?php echo (isset($article) && isset($article->date) && !empty($article->date)) ? date('m/d/Y',$article->date) : ($this->input->post('date') ? set_value(date('m/d/Y','date')) : '') ?>" />
 				<?php if (form_error('date')) echo '<span class="help-inline">'. form_error('date') .'</span>'; ?>
@@ -34,8 +34,8 @@
         </div>
 
 		<!-- Body -->
-        <div class="control-group <?= iif ( form_error('body'), 'error'); ?>">
-			<label class="control-label" ><?= lang('us_body') ?></label>
+        <div class="control-group <?php echo iif ( form_error('body'), 'error'); ?>">
+			<label class="control-label" ><?php echo lang('us_body') ?></label>
             <div class="controls">
                 <?php echo form_textarea( array( 'class' => 'editor', 'name' => 'body', 'id' => 'body', 'rows' => '8', 'cols' => '80', 'value' => isset($article) ? $article->body : set_value('body') ) )?>
 				<?php if (form_error('body')) echo '<span class="help-inline">'. form_error('body') .'</span>'; ?>
@@ -52,8 +52,8 @@
 		<!-- // ATTACHMENTS -->
 
 		<!-- Image Upload -->
-		<div class="control-group <?= iif ( form_error('attachment'), 'error'); ?>">
-			<label class="control-label"><?= lang('us_image_path') ?></label>
+		<div class="control-group <?php echo iif ( form_error('attachment'), 'error'); ?>">
+			<label class="control-label"><?php echo lang('us_image_path') ?></label>
             <div class="controls">
                 <input type="file" id="attachment" name="attachment" />
 	            <span class="help-inline"> <?php if (form_error('attachment')) echo form_error('attachment'); ?></span>
@@ -73,11 +73,11 @@
 				<ul class="thumbnails">
 					<li class="span3">
 						<div class="thumbnail">
-						<a class="lightbox" href="<?= base_url() . $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" target="_blank" >
-							<img src="<?= base_url() . $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" />
+						<a class="lightbox" href="<?php echo base_url() . $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" target="_blank" >
+							<img src="<?php echo base_url() . $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" />
 						</a>
-						<h5><?= $attachment['file_name'].' ('.$attachment['file_size'].'kB '.$attachment['file_type'].')'; ?></h5>
-						<p><?= anchor(SITE_AREA.'/content/news/remove_attachment/'.$article->id,'Remove', 'class="btn btn-small btn-danger"'); ?></p>
+						<h5><?php echo $attachment['file_name'].' ('.$attachment['file_size'].'kB '.$attachment['file_type'].')'; ?></h5>
+						<p><?php echo anchor(SITE_AREA.'/content/news/remove_attachment/'.$article->id,'Remove', 'class="btn btn-small btn-danger"'); ?></p>
 						</div>
 					</li>
 				</ul>
@@ -87,8 +87,8 @@
 		<?php endif; ?>
 
 		<!-- IMAGE CAPTION -->
-		<div class="control-group <?= iif ( form_error('image_caption'), 'error'); ?>">
-			<label class="control-label"><?= lang('us_image_caption') ?></label>
+		<div class="control-group <?php echo iif ( form_error('image_caption'), 'error'); ?>">
+			<label class="control-label"><?php echo lang('us_image_caption') ?></label>
 			<div class="controls">
 				<input type="text" class="span8" name="image_caption" id="image_caption" value="<?php echo isset($article) ? $article->image_caption : set_value('image_caption') ?>" />
 				<?php if (form_error('image_caption')) echo '<span class="help-inline">'. form_error('image_caption') .'</span>'; ?>
@@ -96,8 +96,8 @@
 		</div>
 
 		<!-- IMAGE title -->
-		<div class="control-group <?= iif ( form_error('image_title'), 'error'); ?>">
-			<label class="control-label"><?= lang('us_image_title') ?></label>
+		<div class="control-group <?php echo iif ( form_error('image_title'), 'error'); ?>">
+			<label class="control-label"><?php echo lang('us_image_title') ?></label>
 			<div class="controls">
 				<input type="text" class="span8" name="image_title" id="image_title" value="<?php echo isset($article->image_title) ? $article->image_title : set_value('image_title') ?>" />
 				<?php if (form_error('image_title')) echo '<span class="help-inline">'. form_error('image_title') .'</span>'; ?>
@@ -105,8 +105,8 @@
 		</div>
 
 		<!-- IMAGE alttag -->
-		<div class="control-group <?= iif ( form_error('image_alttag'), 'error'); ?>">
-			<label class="control-label"><?= lang('us_image_alttag') ?></label>
+		<div class="control-group <?php echo iif ( form_error('image_alttag'), 'error'); ?>">
+			<label class="control-label"><?php echo lang('us_image_alttag') ?></label>
 			<div class="controls">
 				<input type="text" class="span8" name="image_alttag" id="image_alttag" value="<?php echo isset($article->image_alttag) ? $article->image_alttag : set_value('image_alttag') ?>" />
 				<?php if (form_error('image_alttag')) echo '<span class="help-inline">'. form_error('image_alttag') .'</span>'; ?>
@@ -127,8 +127,8 @@
 	    <legend>Author and Randomness</legend>
 
 		<!-- TAGS -->
-		<div class="control-group <?= iif ( form_error('tags'), 'error'); ?>">
-			<label class="control-label"><?= lang('us_tags') ?></label>
+		<div class="control-group <?php echo iif ( form_error('tags'), 'error'); ?>">
+			<label class="control-label"><?php echo lang('us_tags') ?></label>
 			<div class="controls">
 				<input type="text" id="tags" name="tags" value="<?php echo isset($article) ? $article->tags : set_value('tags') ?>" />
 				<?php if (form_error('tags')) echo '<span class="help-inline">'. form_error('tags') .'</span>'; ?>
@@ -140,7 +140,7 @@
 			<?php
 			if (isset($users) && is_array($users) && count($users)) :
 				$selection = ( isset ($article) && !empty( $article->author ) ) ? (int) $article->author : $current_user->username;
-				echo form_dropdown('author', $users, $selection , lang('sl_author'), 'class="chzn-select" id="author"');
+				echo form_dropdown('author', $users, $selection , lang('us_author'), 'class="chzn-select" id="author"');
 			endif;
 			?>
 		<?php else : 
@@ -157,7 +157,7 @@
 		if (is_array($categories) && count($categories)) :
 
 			$selection = ( isset ($article) && !empty($article->category_id ) ) ? (int) $article->category_id : 0;
-			echo form_dropdown('category_id', $categories, $selection , lang('sl_category'), 'class="chzn-select" id="category_id"');
+			echo form_dropdown('category_id', $categories, $selection , lang('us_category'), 'class="chzn-select" id="category_id"');
 		endif; ?>
 		
 			<!-- STATUSES -->
@@ -165,13 +165,13 @@
 		if (is_array($statuses) && count($statuses)) :
 
 			$selection = ( isset ($article) && !empty($article->status_id ) ) ? (int) $article->status_id : 0;
-			echo form_dropdown('status_id', $statuses, $selection , lang('sl_status'), 'class="chzn-select" id="status_id"');
+			echo form_dropdown('status_id', $statuses, $selection , lang('us_status'), 'class="chzn-select" id="status_id"');
 		endif;
 		?>
 		
 			<!-- PUBLISH DATE -->
-		<div class="control-group <?= iif ( form_error('date_published'), 'error'); ?>">
-			 <label class="control-label"><?= lang('us_publish_date') ?></label>
+		<div class="control-group <?php echo iif ( form_error('date_published'), 'error'); ?>">
+			 <label class="control-label"><?php echo lang('us_publish_date') ?></label>
 			<div class="controls">
 				<input type="text" name="date_published" id="date_published" value="<?php echo (isset($article) && isset($article->date_published) && !empty($article->date_published)) ? date('m/d/Y',$article->date_published) : ($this->input->post('date_published') ? set_value(date('m/d/Y','date_published')) : '') ?>" />
 				<?php if (form_error('date_published')) echo '<span class="help-inline">'. form_error('date_published') .'</span>'; ?>
@@ -181,7 +181,7 @@
 			<!-- CREATED  -->
 		<?php if (isset($article) && isset($article->id)) : ?>
 		<div class="control-group">
-			 <label class="control-label"><?= lang('us_created') ?></label>
+			 <label class="control-label"><?php echo lang('us_created') ?></label>
 			<div class="controls">
 				<span class="inline-help">
 					<?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->created_on) : 'Unknown'); ?> by <?php echo (isset($article) ? find_author_name($article->created_by) : 'Unknown'); ?>
@@ -191,7 +191,7 @@
 		
 			<!-- MODIFIED -->
 		<div class="control-group">
-			 <label class="control-label"><?= lang('us_modified') ?></label>
+			 <label class="control-label"><?php echo lang('us_modified') ?></label>
 			<div class="controls">
 				<span class="inline-help"><?php echo (isset($article) ? date('m/d/Y h:i:s A',$article->modified_on) : 'Unknown'); ?> by <?php echo (isset($article) ? find_author_name($article->modified_by) : 'Unknown'); ?></span>
 			</div>
