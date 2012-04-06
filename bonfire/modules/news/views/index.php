@@ -59,7 +59,7 @@
 */
 			?>
 		<?php else : ?>
-		<p>No article content was found.</p>
+		<p><?php echo lang('us_no_articles_found'); ?></p>
 		<?php endif; ?>
 
 	</div>

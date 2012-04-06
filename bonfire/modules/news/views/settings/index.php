@@ -6,7 +6,7 @@
 
 <div class="admin-box">
 
-    <h3>General Settings</h3>
+    <h3><?php echo lang('us_general_info') ?></h3>
 
     <?php echo form_open($this->uri->uri_string(), 'class="form-horizontal"'); ?>
 

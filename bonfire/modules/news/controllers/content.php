@@ -129,13 +129,16 @@ class Content extends Admin_Controller {
 			switch(strtolower($action))
 			{
 				case 'publish':
-					$this->publish($checked);
+					$this->change_status($checked, 3);
 					break;
 				case 'review':
-					$this->review($checked);
+					$this->change_status($checked, 2);
 					break;
 				case 'archive':
-					$this->archive($checked);
+					$this->change_status($checked, 4);
+					break;
+				case 'reject':
+					$this->change_status($checked, 5);
 					break;
 				case 'delete':
 					$this->delete($checked);
@@ -160,6 +163,9 @@ class Content extends Admin_Controller {
 				break;
 			case 'archived':
 				$where['news_articles.status_id'] = 4;
+				break;
+			case 'rejected':
+				$where['news_articles.status_id'] = 5;
 				break;
 			case 'category':
 				$category_id = (int)$this->input->get('category_id');
@@ -271,13 +277,6 @@ class Content extends Admin_Controller {
 		Template::set('users', $this->author_model->get_users_select() );
 		Template::set('settings', $settings);
 
-/*
-		Template::set('categories', $this->news_model->get_news_categories());
-		Template::set('statuses', $this->news_model->get_news_statuses());
-		Template::set('settings', $settings);
-		Template::set('users', $this->user_model->find_all());
-*/
-
 		if (!isset($this->user_model)) {
 			$this->load->model('users/User_model','user_model');
 		}
@@ -350,16 +349,6 @@ class Content extends Admin_Controller {
 			Template::set('users', $this->author_model->get_users_select() );
 			Template::set('settings', $settings);
 			Template::set_view('content/news_form');
-
-			/*
-			Template::set('categories', $this->news_model->get_news_categories());
-			Template::set('statuses', $this->news_model->get_news_statuses());
-			Template::set_view('content/news_form');
-			if (!isset($this->user_model)) {
-				$this->load->model('users/User_model','user_model');
-			}
-			Template::set('users', $this->user_model->find_all());
-			*/
 		}
 		else
 		{
@@ -410,31 +399,6 @@ class Content extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
-	public function deleted()
-	{
-		$this->db->where('news_articles.deleted !=', 0);
-		Template::set('articles', $this->news_model->find_all(true));
-		Template::render();
-	}
-
-	//--------------------------------------------------------------------
-
-	public function drafts()
-	{
-		Template::set('articles', $this->news_model->find_all_by('status_id',1));
-		Template::render();
-	}
-
-	//--------------------------------------------------------------------
-
-	public function published()
-	{
-		Template::set('articles', $this->news_model->find_all_by('status_id',3));
-		Template::render();
-	}
-
-	//--------------------------------------------------------------------
-
 	public function purge()
 	{
 		$article_id = $this->uri->segment(5);
@@ -463,25 +427,6 @@ class Content extends Admin_Controller {
 		}
 
 		Template::set_message('Articles Purged.', 'success');
-
-		Template::redirect(SITE_AREA .'/content/news');
-	}
-
-	//--------------------------------------------------------------------
-
-	public function set_status()
-	{
-		$id = $this->uri->segment(5);
-		$status = $this->uri->segment(6);
-
-		if ($this->news_model->update($id, array('news_articles.status_id'=>$status)))
-		{
-			Template::set_message('Article status updated successfully.', 'success');
-		}
-		else
-		{
-			Template::set_message('Unable to change article status: '. $this->news_model->error, 'error');
-		}
 
 		Template::redirect(SITE_AREA .'/content/news');
 	}
@@ -541,6 +486,21 @@ class Content extends Admin_Controller {
 	/*--------------------------------------------------------------------
 	/	PRIVATE FUNCTIONS
 	/-------------------------------------------------------------------*/
+	private function change_status($checked = false, $status_id = 1)
+	{
+		if ($checked === false)
+		{
+			return;
+		}
+		$this->auth->restrict('Site.News.Manage');
+		foreach ($checked as $article_id)
+		{
+			$this->news_model->update($article_id,array('status_id'=>$status_id));
+		}
+	}
+	
+	//--------------------------------------------------------------------
+
 	private function handle_upload($path = '')
 	{
 		$settings  = $this->_settings;
@@ -676,7 +636,6 @@ class Content extends Admin_Controller {
 		return strtotime($date);
 
 	}
-
 
 	//--------------------------------------------------------------------
 

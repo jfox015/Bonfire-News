@@ -8,12 +8,12 @@
 
 <div class="admin-box">
 
-    <h3>Article Details</h3>
+    <h3><?php echo lang('us_article_details') ?></h3>
 
     <?php echo form_open_multipart($this->uri->uri_string(), 'class="form-horizontal"'); ?>
 
     <fieldset>
-        <legend>General Information</legend>
+        <legend><?php echo lang('us_general_info') ?></legend>
 
 		<!-- Title -->
         <div class="control-group <?php echo iif ( form_error('title'), 'error'); ?>">
@@ -47,7 +47,7 @@
 	<?php if (isset($settings['news.allow_attachments']) && $settings['news.allow_attachments'] == 1) : ?>
     </fieldset>
     <fieldset>
-	    <legend>Image Attachments</legend>
+	    <legend><?php echo lang('us_img_attachments') ?></legend>
 
 		<!-- // ATTACHMENTS -->
 
@@ -68,7 +68,7 @@
 
 		<!-- Current Image Display -->
 		<div class="control-group">
-			<label class="control-label">Current Attachment</label>
+			<label class="control-label"><?php echo lang('us_current_attachment') ?></label>
 			<div class="controls">
 				<ul class="thumbnails">
 					<li class="span3">
@@ -124,7 +124,7 @@
 
     </fieldset>
     <fieldset>
-	    <legend>Author and Randomness</legend>
+	    <legend><?php echo lang('us_author_rand') ?></legend>
 
 		<!-- TAGS -->
 		<div class="control-group <?php echo iif ( form_error('tags'), 'error'); ?>">
@@ -198,14 +198,16 @@
 		</div>
 		<?php endif; ?>
 		
+	</fieldset>
 	<?php endif; ?>
-
+	
 	<div class="form-actions">
 		<input type="submit" name="submit" class="btn btn-primary btn-large" value="<?php echo lang('bf_action_save') .' '. lang('us_article') ?>" />
 	</div>
 
-</fieldset>
 <?php echo form_close(); ?>
+
+</div>
 
 <?php
 

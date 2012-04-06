@@ -54,6 +54,7 @@ class Migration_Install_news extends Migration {
 		$this->db->query("INSERT INTO {$prefix}news_status VALUES(2, 'In Review', 0)");
 		$this->db->query("INSERT INTO {$prefix}news_status VALUES(3, 'Published', 0)");
 		$this->db->query("INSERT INTO {$prefix}news_status VALUES(4, 'Archived', 0)");
+		$this->db->query("INSERT INTO {$prefix}news_status VALUES(5, 'Rejected', 0)");
 		
 		$data = array(
 			'name'        => 'Site.News.Manage',

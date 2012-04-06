@@ -17,6 +17,7 @@ $lang['us_purge_del_articles']		= 'Purge Articles';
 $lang['us_article_id']				= 'Article ID';
 $lang['us_articles']				= 'Articles';
 $lang['us_article']					= 'Article';
+$lang['us_no_articles_found']		= 'No article content was found.';
 
 $lang['mw_setting_title']			= 'News Settings';
 $lang['us_news_options']			= 'News Options';
@@ -52,10 +53,12 @@ $lang['us_no_deleted']				= 'There are not any deleted articles in the database.
 $lang['us_no_drafts']				= 'There are not any drafts in the database.';
 $lang['us_no_published']			= 'There are not any published articles in the database.';
 
+$lang['us_article_details']			= 'Article Details';
 $lang['us_title']					= 'Title';
 $lang['us_date']					= 'Article Date';
 $lang['us_body']					= 'Article Body';
 $lang['us_image_path']				= 'Attach Image';
+$lang['us_current_attachment']		= 'Current Attachment';
 $lang['us_image_align']				= 'Image Alignment';
 $lang['us_image_caption']			= 'Caption';
 $lang['us_image_align_left']		= 'Left (Default)';
@@ -63,6 +66,9 @@ $lang['us_image_align_right']		= 'Right';
 $lang['us_tags']					= 'Tags';
 
 $lang['us_additional']				= 'Additional Information';
+$lang['us_general_info']			= 'General Information';
+$lang['us_img_attachments']			= 'Image Attachments';
+$lang['us_author_rand']				= 'Author and Randomness';
 
 $lang['us_author']					= 'Author';
 $lang['us_category']				= 'Category';
