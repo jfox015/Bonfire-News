@@ -62,7 +62,6 @@ class Content extends Admin_Controller {
 
 		$this->_settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
 
-		$js_path =
 		Assets::add_css( array(
 			Template::theme_url('js/editors/markitup/skins/markitup/style.css'),
 			Template::theme_url('js/editors/markitup/sets/default/style.css'),
@@ -649,9 +648,9 @@ class Content extends Admin_Controller {
 		$attachment = unserialize( $attachment );
 		$file_dir = $this->_news_dir;
 
-		if (file_exists( $file_dir . DIRECTORY_SEPERATOR. $attachment['file_name']) )
+		if (file_exists( $file_dir . DIRECTORY_SEPARATOR . $attachment['file_name']) )
 		{
-			$deleted = unlink( $file_dir . DIRECTORY_SEPERATOR.$attachment['file_name']);
+			$deleted = unlink( $file_dir . DIRECTORY_SEPARATOR .$attachment['file_name']);
 			if ( $deleted === false )
 			{
 				Template::set_message('Problem deleting attachment file:' . $attachment['file_name'], 'error');
@@ -660,9 +659,9 @@ class Content extends Admin_Controller {
 			unset ( $deleted );
 		}
 
-		if ( isset($attachment['image_thumb']) && file_exists( $file_dir .DIRECTORY_SEPERATOR.$attachment['image_thumb']))
+		if ( isset($attachment['image_thumb']) && file_exists( $file_dir .DIRECTORY_SEPARATOR .$attachment['image_thumb']))
 		{
-			$deleted = unlink($file_dir . DIRECTORY_SEPERATOR . $attachment['image_thumb'] );
+			$deleted = unlink($file_dir . DIRECTORY_SEPARATOR  . $attachment['image_thumb'] );
 			if ( $deleted === false )
 			{
 				Template::set_message('Problem deleting attachment file:' . $attachment['image_thumb'], 'error');
