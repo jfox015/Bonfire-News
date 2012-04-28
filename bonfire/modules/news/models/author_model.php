@@ -83,7 +83,7 @@ class Author_model extends BF_Model
 	 *
 	 * @return array Returns array of Users formatted for Select Menu Dropdown
 	 */
-	public function get_users_select ( )
+	public function get_users_select ( $insert_empty_row = false )
 	{
 
 		$query = $this->db->select('id, ' . $this->display_name )->get( $this->table );
@@ -93,7 +93,12 @@ class Author_model extends BF_Model
 
 		$option = array();
 
-		foreach ($query->result() as $row)
+		if ($insert_empty_row !== false)
+        {
+            $option[-999] = lang('us_select_user');
+
+        }
+        foreach ($query->result() as $row)
 		{
 			$row_id          = (int) $row->id;
 			$option[$row_id] = $row->{$this->display_name};

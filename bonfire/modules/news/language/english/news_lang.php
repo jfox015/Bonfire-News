@@ -78,6 +78,7 @@ $lang['us_created']					= 'Created';
 $lang['us_modified']				= 'Last Updated:';
 $lang['us_action_publish']			= 'Publish';
 $lang['us_action_review']			= 'Review';
+$lang['us_select_user']				= 'Select User';
 
 $lang['us_image_title'] = 'Image Title';
 $lang['us_image_alttag'] = 'Image Alt Tag';
