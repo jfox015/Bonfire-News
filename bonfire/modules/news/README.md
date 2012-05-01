@@ -15,7 +15,7 @@ A custom news module for the Bonfire Admin Dashboard mod.
 
 ## Keep Current on the Mod
 
-Follow the official Twitter feed [ootpFox07](http://twitter.com/#!/ootpFox07).
+Follow the official Twitter feed [jfox015](http://twitter.com/#!/jfox015).
   
 ## Team
 
