@@ -78,9 +78,9 @@ class Content extends Admin_Controller {
 		));
 
 		$the_path = $this->_settings['news.upload_dir_path'];
-		$this->_news_dir = realpath( APPPATH . '../..' . $the_path );
+		$this->_news_dir = realpath( $the_path );
 
-		if ( !is_dir( $this->_news_dir ) && !is_writeable( $this->_news_dir ) )
+		if ( !is_dir( $this->_news_dir ) && ! is_writeable( $this->_news_dir ) )
 		{
 			Template::set_message('Attachment Upload Directory is not write-able: ' . $this->_news_dir, 'error');
 			log_message('error', 'Attachment Upload Directory is not write-able: ' . $this->_news_dir);
@@ -247,7 +247,6 @@ class Content extends Admin_Controller {
 					$upload = false;
 				}
 			}
-
 			if ((count($uploadData) && $upload) || (count($uploadData) == 0 && $upload))
 			{
 				if ($id = $this->save_article($uploadData))
@@ -275,10 +274,6 @@ class Content extends Admin_Controller {
 		Template::set('statuses', $this->news_model->get_news_statuses_select() );
 		Template::set('users', $this->author_model->get_users_select() );
 		Template::set('settings', $settings);
-
-		if (!isset($this->user_model)) {
-			$this->load->model('users/User_model','user_model');
-		}
 
 		Template::set('toolbar_title', lang('us_create_news'));
 		Template::set_view('content/news_form');
@@ -560,11 +555,11 @@ class Content extends Admin_Controller {
 
 		if ($type == 'insert')
 		{
-			$this->form_validation->set_rules('title', 'lang:us_title', 'required|trim|max_length[255]|xss_clean');
+			$this->form_validation->set_rules('title', 'lang:us_title', 'required|trim|max_length[255]|strip_tags|xss_clean');
 			$this->form_validation->set_rules('body', 'lang:us_body', 'required|trim|xss_clean');
 			$this->form_validation->set_rules('date', 'lang:us_date', 'required|trim|strip_tags|xss_clean');
 		} else {
-			$this->form_validation->set_rules('title', 'lang:us_title', 'trim|max_length[255]|xss_clean');
+			$this->form_validation->set_rules('title', 'lang:us_title', 'trim|max_length[255]|strip_tags|xss_clean');
 			$this->form_validation->set_rules('body', 'lang:us_body', 'trim|xss_clean');
 			$this->form_validation->set_rules('date', 'lang:us_date', 'trim|strip_tags|xss_clean');
 		}
@@ -573,12 +568,12 @@ class Content extends Admin_Controller {
 		$this->form_validation->set_rules('image_title', 'lang:us_image_title', 'trim|strip_tags|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('image_alttag', 'lang:us_image_alttag', 'trim|strip_tags|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('tags', 'lang:us_tags', 'trim|strip_tags|max_length[255]|xss_clean');
-		$this->form_validation->set_rules('attachment', 'lang:us_image_path', 'trim|strip_tags|xss_clean');
-		$this->form_validation->set_rules('image_align', 'lang:us_image_align', 'number|xss_clean');
-		$this->form_validation->set_rules('author', 'lang:us_author', 'number|xss_clean');
-		$this->form_validation->set_rules('date_published', 'lang:us_publish_date', 'number|xss_clean');
-		$this->form_validation->set_rules('category_id', 'lang:us_category', 'number|xss_clean');
-		$this->form_validation->set_rules('status_id', 'lang:us_status', 'number|xss_clean');
+		//$this->form_validation->set_rules('attachment', 'lang:us_image_path', 'trim|strip_tags|xss_clean');
+		$this->form_validation->set_rules('image_align', 'lang:us_image_align', 'numeric|xss_clean');
+		$this->form_validation->set_rules('author', 'lang:us_author', 'numeric|xss_clean');
+		$this->form_validation->set_rules('date_published', 'lang:us_publish_date', 'trim|strip_tags|xss_clean');
+		$this->form_validation->set_rules('category_id', 'lang:us_category', 'numeric|xss_clean');
+		$this->form_validation->set_rules('status_id', 'lang:us_status', 'numeric|xss_clean');
 
 		if ($this->form_validation->run() === false)
 		{

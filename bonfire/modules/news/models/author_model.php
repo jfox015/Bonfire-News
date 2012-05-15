@@ -41,7 +41,6 @@ class Author_model extends BF_Model
 
 	/**
 	 * Simple Constructor to fetch username,  need to check settings to see if we have a Option for Display Name set.
-	 * @TODO: Check settings_lib for auth.use_displayname?
 	 */
 	public function __construct()
 	{

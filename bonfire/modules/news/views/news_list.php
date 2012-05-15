@@ -1,6 +1,6 @@
 		<!-- Begin Articles -->
 	<div class="widget">
-        <h3>Recent News</h3>
+        <h3><?php echo lang('us_recent_news'); ?></h3>
         <ul class="articles">
 		<?php if (isset($articles) && is_array($articles) && count($articles)) { 
             foreach($articles as $article) {
@@ -10,7 +10,7 @@
         </ul>
         <?php
         } else { ?>
-		<p>No articles were found.</p>
+		<p><?php echo lang('us_no_articles'); ?></p>
 		<?php } ?>
 	</div>
 		<!-- End Articles -->

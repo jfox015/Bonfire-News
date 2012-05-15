@@ -19,7 +19,7 @@
         <div class="control-group <?php echo iif ( form_error('title'), 'error'); ?>">
 			<label class="control-label"><?php echo lang('us_title') ?></label>
             <div class="controls">
-                <input type="text" class="span8" name="title" id="title" value="<?php echo isset($article) ? $article->title : set_value('title') ?>" />
+                <input type="text" class="span6" name="title" id="title" value="<?php echo isset($article) ? $article->title : set_value('title') ?>" />
 				<?php if (form_error('title')) echo '<span class="help-inline">'. form_error('title') .'</span>'; ?>
             </div>
         </div>
@@ -28,7 +28,7 @@
         <div class="control-group <?php echo iif ( form_error('date'), 'error'); ?>">
              <label class="control-label" for="date"><?php echo lang('us_date') ?></label>
             <div class="controls">
-                <input type="text" name="date" id="date" value="<?php echo (isset($article) && isset($article->date) && !empty($article->date)) ? date('m/d/Y',$article->date) : ($this->input->post('date') ? set_value(date('m/d/Y','date')) : '') ?>" />
+                <input type="text" name="date" id="date" value="<?php echo (isset($article) && isset($article->date) && !empty($article->date)) ? date('m/d/Y',$article->date) : ($this->input->post('date') ? set_value(date('m/d/Y',strtotime($this->input->post('date')))) : '') ?>" />
 				<?php if (form_error('date')) echo '<span class="help-inline">'. form_error('date') .'</span>'; ?>
             </div>
         </div>
@@ -74,9 +74,10 @@
 					<li class="span3">
 						<div class="thumbnail">
 						<a class="lightbox" href="<?php echo base_url() . $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" target="_blank" >
-							<img src="<?php echo base_url() . $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" />
-						</a>
-						<h5><?php echo $attachment['file_name'].' ('.$attachment['file_size'].'kB '.$attachment['file_type'].')'; ?></h5>
+							<!--img src="<?php //echo  $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" /-->
+                            <img src="<?php echo base_url().$settings['news.upload_dir_url']; if (isset($attachment['image_thumb']) && !empty($attachment['image_thumb'])) { echo($attachment['image_thumb']); } else { echo($attachment['file_name']); } ?>" alt="" title="" />
+                        </a>
+						<h5><?php echo base_url(); echo $attachment['file_name'].' ('.$attachment['file_size'].'kB '.$attachment['file_type'].')'; ?></h5>
 						<p><?php echo anchor(SITE_AREA.'/content/news/remove_attachment/'.$article->id,'Remove', 'class="btn btn-small btn-danger"'); ?></p>
 						</div>
 					</li>
@@ -90,7 +91,7 @@
 		<div class="control-group <?php echo iif ( form_error('image_caption'), 'error'); ?>">
 			<label class="control-label"><?php echo lang('us_image_caption') ?></label>
 			<div class="controls">
-				<input type="text" class="span8" name="image_caption" id="image_caption" value="<?php echo isset($article) ? $article->image_caption : set_value('image_caption') ?>" />
+				<input type="text" class="span6" name="image_caption" id="image_caption" value="<?php echo isset($article) ? $article->image_caption : set_value('image_caption') ?>" />
 				<?php if (form_error('image_caption')) echo '<span class="help-inline">'. form_error('image_caption') .'</span>'; ?>
 			</div>
 		</div>
@@ -99,7 +100,7 @@
 		<div class="control-group <?php echo iif ( form_error('image_title'), 'error'); ?>">
 			<label class="control-label"><?php echo lang('us_image_title') ?></label>
 			<div class="controls">
-				<input type="text" class="span8" name="image_title" id="image_title" value="<?php echo isset($article->image_title) ? $article->image_title : set_value('image_title') ?>" />
+				<input type="text" class="span6" name="image_title" id="image_title" value="<?php echo isset($article->image_title) ? $article->image_title : set_value('image_title') ?>" />
 				<?php if (form_error('image_title')) echo '<span class="help-inline">'. form_error('image_title') .'</span>'; ?>
 			</div>
 		</div>
@@ -108,7 +109,7 @@
 		<div class="control-group <?php echo iif ( form_error('image_alttag'), 'error'); ?>">
 			<label class="control-label"><?php echo lang('us_image_alttag') ?></label>
 			<div class="controls">
-				<input type="text" class="span8" name="image_alttag" id="image_alttag" value="<?php echo isset($article->image_alttag) ? $article->image_alttag : set_value('image_alttag') ?>" />
+				<input type="text" class="span6" name="image_alttag" id="image_alttag" value="<?php echo isset($article->image_alttag) ? $article->image_alttag : set_value('image_alttag') ?>" />
 				<?php if (form_error('image_alttag')) echo '<span class="help-inline">'. form_error('image_alttag') .'</span>'; ?>
 			</div>
 		</div>
@@ -130,7 +131,7 @@
 		<div class="control-group <?php echo iif ( form_error('tags'), 'error'); ?>">
 			<label class="control-label"><?php echo lang('us_tags') ?></label>
 			<div class="controls">
-				<input type="text" id="tags" name="tags" value="<?php echo isset($article) ? $article->tags : set_value('tags') ?>" />
+				<input type="text" id="tags" name="tags" class="span6" value="<?php echo isset($article) ? $article->tags : set_value('tags') ?>" />
 				<?php if (form_error('tags')) echo '<span class="help-inline">'. form_error('tags') .'</span>'; ?>
 			</div>
 		</div>
@@ -173,7 +174,7 @@
 		<div class="control-group <?php echo iif ( form_error('date_published'), 'error'); ?>">
 			 <label class="control-label"><?php echo lang('us_publish_date') ?></label>
 			<div class="controls">
-				<input type="text" name="date_published" id="date_published" value="<?php echo (isset($article) && isset($article->date_published) && !empty($article->date_published)) ? date('m/d/Y',$article->date_published) : ($this->input->post('date_published') ? set_value(date('m/d/Y','date_published')) : '') ?>" />
+				<input type="text" name="date_published" id="date_published" value="<?php echo (isset($article) && isset($article->date_published) && !empty($article->date_published)) ? date('m/d/Y',$article->date_published) : ($this->input->post('date_published') ? set_value(date('m/d/Y',strtotime($this->input->post('date_published')))) : '') ?>" />
 				<?php if (form_error('date_published')) echo '<span class="help-inline">'. form_error('date_published') .'</span>'; ?>
 			</div>
 		</div>

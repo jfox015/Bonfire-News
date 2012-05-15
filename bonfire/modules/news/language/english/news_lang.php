@@ -23,9 +23,9 @@ $lang['mw_setting_title']			= 'News Settings';
 $lang['us_news_options']			= 'News Options';
 $lang['nw_settings_attachAllow']	= 'Allow Attachments';
 $lang['nw_upload_dir_path']			= 'Upload directory path';
-$lang['nw_upload_dir_path_note']	= 'Full Server path to attachmnent upload directory';
+$lang['nw_upload_dir_path_note']	= 'Full server path from server root to attachmnent upload directory';
 $lang['nw_upload_dir_url']			= 'Upload directory URL';
-$lang['nw_upload_dir_url_note']		= 'Web accessible URL to asset upload directory';
+$lang['nw_upload_dir_url_note']		= 'Web accessible URL to asset upload directory. Include the trailing slash!';
 $lang['nw_image_dimensions']		= 'Max image dimensions:';
 $lang['nw_resize_images']			= 'Max image dimensions in articles:';
 $lang['nw_resize_images_note']		= 'For any images exceeding these dimensions, a thumbnail will be created and displayed in the article instead.';
@@ -37,6 +37,18 @@ $lang['nw_max_img_height']			= 'Max Image Height';
 $lang['nw_max_img_disp_height']		= 'Max Image Display Height';
 $lang['nw_width']					= 'Width';
 $lang['nw_height']					= 'Height';
+// Social Sharing Settings
+$lang['nw_social_sharing']			= 'Social Sharing';
+$lang['nw_sharing_enabled']			= 'Sharing Enabled';
+$lang['nw_sharing_note']			= 'Select which services you wish to enable sharing for. Uncheck &quot;Sharing Enabled&quot; to disable all services.';
+$lang['nw_select_services']			= 'Select Services';
+$lang['nw_share_facebook']			= 'Facebook';
+$lang['nw_share_twitter']			= 'Twitter';
+$lang['nw_share_stumbleupon']		= 'StumbleUpon';
+$lang['nw_share_delicious']			= 'Delicious';
+$lang['nw_share_email']				= 'Email';
+$lang['nw_share_fblike']			= 'Facebook Like';
+$lang['nw_share_plusone']			= 'Google +1';
 
 $lang['us_draft_articles']			= 'Draft articles.';
 $lang['us_action_draft']			= 'Draft';
@@ -80,7 +92,10 @@ $lang['us_action_publish']			= 'Publish';
 $lang['us_action_review']			= 'Review';
 $lang['us_select_user']				= 'Select User';
 
-$lang['us_image_title'] = 'Image Title';
-$lang['us_image_alttag'] = 'Image Alt Tag';
-// Settings
+$lang['us_image_title'] 			= 'Image Title';
+$lang['us_image_alttag'] 			= 'Image Alt Tag';
+
+$lang['us_recent_news'] 			= 'Recent News';
+$lang['us_no_articles'] 			= 'No articles were found.';
+
 

@@ -3,6 +3,7 @@
 class News extends Front_Controller {
 
 	private $_settings;
+	
 	//--------------------------------------------------------------------
 	
 	public function __construct() 
@@ -19,12 +20,10 @@ class News extends Front_Controller {
 	
 	public function index()
 	{
-		// Load our current settings
-		Template::set(read_config('news'));
-
 		$articles = $this->get_articles();
-		Template::set_block('social', '');
-		Template::set_block('social', 'partials/social');
+		Template::set('articles', $articles);
+		Template::set('settings', $this->_settings);
+		Template::set('single', false);
 		Template::render();
 	}
 
@@ -76,13 +75,12 @@ class News extends Front_Controller {
 			{
 				$article->asset_url = $settings['news.upload_dir_url'];
 				$article->author_name = find_author_name($article->author);
-				$output .= $this->load->view('news/index',array('article'=>$article),true);
+				$output .= $this->load->view('news/article',array('article'=>$article,'settings'=>$settings,'single'=>false),true);
 			}
 		} else {
 				$output = 'No Articles found.';
 				$this->activity_model->log_activity($this->current_user->id, 'Get Articles: failed. No article were found.', 'news');
 		}
-
 		return $output;
 	}
 	
@@ -96,21 +94,25 @@ class News extends Front_Controller {
 			return false;
 		}
 
+		$settings = $this->_settings;
 		Assets::add_module_css('news','news.css');
 
 		if ( ($article = $this->news_model->get_article($article_id)) !== false)
 		{
 			$this->load->helper('author');
-
 			$article->author_name = find_author_name($article->author);
-			$settings = $this->_settings;
 			$article->asset_url = $settings['news.upload_dir_url'];
 			Template::set('article',$article);
+			if ( isset ($settings['news.sharing_enabled']) && $settings['news.sharing_enabled'] == 1) {
+                Template::set('settings',$settings);
+                Template::set('single',true);
+                Template::set('scripts',$this->load->view('news/news_articles_js',null,true));
+			}
 		} else {
 			$this->activity_model->log_activity($this->current_user->id, 'Get Article: '. $article_id .' failed. no article found.', 'news');
 		}
 
-		Template::set_view('news/index');
+		Template::set_view('news/article');
 		Template::render();
 	}
 	

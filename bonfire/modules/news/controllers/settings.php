@@ -46,14 +46,23 @@ class Settings extends Admin_Controller {
 
 	private function save_settings()
 	{
-		$this->form_validation->set_rules('allow_attachments', lang('nw_settings_attachAllow'), 'number|xss_clean');
-		$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), 'required|xss_clean');
-		$this->form_validation->set_rules('upload_dir_url', lang('nw_upload_dir_url'), 'number|xss_clean');
-		$this->form_validation->set_rules('max_img_size', lang('nw_max_img_size'), 'number|xss_clean');
-		$this->form_validation->set_rules('max_img_width', lang('nw_max_img_width'), 'number|xss_clean');
-		$this->form_validation->set_rules('max_img_height', lang('nw_max_img_height'), 'number|xss_clean');
-		$this->form_validation->set_rules('max_img_disp_width', lang('nw_max_img_disp_width'), 'number|xss_clean');
-		$this->form_validation->set_rules('max_img_disp_height', lang('nw_max_img_disp_height'), 'number|xss_clean');
+		$this->form_validation->set_rules('allow_attachments', lang('nw_settings_attachAllow'), 'numeric|xss_clean');
+		$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), 'required|strip_tags||xss_clean');
+		$this->form_validation->set_rules('upload_dir_url', lang('nw_upload_dir_url'), 'required|strip_tags|xss_clean');
+		$this->form_validation->set_rules('max_img_size', lang('nw_max_img_size'), 'numeric|xss_clean');
+		$this->form_validation->set_rules('max_img_width', lang('nw_max_img_width'), 'numeric|xss_clean');
+		$this->form_validation->set_rules('max_img_height', lang('nw_max_img_height'), 'numeric|xss_clean');
+		$this->form_validation->set_rules('max_img_disp_width', lang('nw_max_img_disp_width'), 'numeric|xss_clean');
+		$this->form_validation->set_rules('max_img_disp_height', lang('nw_max_img_disp_height'), 'numeric|xss_clean');
+		
+		$this->form_validation->set_rules('sharing_enabled', lang('nw_sharing_enabled'), 'numeric|strip_tags|max_length[1]|xss_clean');
+		$this->form_validation->set_rules('share_facebook', lang('nw_share_facebook'), 'numeric|strip_tags|max_length[1]|xss_clean');
+		$this->form_validation->set_rules('share_twitter', lang('nw_share_twitter'), 'numeric|strip_tags|max_length[1]|xss_clean');
+		$this->form_validation->set_rules('share_stumbleupon', lang('nw_share_stumbleupon'), 'numeric|strip_tags|max_length[1]|xss_clean');
+		$this->form_validation->set_rules('share_delicious', lang('nw_share_delicious'), 'numeric|strip_tags|max_length[1]|xss_clean');
+		$this->form_validation->set_rules('share_email', lang('nw_share_email'), 'numeric|strip_tags|max_length[1]|xss_clean');
+		$this->form_validation->set_rules('share_fblike', lang('nw_share_fblike'), 'numeric|strip_tags|max_length[1]|xss_clean');
+		$this->form_validation->set_rules('share_plusone', lang('nw_share_plusone'), 'numeric|strip_tags|max_length[1]|xss_clean');
 
 		if ($this->form_validation->run() === false)
 		{
@@ -61,7 +70,7 @@ class Settings extends Admin_Controller {
 		}
 
 		$data = array(
-			array('name' => 'news.allow_attachments', 'value' => ($this->input->post('allow_attachments')) ? 1 : -1),
+			array('name' => 'news.allow_attachments', 'value' => ($this->input->post('allow_attachments')) ? 1 : 0),
 			array('name' => 'news.upload_dir_path', 'value' => $this->input->post('upload_dir_path')),
 			array('name' => 'news.upload_dir_url', 'value' => $this->input->post('upload_dir_url')),
 			array('name' => 'news.max_img_size', 'value' => $this->input->post('max_img_size')),
@@ -69,6 +78,16 @@ class Settings extends Admin_Controller {
 			array('name' => 'news.max_img_height', 'value' => $this->input->post('max_img_height')),
 			array('name' => 'news.max_img_disp_width', 'value' => $this->input->post('max_img_disp_width')),
 			array('name' => 'news.max_img_disp_height', 'value' => $this->input->post('max_img_disp_height')),
+			
+			array('name' => 'news.sharing_enabled', 'value' => ($this->input->post('sharing_enabled')) ? 1 : 0),
+			array('name' => 'news.share_facebook', 'value' => ($this->input->post('share_facebook')) ? 1 : 0),
+			array('name' => 'news.share_twitter', 'value' => ($this->input->post('share_twitter')) ? 1 : 0),
+			array('name' => 'news.share_stumbleupon', 'value' => ($this->input->post('share_stumbleupon')) ? 1 : 0),
+			array('name' => 'news.share_delicious', 'value' => ($this->input->post('share_delicious')) ? 1 : 0),
+			array('name' => 'news.share_email', 'value' => ($this->input->post('share_email')) ? 1 : 0),
+			array('name' => 'news.share_fblike', 'value' => ($this->input->post('share_fblike')) ? 1 : 0),
+			array('name' => 'news.share_plusone', 'value' => ($this->input->post('share_plusone')) ? 1 : 0),
+			
 		);
 
 		// Log the activity
