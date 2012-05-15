@@ -5,12 +5,12 @@
 		<div class="span12">
         <?php if (isset($article)) : ?>
             <div class="page-header" style="padding-top: 25px;">
-                <h1><?php echo $article->title; ?>
-                    <div id="article_date" class="news_date"><?php echo(date('m/d/Y',intval($article->date))); ?></div>
-                    <?php if (isset($article->author_name) && !empty($article->author_name)) : ?>
-                        <div id="author" class="author">by <?php echo(anchor('users/profile/'.$article->author,((isset($article->author_name))? $article->author_name: 'Unnamed Author'))); ?></div>
-                    <?php endif; ?>
-                </h1>
+                <h1><?php echo $article->title; ?></h1>
+                <div id="article_date" class="news_date"><?php echo(date('m/d/Y',intval($article->date))); ?></div>
+                <?php if (isset($article->author_name) && !empty($article->author_name)) : ?>
+                    <div id="author" class="author">by <?php echo(anchor('users/profile/'.$article->author,((isset($article->author_name))? $article->author_name: 'Unnamed Author'))); ?></div>
+                <?php endif; ?>
+
             </div>
             <p>
             <div id="article">
@@ -48,6 +48,7 @@
                 <?php if (!isset($single) || isset ($single) && $single === false) :
                     echo anchor(site_url('/news/article/'.$article->id),'Read more...');
                 endif;  ?>
+                </div>
             </div>
             </p>
             <?php if ( isset ( $article->tags ) ) : ?>

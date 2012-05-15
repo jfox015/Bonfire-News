@@ -46,8 +46,9 @@ class Settings extends Admin_Controller {
 
 	private function save_settings()
 	{
+		$this->form_validation->set_rules('default_article_count', lang('nw_default_article_count'), 'required|numeric|max_length[3]|xss_clean');
 		$this->form_validation->set_rules('allow_attachments', lang('nw_settings_attachAllow'), 'numeric|xss_clean');
-		$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), 'required|strip_tags||xss_clean');
+		$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), 'required|strip_tags|xss_clean');
 		$this->form_validation->set_rules('upload_dir_url', lang('nw_upload_dir_url'), 'required|strip_tags|xss_clean');
 		$this->form_validation->set_rules('max_img_size', lang('nw_max_img_size'), 'numeric|xss_clean');
 		$this->form_validation->set_rules('max_img_width', lang('nw_max_img_width'), 'numeric|xss_clean');
@@ -70,6 +71,7 @@ class Settings extends Admin_Controller {
 		}
 
 		$data = array(
+			array('name' => 'news.default_article_count', 'value' => $this->input->post('default_article_count')),
 			array('name' => 'news.allow_attachments', 'value' => ($this->input->post('allow_attachments')) ? 1 : 0),
 			array('name' => 'news.upload_dir_path', 'value' => $this->input->post('upload_dir_path')),
 			array('name' => 'news.upload_dir_url', 'value' => $this->input->post('upload_dir_url')),

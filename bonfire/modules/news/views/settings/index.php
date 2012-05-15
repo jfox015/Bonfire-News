@@ -12,7 +12,17 @@
 
     <fieldset>
         <legend></legend>
-		    <!-- Allow Attachments -->
+
+        <!-- Default Article Count -->
+        <div class="control-group <?php echo form_error('default_article_count') ? 'error' : '' ?>">
+            <label class="control-label"><?php echo lang('nw_default_article_count') ?></label>
+            <div class="controls">
+                <input type="text" class="span1" id="default_article_count" name="default_article_count" value="<?php echo (isset($settings['news.default_article_count'])) ? $settings['news.default_article_count']: set_value('news.default_article_count'); ?>" /> <span class="help-inline"><?php echo lang('nw_article_count_note'); ?></span>
+            </div>
+        </div>
+
+
+        <!-- Allow Attachments -->
         <div class="control-group <?php echo form_error('allow_attachments') ? 'error' : '' ?>">
             <label class="control-label"><?php echo lang('nw_settings_attachAllow') ?></label>
             <div class="controls">

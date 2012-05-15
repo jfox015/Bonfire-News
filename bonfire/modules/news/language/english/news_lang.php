@@ -21,6 +21,8 @@ $lang['us_no_articles_found']		= 'No article content was found.';
 
 $lang['mw_setting_title']			= 'News Settings';
 $lang['us_news_options']			= 'News Options';
+$lang['nw_default_article_count']	= 'Default Article Count';
+$lang['nw_article_count_note']	    = 'How many articles should show on the default news home page';
 $lang['nw_settings_attachAllow']	= 'Allow Attachments';
 $lang['nw_upload_dir_path']			= 'Upload directory path';
 $lang['nw_upload_dir_path_note']	= 'Full server path from server root to attachmnent upload directory';

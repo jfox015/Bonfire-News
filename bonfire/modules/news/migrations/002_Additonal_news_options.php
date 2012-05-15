@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Migration_Social_sharing_options extends Migration {
+class Migration_Additonal_news_options extends Migration {
 	
 	public function up() 
 	{
@@ -8,6 +8,7 @@ class Migration_Social_sharing_options extends Migration {
 	
 		$default_settings = "
 			INSERT INTO `{$prefix}settings` (`name`, `module`, `value`) VALUES
+			 ('news.default_article_count', 'news', '5'),
 			 ('news.sharing_enabled', 'news', '1'),
 			 ('news.share_facebook', 'news', '1'),
 			 ('news.share_twitter', 'news', '1'),
@@ -28,6 +29,7 @@ class Migration_Social_sharing_options extends Migration {
 
         // remove the keys
 		$this->db->query("DELETE FROM {$prefix}settings WHERE (name = 'news.sharing_enabled'
+			OR name ='news.default_article_count'
 			OR name ='news.share_facebook'
 			OR name ='news.share_twitter'
 			OR name ='news.share_stumbleupon'

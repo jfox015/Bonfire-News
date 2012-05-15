@@ -20,7 +20,10 @@ class News extends Front_Controller {
 	
 	public function index()
 	{
-		$articles = $this->get_articles();
+
+        $settings = $this->_settings;
+
+        $articles = $this->get_articles($settings['news.default_article_count']);
 		Template::set('articles', $articles);
 		Template::set('settings', $this->_settings);
 		Template::set('single', false);

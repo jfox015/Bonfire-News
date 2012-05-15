@@ -26,6 +26,11 @@
     color:#909090;
 }
 
+.news_date, .author {
+    display: inline;block;
+    margin-right: 6px;
+}
+
 #articles {
     width:100%;
     font-family:Arial, Helvetica, sans-serif;

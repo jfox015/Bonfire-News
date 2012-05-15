@@ -13,19 +13,18 @@ A custom news module for the Bonfire Admin Dashboard mod.
 
 - Multiple Attachments
 
+## Installation and Usage
+
+See the [Bonfire:News Wiki Guide](https://github.com/jfox015/Bonfire-News/wiki) for installation and usage tips.
+
 ## Keep Current on the Mod
 
-Follow the official Twitter feed [ootpFox07](http://twitter.com/#!/ootpFox07).
+Follow the official Twitter feed [jfox015](http://twitter.com/#!/jfox015).
   
 ## Team
 
 - [Jeff Fox](http://www.aeoliandigital.com/) - Lead Developer
-- [Shawn Crigger](http://www.s-vizion.com/)  - Annoying Forking Developer
-
-## Just a side note
-
-This is my personal fork of **Jeff Fox's** execellent News Module,  my Fork is different then the offical and original version,  if it does not work on your system or a kitten dies when you install it
-I plead NOLA :P 
+- [Shawn Crigger](http://www.s-vizion.com/)  - Contributing Developer
  
 ## Contribute to the development
 
