@@ -15,8 +15,6 @@ class Migration_Install_news extends Migration {
 		$this->dbforge->add_field('`attachment` varchar(1000) NOT NULL');
 		$this->dbforge->add_field('`image_align` varchar(255) NOT NULL');
 		$this->dbforge->add_field('`image_caption` varchar(255) NOT NULL');
-		$this->dbforge->add_field('`image_alttag` varchar(255) NOT NULL');
-		$this->dbforge->add_field('`image_title` varchar(255) NOT NULL');
 		$this->dbforge->add_field('`tags` varchar(255) NOT NULL');
 		
 		$this->dbforge->add_field("`created_on` int(11) NOT NULL DEFAULT '0'");
@@ -31,8 +29,8 @@ class Migration_Install_news extends Migration {
 
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('news_articles');
-        $this->db->query("INSERT INTO {$prefix}news_articles VALUES(1, 1, 'Test News Article',".(time()-100000).",'<b>This is a test</b><br />Testing how this all works out.</b>','',-1,'','','','news,article,first',".time().",1,".time().",1,1,1,".strtotime('2012-02-14').",0)");
-        $this->db->query("INSERT INTO {$prefix}news_articles VALUES(2, 1, 'A sample news article with title',".time().",'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse est dolor, pellentesque a aliquet commodo, vestibulum quis enim. Ut aliquet rutrum purus, in vestibulum augue mattis eget. Aliquam iaculis lacinia neque, nec ultrices lorem aliquet eu. Suspendisse potenti. Nullam elementum feugiat blandit. Nullam ultricies leo libero, venenatis molestie diam. Proin mollis libero vitae nunc mattis rutrum.','',-1,'','','','lipsum, news, title, content, fresh',".time().",1,".time().",1,1,1,".strtotime('2012-04-01').",0)");
+        $this->db->query("INSERT INTO {$prefix}news_articles VALUES(1, 1, 'Test News Article',".(time()-100000).",'<b>This is a test</b><br />Testing how this all works out.</b>','',-1,'','news,article,first',".time().",1,".time().",1,1,1,".strtotime('2012-02-14').",0)");
+        $this->db->query("INSERT INTO {$prefix}news_articles VALUES(2, 1, 'A sample news article with title',".time().",'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse est dolor, pellentesque a aliquet commodo, vestibulum quis enim. Ut aliquet rutrum purus, in vestibulum augue mattis eget. Aliquam iaculis lacinia neque, nec ultrices lorem aliquet eu. Suspendisse potenti. Nullam elementum feugiat blandit. Nullam ultricies leo libero, venenatis molestie diam. Proin mollis libero vitae nunc mattis rutrum.','',-1,'','lipsum, news, title, content, fresh',".time().",1,".time().",1,1,1,".strtotime('2012-04-01').",0)");
 	
 		// Categories
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');

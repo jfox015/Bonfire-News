@@ -19,7 +19,23 @@ class Migration_Additonal_news_options extends Migration {
 			 ('news.share_plusone', 'news', '1');
 		";
         $this->db->query($default_settings);
-	}
+
+        $this->dbforge->add_column('news_articles', array(
+                'image_alttag'	=> array(
+                'type'	=> 'VARCHAR',
+                'constraint'	=> 255,
+                'default'		=> ''
+            )
+        ));
+        $this->dbforge->add_column('news_articles', array(
+                'image_title' => array(
+                'type'	=> 'VARCHAR',
+                'constraint'	=> 255,
+                'default' => ''
+            )
+        ));
+
+    }
 	
 	//--------------------------------------------------------------------
 	
@@ -38,7 +54,11 @@ class Migration_Additonal_news_options extends Migration {
 			OR name ='news.share_fblike'
 			OR name ='news.share_plusone'
 		)");
-	}
+
+        $this->dbforge->drop_column("news_articles","image_alttag");
+        $this->dbforge->drop_column("news_articles","image_title");
+
+    }
 	
 	//--------------------------------------------------------------------
 	
