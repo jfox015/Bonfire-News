@@ -34,7 +34,7 @@
                         endif;
                         ?>
                     <div id="image" class="news_image<?php echo($alignClass); ?>">
-                    <img src="<?php echo base_url(); if (isset($attachment['image_thumb']) && !empty($attachment['image_thumb'])) { echo($article->asset_url.$attachment['image_thumb']); } else { echo($article->asset_url.$attachment['file_name']); } ?>" alt="" title="" />
+                    <img src="<?php echo base_url(); if (isset($attachment['image_thumb']) && !empty($attachment['image_thumb'])) { echo($article->asset_url.$attachment['image_thumb']); } else { echo($article->asset_url.$attachment['file_name']); } ?>" alt="<?php echo (isset($article->image_alttag) ? $article->image_alttag : ''); ?>" title="<?php echo (isset($article->image_title) ? $article->image_title : ''); ?>" />
                     <?php
                     // IMAGE CAPTION CHECK
                     if (isset($article->image_caption) && !empty($article->image_caption)) : ?>

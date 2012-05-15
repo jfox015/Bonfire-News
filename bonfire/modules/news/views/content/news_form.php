@@ -28,7 +28,7 @@
         <div class="control-group <?php echo iif ( form_error('date'), 'error'); ?>">
              <label class="control-label" for="date"><?php echo lang('us_date') ?></label>
             <div class="controls">
-                <input type="text" name="date" id="date" value="<?php echo (isset($article) && isset($article->date) && !empty($article->date)) ? date('m/d/Y',$article->date) : ($this->input->post('date') ? set_value(date('m/d/Y',strtotime($this->input->post('date')))) : '') ?>" />
+                <input type="text" name="date" id="date" value="<?php echo (isset($article) && isset($article->date) && !empty($article->date)) ? date('m/d/Y',$article->date) : ($this->input->post('date') ? set_value(date('m/d/Y',strtotime($this->input->post('date')))) : date('m/d/Y',time())); ?>" />
 				<?php if (form_error('date')) echo '<span class="help-inline">'. form_error('date') .'</span>'; ?>
             </div>
         </div>
@@ -71,20 +71,19 @@
 			<label class="control-label"><?php echo lang('us_current_attachment') ?></label>
 			<div class="controls">
 				<ul class="thumbnails">
-					<li class="span3">
+					<li class="span6">
 						<div class="thumbnail">
 						<a class="lightbox" href="<?php echo base_url() . $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" target="_blank" >
 							<!--img src="<?php //echo  $settings['news.upload_dir_url'] . $attachment['file_name'] ?>" /-->
                             <img src="<?php echo base_url().$settings['news.upload_dir_url']; if (isset($attachment['image_thumb']) && !empty($attachment['image_thumb'])) { echo($attachment['image_thumb']); } else { echo($attachment['file_name']); } ?>" alt="" title="" />
-                        </a>
-						<h5><?php echo base_url(); echo $attachment['file_name'].' ('.$attachment['file_size'].'kB '.$attachment['file_type'].')'; ?></h5>
+                        </a> <br />
+						<h5>Path: <?php echo base_url().$settings['news.upload_dir_url']; echo $attachment['file_name'].' ('.$attachment['file_size'].'kB '.$attachment['file_type'].')'; ?></h5>
 						<p><?php echo anchor(SITE_AREA.'/content/news/remove_attachment/'.$article->id,'Remove', 'class="btn btn-small btn-danger"'); ?></p>
 						</div>
 					</li>
 				</ul>
 			</div>
 		</div>
-
 		<?php endif; ?>
 
 		<!-- IMAGE CAPTION -->
@@ -174,7 +173,7 @@
 		<div class="control-group <?php echo iif ( form_error('date_published'), 'error'); ?>">
 			 <label class="control-label"><?php echo lang('us_publish_date') ?></label>
 			<div class="controls">
-				<input type="text" name="date_published" id="date_published" value="<?php echo (isset($article) && isset($article->date_published) && !empty($article->date_published)) ? date('m/d/Y',$article->date_published) : ($this->input->post('date_published') ? set_value(date('m/d/Y',strtotime($this->input->post('date_published')))) : '') ?>" />
+				<input type="text" name="date_published" id="date_published" value="<?php echo (isset($article) && isset($article->date_published) && !empty($article->date_published)) ? date('m/d/Y',$article->date_published) : ($this->input->post('date_published') ? set_value(date('m/d/Y',strtotime($this->input->post('date_published')))) : date('m/d/Y',time())) ?>" />
 				<?php if (form_error('date_published')) echo '<span class="help-inline">'. form_error('date_published') .'</span>'; ?>
 			</div>
 		</div>

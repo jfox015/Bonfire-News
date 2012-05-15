@@ -236,28 +236,26 @@ class Content extends Admin_Controller {
 
 		if ($this->input->post('submit'))
 		{
-			//@TODO: Add Callback for file uploading instead of doing all this crazy stuff.
 			$uploadData = array();
 			$upload = true;
-			if (isset($_FILES['attachment']) && !empty($_FILES['attachment']))
-			{
+            if (isset($_FILES['attachment']) && is_array($_FILES['attachment']) && $_FILES['attachment']['error'] != 4)
+            {
 				$uploadData = $this->handle_upload( );
 				if (isset($uploadData['error']) && !empty($uploadData['error']))
 				{
 					$upload = false;
 				}
 			}
-			if ((count($uploadData) && $upload) || (count($uploadData) == 0 && $upload))
+			if ((count($uploadData) > 0 && $upload) || (count($uploadData) == 0 && $upload))
 			{
 				if ($id = $this->save_article($uploadData))
 				{
 					$article = $this->news_model->find($id);
-					//$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
-					$this->load->model('activities/activity_model');
-					$this->activity_model->log_activity($this->current_user->id, lang('us_log_create').' '.$this->current_user->display_name, 'users');
 
-					Template::set_message('Article successfully created.', 'success');
-					Template::redirect(SITE_AREA .'/content/news');
+                    $this->load->model('activities/activity_model');
+                    $this->activity_model->log_activity($this->current_user->id, 'Created Article: '. $article->id, 'news');
+
+                    Template::set_message('Article successfully created.', 'success');
 				}
 				else
 				{
@@ -298,16 +296,14 @@ class Content extends Admin_Controller {
 		{
 			$uploadData = array();
 			$upload = true;
-			//@TODO: Add Callback for file uploading instead of doing all this crazy stuff.
-			if (isset($_FILES['attachment']) && !empty($_FILES['attachment']))
-			{
+            if (isset($_FILES['attachment']) && is_array($_FILES['attachment']) && $_FILES['attachment']['error'] != 4)
+            {
 				$uploadData = $this->handle_upload( );
 				if (isset($uploadData['error']) && !empty($uploadData['error']))
 				{
 					$upload = false;
 				}
 			}
-
 			if ((count($uploadData) && $upload) || (count($uploadData) == 0 && $upload)) {
 
 				if ($this->save_article($uploadData, 'update', $article_id))
@@ -315,12 +311,9 @@ class Content extends Admin_Controller {
 					$article = $this->news_model->find($article_id);
 					$this->load->model('activities/activity_model');
 
-					$article->author_name = find_author_name($article->author);
-					//$log_name = $this->settings_lib->item('auth.use_own_names') ? $this->auth->user_name() : ($this->settings_lib->item('auth.use_usernames') ? $this->auth->user_name() : $this->auth->email());
-					$log_name = $this->current_user->email;
-					$this->activity_model->log_activity($this->current_user->id, lang('us_log_edit') .': '.$log_name, 'users');
+                    $this->activity_model->log_activity($this->current_user->id, 'Edited Article: '. $article->id, 'news');
 
-					Template::set_message('Article successfully updated.', 'success');
+                    Template::set_message('Article successfully updated.', 'success');
 				}
 				else
 				{
@@ -374,8 +367,8 @@ class Content extends Admin_Controller {
 
 					$log_name = $this->current_user->email;
 
-					$this->activity_model->log_activity($this->current_user->id, lang('us_log_delete') . ': '.$log_name, 'users');
-					Template::set_message('The article was successfully deleted.', 'success');
+                    $this->activity_model->log_activity($this->current_user->id, 'Deleted Article: '. $id, 'news');
+                    Template::set_message('The article was successfully deleted.', 'success');
 				}
 				else
 				{
@@ -567,9 +560,8 @@ class Content extends Admin_Controller {
 		$this->form_validation->set_rules('image_caption', 'lang:us_image_caption', 'trim|strip_tags|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('image_title', 'lang:us_image_title', 'trim|strip_tags|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('image_alttag', 'lang:us_image_alttag', 'trim|strip_tags|max_length[255]|xss_clean');
-		$this->form_validation->set_rules('tags', 'lang:us_tags', 'trim|strip_tags|max_length[255]|xss_clean');
-		//$this->form_validation->set_rules('attachment', 'lang:us_image_path', 'trim|strip_tags|xss_clean');
-		$this->form_validation->set_rules('image_align', 'lang:us_image_align', 'numeric|xss_clean');
+        $this->form_validation->set_rules('image_align', 'lang:us_image_align', 'numeric|xss_clean');
+        $this->form_validation->set_rules('tags', 'lang:us_tags', 'trim|strip_tags|max_length[255]|xss_clean');
 		$this->form_validation->set_rules('author', 'lang:us_author', 'numeric|xss_clean');
 		$this->form_validation->set_rules('date_published', 'lang:us_publish_date', 'trim|strip_tags|xss_clean');
 		$this->form_validation->set_rules('category_id', 'lang:us_category', 'numeric|xss_clean');
@@ -590,6 +582,9 @@ class Content extends Admin_Controller {
 					'tags'=>$this->input->post('tags'),
 					'author'=>$this->input->post('author'),
 					'image_align'=>$this->input->post('image_align'),
+					'image_alttag'=>$this->input->post('image_alttag'),
+					'image_title'=>$this->input->post('image_title'),
+					'image_caption'=>$this->input->post('image_caption'),
 					'date_published'=>$date_published,
 					'category_id'=>(($this->input->post('category_id'))?$this->input->post('category_id'):1),
 					'status_id'=>(($this->input->post('status_id'))?$this->input->post('status_id'):1)
