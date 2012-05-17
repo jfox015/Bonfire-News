@@ -1,9 +1,8 @@
+<?php if (isset($article)) : ?>
 <!-- Begin Article -->
 <div class="container-fluid">
-
 	<div class="row-fluid rowbg content">
 		<div class="span12">
-        <?php if (isset($article)) : ?>
             <div class="page-header" style="padding-top: 25px;">
                 <h1><?php echo $article->title; ?></h1>
                 <div id="article_date" class="news_date"><?php echo(date('m/d/Y',intval($article->date))); ?></div>
@@ -45,7 +44,8 @@
                 endif;  ?>
 
                 <?php echo $article->body ?>
-                <?php if (!isset($single) || isset ($single) && $single === false) :
+                <?php 
+				if (!isset($single) || isset ($single) && $single === false) :
                     echo anchor(site_url('/news/article/'.$article->id),'Read more...');
                 endif;  ?>
                 </div>
@@ -55,14 +55,27 @@
             <p><div id="tags" class="tags">Tags: <?php echo $article->tags ?></div></p>
             <?php endif;
 
-            if ( (isset ($single) && $single === true) && isset ($settings['news.sharing_enabled']) && $settings['news.sharing_enabled'] == 1) :
-                echo $this->load->view('news/partials/_social',array('settings'=>$settings,'scripts'=>$scripts),true);
-            endif;
-        else :?>
-            <p><?php echo lang('us_no_articles_found'); ?></p>
-        <?php
-        endif; ?>
+            if ( (isset ($single) && $single === true)) :
+				if (isset ($settings['news.sharing_enabled']) && $settings['news.sharing_enabled'] == 1) :
+					echo $this->load->view('news/partials/_social',array('settings'=>$settings,'scripts'=>$scripts),true);
+				endif;
+				
+				// COMMENTS
+				if (isset ($settings['news.comments_enabled']) && $settings['news.comments_enabled'] == 1) :
+					if (isset($comment_form) && !empty($comment_form)) : ?>
+						<!-- COMMENTS -->
+						<h3><?php echo lang('nw_article_comments'); ?></h3>
+						<?php 
+						echo ($comment_form);
+					elseif (isset($comment_count) && !empty($comment_count)) :
+						echo ('<h4><span class="label">'.$comment_count.'</span> Comments</h4>');
+					endif;
+				endif;
+			endif; ?>
         </div>
     </div>
 </div>
 <!-- End Article -->
+<?php
+endif; 
+?>

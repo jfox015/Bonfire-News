@@ -541,11 +541,6 @@ class Content extends Admin_Controller {
 
 	private function save_article($uploadData = false, $type='insert', $id=0)
 	{
-		/**
-		 * Donnu why this is here?
-		 */
-		$db_prefix = $this->db->dbprefix;
-
 		if ($type == 'insert')
 		{
 			$this->form_validation->set_rules('title', 'lang:us_title', 'required|trim|max_length[255]|strip_tags|xss_clean');
@@ -597,6 +592,16 @@ class Content extends Admin_Controller {
 		}
 		if ($type == 'insert')
 		{
+			$thread_id = 0;
+			if (in_array('comments',module_list(true))) 
+			{
+				if(!isset($this->comments_model)) 
+				{
+					$this->load->model('comments/comments_model');
+				}
+				$thread_id = $this->comments_model->new_comments_thread('news');
+			}
+			$data = $data + array('comments_thread_id'=>$thread_id,'created_by'=>$this->current_user->id);
 			return $this->news_model->insert($data);
 		}
 		else	// Update

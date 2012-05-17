@@ -11,18 +11,82 @@
     <?php echo form_open($this->uri->uri_string(), 'class="form-horizontal"'); ?>
 
     <fieldset>
-        <legend></legend>
+        <legend><?php echo lang('us_general_settings') ?></legend>
 
-        <!-- Default Article Count -->
+			<!-- Default Article Count -->
         <div class="control-group <?php echo form_error('default_article_count') ? 'error' : '' ?>">
             <label class="control-label"><?php echo lang('nw_default_article_count') ?></label>
             <div class="controls">
                 <input type="text" class="span1" id="default_article_count" name="default_article_count" value="<?php echo (isset($settings['news.default_article_count'])) ? $settings['news.default_article_count']: set_value('news.default_article_count'); ?>" /> <span class="help-inline"><?php echo lang('nw_article_count_note'); ?></span>
             </div>
         </div>
-
-
-        <!-- Allow Attachments -->
+		
+			<!-- Public Submissions -->
+        <div class="control-group <?php echo form_error('public_submissions') ? 'error' : '' ?>">
+            <label class="control-label"><?php echo lang('nw_public_submissions') ?></label>
+            <div class="controls">
+                <?php
+                $use_selection = ((isset($settings['news.public_submissions']) && $settings['news.public_submissions'] == 1) || !isset($settings['news.public_submissions'])) ? true : false;
+                echo form_checkbox('public_submissions',1, $use_selection, '', 'id="public_submissions"');
+                ?>
+                <?php if (form_error('public_submissions')) echo '<span class="help-inline">'. form_error('public_submissions') .'</span>'; ?>
+            </div>
+        </div>
+		
+			<!-- Public Submitters-->
+        <div class="control-group <?php echo form_error('public_submitters') ? 'error' : '' ?>">
+            <label class="control-label"><?php echo lang('nw_public_submitters') ?></label>
+            <div class="controls">
+                <?php
+                $use_selection = ((isset($settings['news.public_submitters']) && $settings['news.public_submitters'] == 1) || !isset($settings['news.public_submitters'])) ? true : false;
+                echo form_checkbox('public_submitters',1, $use_selection, '', 'id="public_submitters"');
+                ?>
+                <?php if (form_error('public_submitters')) echo '<span class="help-inline">'. form_error('public_submitters') .'</span>'; ?>
+            </div>
+        </div>
+		
+			<!-- Hold for Moderation -->
+        <div class="control-group <?php echo form_error('public_moderation') ? 'error' : '' ?>">
+            <label class="control-label"><?php echo lang('nw_public_moderation') ?></label>
+            <div class="controls">
+                <?php
+                $use_selection = ((isset($settings['news.public_moderation']) && $settings['news.public_moderation'] == 1) || !isset($settings['news.public_moderation'])) ? true : false;
+                echo form_checkbox('public_moderation',1, $use_selection, '', 'id="public_moderation"');
+                ?>
+                <span class="help-inline"><?php if (form_error('public_moderation')) echo form_error('public_moderation'); else echo lang('nw_moderation_note'); ?></span>
+            </div>
+        </div>
+    </fieldset>
+	
+	<fieldset>
+		<legend><?php echo lang('us_comments') ?></legend>
+		<?php 
+		if (in_array('comments',module_list(true))) :
+		?>
+			<!-- Enable Comments -->
+        <div class="control-group <?php echo form_error('comments_enabled') ? 'error' : '' ?>">
+            <label class="control-label"><?php echo lang('nw_comments_enabled') ?></label>
+            <div class="controls">
+                <?php
+                $use_selection = ((isset($settings['news.comments_enabled']) && $settings['news.comments_enabled'] == 1) || !isset($settings['news.comments_enabled'])) ? true : false;
+                echo form_checkbox('comments_enabled',1, $use_selection, '', 'id="comments_enabled"');
+                ?>
+                <span class="help-inline"><?php if (form_error('comments_enabled')) echo form_error('comments_enabled'); else echo lang('nw_comments_enabled_note'); ?></span>
+            </div>
+        </div>
+		<?php
+		else:
+		?>
+		<div class="well"><?php echo lang('nw_get_comments_module') ?></div>
+		<?php
+		endif;
+		?>
+	</fieldset>	
+	
+	<fieldset>
+		<legend><?php echo lang('us_img_attachments') ?></legend>
+		
+			<!-- Allow Attachments -->
         <div class="control-group <?php echo form_error('allow_attachments') ? 'error' : '' ?>">
             <label class="control-label"><?php echo lang('nw_settings_attachAllow') ?></label>
             <div class="controls">

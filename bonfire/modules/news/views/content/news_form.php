@@ -124,7 +124,7 @@
 
     </fieldset>
     <fieldset>
-	    <legend><?php echo lang('us_author_rand') ?></legend>
+	    <legend><?php echo lang('nw_random') ?></legend>
 
 		<!-- TAGS -->
 		<div class="control-group <?php echo iif ( form_error('tags'), 'error'); ?>">
@@ -148,7 +148,7 @@
 		endif; ?>
 	
 	</fieldset>
-	<?php  if ( has_permission('Site.News.Manage') ) :?>
+	<?php  if ( has_permission('Site.News.Manage') && !isset($public)) :?>
 	<fieldset>
 		<legend><?php echo lang('us_additional'); ?></legend>
 		

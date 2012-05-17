@@ -19,10 +19,20 @@ $lang['us_articles']				= 'Articles';
 $lang['us_article']					= 'Article';
 $lang['us_no_articles_found']		= 'No article content was found.';
 
-$lang['mw_setting_title']			= 'News Settings';
+$lang['nw_setting_title']			= 'News Settings';
 $lang['us_news_options']			= 'News Options';
 $lang['nw_default_article_count']	= 'Default Article Count';
 $lang['nw_article_count_note']	    = 'How many articles should show on the default news home page';
+
+$lang['nw_public_submissions']		= 'Allow Public News Submissions';
+$lang['nw_public_submitters']		= 'Must be member/signed in to submit news';
+$lang['nw_public_moderation']		= 'Queue public submissions for moderation';
+$lang['nw_moderation_note']			= 'If not checked, publicly submitted news articles are set to published upon submission';
+
+$lang['nw_comments_enabled']		= 'Enable Comments';
+$lang['nw_comments_enabled_note']	= 'Comments can be moderated from the <a href="[COMMENTS_URL]">Comments content page</a>';
+$lang['nw_get_comments_module']		= 'Enable user comments and feedback with the <a href="https://github.com/jfox015/Bonfire-Comments" target="_blank">Bonfire Comments</a> module.';
+
 $lang['nw_settings_attachAllow']	= 'Allow Attachments';
 $lang['nw_upload_dir_path']			= 'Upload directory path';
 $lang['nw_upload_dir_path_note']	= 'Full server path from server root to attachmnent upload directory';
@@ -79,10 +89,11 @@ $lang['us_image_align_left']		= 'Left (Default)';
 $lang['us_image_align_right']		= 'Right';
 $lang['us_tags']					= 'Tags';
 
+$lang['us_general_settings']		= 'General Settings';
+$lang['us_comments']				= 'Comments';
 $lang['us_additional']				= 'Additional Information';
-$lang['us_general_info']			= 'General Information';
 $lang['us_img_attachments']			= 'Image Attachments';
-$lang['us_author_rand']				= 'Author and Randomness';
+$lang['nw_random']				    = 'Random Details';
 
 $lang['us_author']					= 'Author';
 $lang['us_category']				= 'Category';
@@ -99,5 +110,6 @@ $lang['us_image_alttag'] 			= 'Image Alt Tag';
 
 $lang['us_recent_news'] 			= 'Recent News';
 $lang['us_no_articles'] 			= 'No articles were found.';
+$lang['nw_article_comments'] 		= 'Comments';
 
 

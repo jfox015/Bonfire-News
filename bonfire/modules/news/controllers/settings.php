@@ -32,14 +32,11 @@ class Settings extends Admin_Controller {
 		// Read our current settings
 		$settings = $this->settings_model->select('name,value')->find_all_by('module', 'news');
 		Template::set('settings', $settings);
-		Template::set('toolbar_title', lang('mw_setting_title'));
+		Template::set('toolbar_title', lang('nw_setting_title'));
 		Template::set_view('settings/index');
 		Template::render();
 	}
-
-
-	//--------------------------------------------------------------------
-
+	
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------
@@ -47,6 +44,12 @@ class Settings extends Admin_Controller {
 	private function save_settings()
 	{
 		$this->form_validation->set_rules('default_article_count', lang('nw_default_article_count'), 'required|numeric|max_length[3]|xss_clean');
+		$this->form_validation->set_rules('public_submissions', lang('nw_public_submissions'), 'numeric|xss_clean');
+		$this->form_validation->set_rules('public_submitters', lang('nw_public_submitters'), 'numeric|xss_clean');
+		$this->form_validation->set_rules('public_moderation', lang('nw_public_moderation'), 'numeric|xss_clean');
+		
+		$this->form_validation->set_rules('comments_enabled', lang('nw_comments_enabled'), 'numeric|xss_clean');
+		
 		$this->form_validation->set_rules('allow_attachments', lang('nw_settings_attachAllow'), 'numeric|xss_clean');
 		$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), 'required|strip_tags|xss_clean');
 		$this->form_validation->set_rules('upload_dir_url', lang('nw_upload_dir_url'), 'required|strip_tags|xss_clean');
@@ -72,6 +75,12 @@ class Settings extends Admin_Controller {
 
 		$data = array(
 			array('name' => 'news.default_article_count', 'value' => $this->input->post('default_article_count')),
+			array('name' => 'news.public_submissions', 'value' => ($this->input->post('public_submissions')) ? 1 : 0),
+			array('name' => 'news.public_submitters', 'value' => $this->input->post('public_submitters')),
+			array('name' => 'news.public_moderation', 'value' => ($this->input->post('public_moderation')) ? 1 : 0),
+			
+			array('name' => 'news.comments_enabled', 'value' => ($this->input->post('comments_enabled')) ? 1 : 0),
+			
 			array('name' => 'news.allow_attachments', 'value' => ($this->input->post('allow_attachments')) ? 1 : 0),
 			array('name' => 'news.upload_dir_path', 'value' => $this->input->post('upload_dir_path')),
 			array('name' => 'news.upload_dir_url', 'value' => $this->input->post('upload_dir_url')),

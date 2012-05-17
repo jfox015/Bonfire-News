@@ -35,7 +35,7 @@ function find_author_name ( $id = 0 )
 {
 	$ci =& get_instance();
 
-	$ci->load->model('author_model');
+	$ci->load->model('news/author_model');
 
 	return $ci->author_model->find_author ($id);
 
