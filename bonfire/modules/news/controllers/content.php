@@ -49,8 +49,7 @@ class Content extends Admin_Controller {
 	{
 		parent::__construct();
 
-		$this->auth->restrict('Site.Content.View');
-		$this->auth->restrict('Site.News.Manage');
+		$this->auth->restrict('News.Content.View');
 
 		$this->load->model( array('news/news_model', 'news/author_model' ));
 
@@ -232,9 +231,9 @@ class Content extends Admin_Controller {
 	public function create()
 	{
 		$settings = $this->_settings;
-		$this->auth->restrict('Site.News.Add');
+        $this->auth->restrict('News.Content.Add');
 
-		if ($this->input->post('submit'))
+        if ($this->input->post('submit'))
 		{
 			$uploadData = array();
 			$upload = true;
@@ -283,7 +282,7 @@ class Content extends Admin_Controller {
 	public function edit()
 	{
 		$settings = $this->_settings;
-		$this->auth->restrict('Site.News.Manage');
+		$this->auth->restrict('News.Content.Manage');
 
 		$article_id = $this->uri->segment(5);
 		if (empty($article_id))
@@ -356,8 +355,8 @@ class Content extends Admin_Controller {
 
 		if (!empty($id))
 		{
-			$this->auth->restrict('Site.News.Manage');
-			$article = $this->news_model->find($id);
+            $this->auth->restrict('News.Content.Manage');
+            $article = $this->news_model->find($id);
 			if (isset($article))
 			{
 				if ($this->news_model->delete($id))
@@ -388,7 +387,8 @@ class Content extends Admin_Controller {
 
 	public function purge()
 	{
-		$article_id = $this->uri->segment(5);
+        $this->auth->restrict('News.Content.Manage');
+        $article_id = $this->uri->segment(5);
 		// Handle a single-article purge
 		if (!empty($article_id) && is_numeric($article_id))
 		{
@@ -479,8 +479,8 @@ class Content extends Admin_Controller {
 		{
 			return;
 		}
-		$this->auth->restrict('Site.News.Manage');
-		foreach ($checked as $article_id)
+        $this->auth->restrict('News.Content.Manage');
+        foreach ($checked as $article_id)
 		{
 			$this->news_model->update($article_id,array('status_id'=>$status_id));
 		}
@@ -539,7 +539,7 @@ class Content extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
-	private function save_article($uploadData = false, $type='insert', $id=0)
+	public function save_article($uploadData = false, $type='insert', $id=0)
 	{
 		if ($type == 'insert')
 		{

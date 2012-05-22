@@ -1,11 +1,23 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Migration_Install_news extends Migration {
-	
-	public function up() 
+
+    private $permission_array = array(
+        'News.Content.Manage' => 'Manage News Content.',
+        'News.Content.Add' => 'Add  News Content.',
+        'News.Content.Delete' => 'Delete News Content.',
+    );
+
+    public function up()
 	{
 		$prefix = $this->db->dbprefix;
-	
+
+        foreach ($this->permission_array as $name => $description)
+        {
+            $this->db->query("INSERT INTO {$prefix}permissions(name, description) VALUES('".$name."', '".$description."')");
+            // give current role (or administrators if fresh install) full right to manage permissions
+            $this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1,".$this->db->insert_id().")");
+        }
 		// News Articles
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
 		$this->dbforge->add_field("`author` int(11) NOT NULL DEFAULT '-1'");
@@ -29,9 +41,7 @@ class Migration_Install_news extends Migration {
 
 		$this->dbforge->add_key('id', true);
 		$this->dbforge->create_table('news_articles');
-        $this->db->query("INSERT INTO {$prefix}news_articles VALUES(1, 1, 'Test News Article',".(time()-100000).",'<b>This is a test</b><br />Testing how this all works out.</b>','',-1,'','news,article,first',".time().",1,".time().",1,1,1,".strtotime('2012-02-14').",0)");
-        $this->db->query("INSERT INTO {$prefix}news_articles VALUES(2, 1, 'A sample news article with title',".time().",'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse est dolor, pellentesque a aliquet commodo, vestibulum quis enim. Ut aliquet rutrum purus, in vestibulum augue mattis eget. Aliquam iaculis lacinia neque, nec ultrices lorem aliquet eu. Suspendisse potenti. Nullam elementum feugiat blandit. Nullam ultricies leo libero, venenatis molestie diam. Proin mollis libero vitae nunc mattis rutrum.','',-1,'','lipsum, news, title, content, fresh',".time().",1,".time().",1,1,1,".strtotime('2012-04-01').",0)");
-	
+
 		// Categories
 		$this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
 		$this->dbforge->add_field("`category` varchar(50) NOT NULL");
@@ -55,39 +65,6 @@ class Migration_Install_news extends Migration {
 		$this->db->query("INSERT INTO {$prefix}news_status VALUES(3, 'Published', 0)");
 		$this->db->query("INSERT INTO {$prefix}news_status VALUES(4, 'Archived', 0)");
 		$this->db->query("INSERT INTO {$prefix}news_status VALUES(5, 'Rejected', 0)");
-		
-		$data = array(
-			'name'        => 'Site.News.Manage',
-			'description' => 'Manage News Content' 
-		);
-		$this->db->insert("{$prefix}permissions", $data);
-		
-		$permission_id = $this->db->insert_id();
-		
-		// change the roles which don't have any specific login_destination set
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
-		
-		$data = array(
-			'name'        => 'Site.News.Add',
-			'description' => 'Add News Content' 
-		);
-		$this->db->insert("{$prefix}permissions", $data);
-		
-		$permission_id = $this->db->insert_id();
-		
-		// change the roles which don't have any specific login_destination set
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
-
-        $data = array(
-            'name'        => 'Site.News.Delete',
-            'description' => 'Add News Content'
-        );
-        $this->db->insert("{$prefix}permissions", $data);
-
-        $permission_id = $this->db->insert_id();
-
-        // change the roles which don't have any specific login_destination set
-        $this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
 
         $default_settings = "
 			INSERT INTO `{$prefix}settings` (`name`, `module`, `value`) VALUES
@@ -113,35 +90,19 @@ class Migration_Install_news extends Migration {
 		$this->dbforge->drop_table('news_categories');
 		$this->dbforge->drop_table('news_status');
         $this->db->query("DELETE FROM {$prefix}settings WHERE (module = 'news')");
-		
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Site.News.Manage'");
-		foreach ($query->result_array() as $row)
-		{
-			$permission_id = $row['permission_id'];
-			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
-		}
-		//delete the role
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Site.News.Manage')");
-		
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Site.News.Delete'");
-		foreach ($query->result_array() as $row)
-		{
-			$permission_id = $row['permission_id'];
-			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
-		}
-		//delete the role
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Site.News.Delete')");
-		
-		
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Site.News.Add'");
-        foreach ($query->result_array() as $row)
+
+        foreach ($this->permission_array as $name => $description)
         {
-            $permission_id = $row['permission_id'];
-            $this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
+            $query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = '".$name."'");
+            foreach ($query->result_array() as $row)
+            {
+                $permission_id = $row['permission_id'];
+                $this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
+            }
+            //delete the role
+            $this->db->query("DELETE FROM {$prefix}permissions WHERE (name = '".$name."')");
         }
-        //delete the role
-        $this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Site.News.Add')");
-	}
+    }
 	
 	//--------------------------------------------------------------------
 	

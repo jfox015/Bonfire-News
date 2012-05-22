@@ -71,7 +71,7 @@
                 $use_selection = ((isset($settings['news.comments_enabled']) && $settings['news.comments_enabled'] == 1) || !isset($settings['news.comments_enabled'])) ? true : false;
                 echo form_checkbox('comments_enabled',1, $use_selection, '', 'id="comments_enabled"');
                 ?>
-                <span class="help-inline"><?php if (form_error('comments_enabled')) echo form_error('comments_enabled'); else echo lang('nw_comments_enabled_note'); ?></span>
+                <span class="help-inline"><?php if (form_error('comments_enabled')) echo form_error('comments_enabled'); else echo str_replace('[COMMENTS_URL]',site_url(SITE_AREA.'/content/comments/'),lang('nw_comments_enabled_note')); ?></span>
             </div>
         </div>
 		<?php

@@ -8,8 +8,7 @@ class Settings extends Admin_Controller {
 	{
 		parent::__construct();
 
-		$this->auth->restrict('Site.Settings.View');
-		$this->auth->restrict('Site.News.Manage');
+		$this->auth->restrict('News.Settings.View');
 
 		$this->lang->load('news');
 	}
@@ -20,7 +19,8 @@ class Settings extends Admin_Controller {
 	{
 		if ($this->input->post('submit'))
 		{
-			if ($this->save_settings())
+            $this->auth->restrict('News.Settings.Manage');
+            if ($this->save_settings())
 			{
 				Template::set_message('Your settings were successfully saved.', 'success');
 				redirect(SITE_AREA .'/settings/news');
