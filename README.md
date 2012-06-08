@@ -13,14 +13,19 @@ A custom news module for the Bonfire Admin Dashboard mod.
 
 - Multiple Attachments
 
+## Installation and Usage
+
+See the [Bonfire:News Wiki Guide](https://github.com/jfox015/Bonfire-News/wiki) for installation and usage tips.
+
 ## Keep Current on the Mod
 
-Follow the official Twitter feed [ootpFox07](http://twitter.com/#!/ootpFox07).
+Follow the official Twitter feed [jfox015](http://twitter.com/#!/jfox015).
   
 ## Team
 
 - [Jeff Fox](http://www.aeoliandigital.com/) - Lead Developer
-
+- [Shawn Crigger](http://www.s-vizion.com/)  - Contributing Developer
+ 
 ## Contribute to the development
 
 This mod is a 100% free and open source project. The source code is publicly available on GitHub.com. If you want to contribute to the development, simply fork the project, hack the code and send pull requests with your updates.

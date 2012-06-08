@@ -1,0 +1,39 @@
+.news_date {
+	font-style:italic;
+    font-size:12px;
+}
+
+#article .news_body {
+	vertical-align: text-top !important;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+#article .alignLeft { float:left; margin-right: 2.8em; }
+#article .alignRight { float:right; margin-left: 1.8em; }
+
+#article span.caption, 
+.author {
+	color:#999999;
+	font-size:11px;
+}
+.tags, #sharing_bar {
+    width:100%;
+    clear:both;
+}
+.tags {
+    font-size:11px;
+    color:#909090;
+}
+
+.news_date, .author {
+    display: inline;block;
+    margin-right: 6px;
+}
+
+#articles {
+    width:100%;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    color: #000000;
+}
