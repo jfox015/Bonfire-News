@@ -351,29 +351,37 @@ class Content extends Admin_Controller {
 
 	public function delete()
 	{
-		$id = $this->uri->segment(5);
-
-		if (!empty($id))
+		$arrId = $this->input->post('checked');
+		if (!empty($arrId))
 		{
-            $this->auth->restrict('News.Content.Manage');
-            $article = $this->news_model->find($id);
-			if (isset($article))
-			{
-				if ($this->news_model->delete($id))
-				{
-					$article = $this->news_model->find($id);
-					$this->load->model('activities/activity_model');
-
-					$log_name = $this->current_user->email;
-
-                    $this->activity_model->log_activity($this->current_user->id, 'Deleted Article: '. $id, 'news');
-                    Template::set_message('The article was successfully deleted.', 'success');
-				}
-				else
-				{
-					Template::set_message('Article could not be deleted: '. $this->news_model->error, 'error');
-				}							
-			}
+	            $this->auth->restrict('News.Content.Manage');
+	            $success = false;
+	            foreach($arrId as $id){
+	            	$article = $this->news_model->find($id);
+	            	if (isset($article))
+	            	{
+	            		if ($this->news_model->delete($id))
+	            		{
+	            			$article = $this->news_model->find($id);
+	            			$this->load->model('activities/activity_model');
+	            	
+	            			$log_name = $this->current_user->email;
+	            	
+	            			$this->activity_model->log_activity($this->current_user->id, 'Deleted Article: '. $id, 'news');
+	            			$success = true;
+	            		}
+	            		else
+	            		{
+	            			$success = false;
+	            			$this->activity_model->log_activity($this->current_user->id, 'Could not delet Article: '. $id, 'news');
+	            		}
+	            	}	
+	            }
+	            if($success){
+	            	Template::set_message('The article was successfully deleted.', 'success');
+	            }else{
+	            	Template::set_message('Article could not be deleted: '. $this->news_model->error, 'error');
+	            }
 		}
 		else
 		{
