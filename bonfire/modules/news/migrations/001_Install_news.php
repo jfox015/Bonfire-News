@@ -4,7 +4,7 @@ class Migration_Install_news extends Migration {
 
     private $permission_array = array(
         'News.Content.Manage' => 'Manage News Content.',
-        'News.Content.Add' => 'Add  News Content.',
+        'News.Content.Add' => 'Add News Content.',
         'News.Content.Delete' => 'Delete News Content.',
     );
 

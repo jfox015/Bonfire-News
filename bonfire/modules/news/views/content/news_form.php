@@ -139,7 +139,7 @@
 		<?php if ( has_permission('News.Content.Manage') ) : ?>
 			<?php
 			if (isset($users) && is_array($users) && count($users)) :
-				$selection = ( isset ($article) && !empty( $article->author ) ) ? (int) $article->author : $current_user->user_id;
+				$selection = ( isset ($article) && !empty( $article->author ) ) ? (int) $article->author : $current_user->id;
 				echo form_dropdown('author', $users, $selection , lang('us_author'), 'class="chzn-select" id="author"');
 			endif;
 			?>

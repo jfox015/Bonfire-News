@@ -76,15 +76,22 @@ class Content extends Admin_Controller {
 			js_path() . 'bootstrap-datepicker.js'
 		));
 
-		$the_path = $this->_settings['news.upload_dir_path'];
-		$this->_news_dir = realpath( $the_path );
-
-		if ( !is_dir( $this->_news_dir ) && ! is_writeable( $this->_news_dir ) )
+		if ($this->_settings['news.allow_attachments'] == 1 && (!isset($this->_settings['news.upload_dir_path']) || empty($this->_settings['news.upload_dir_path'])))
 		{
-			Template::set_message('Attachment Upload Directory is not write-able: ' . $this->_news_dir, 'error');
-			log_message('error', 'Attachment Upload Directory is not write-able: ' . $this->_news_dir);
+			Template::set_message('There is no Attachment Upload Directory currently specified. You will not be able to upload attachments unless it is set up.', 'error');
+			log_message('error', 'Attachment Upload Directory not specified.');
 		}
+		else
+		{
+			$the_path = $this->_settings['news.upload_dir_path'];
+			$this->_news_dir = realpath( $the_path );
 
+			if ( !is_dir( $this->_news_dir ) && ! is_writeable( $this->_news_dir ) )
+			{
+				Template::set_message('Attachment Upload Directory is not write-able: ' . $this->_news_dir, 'error');
+				log_message('error', 'Attachment Upload Directory is not write-able: ' . $this->_news_dir);
+			}
+		}
 		Template::set_block('sub_nav', 'content/_sub_nav');
 	}
 
@@ -326,10 +333,11 @@ class Content extends Admin_Controller {
 		}
 
 		$article = $this->news_model->find($article_id);
-		if (isset($article) && has_permission('Site.News.Manage'))
+		if (isset($article) && has_permission('News.Content.Manage'))
 		{
 			Template::set('article', $article);
 
+			Template::set('current_user', $this->current_user);
 			Template::set('categories', $this->news_model->get_news_categories_select());
 			Template::set('statuses', $this->news_model->get_news_statuses_select() );
 			Template::set('users', $this->author_model->get_users_select() );
@@ -338,7 +346,7 @@ class Content extends Admin_Controller {
 		}
 		else
 		{
-			Template::set_message(sprintf(lang('us_unauthorized')), 'error');
+			Template::set_message(lang('article_unauthorized'), 'error');
 			redirect(SITE_AREA .'/content/news');
 		}
 
