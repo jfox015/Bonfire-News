@@ -176,7 +176,7 @@ class News extends Front_Controller {
 	/**
 	 *	get_articles.
 	 *
-	 *	A funtion that returns a HTML block of published article content. This function runs each 
+	 *	A function that returns a HTML block of published article content. This function runs each 
 	 *	article returned through the load view and applies the article content against the article
 	 * 	view template. 
 	 *
@@ -220,7 +220,7 @@ class News extends Front_Controller {
 	/**
 	 *	article.
 	 *
-	 *	A funtion that renders an article using the news article template via the Bonire Template::render() function. 
+	 *	A function that renders an article using the news article template via the Bonire Template::render() function. 
 	 *	Unlike get_articles, this function also includes the News social sharing bar if that options is enabled.
 	 *
 	 *	@param	$article_id		int		The News article ID

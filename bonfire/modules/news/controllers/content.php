@@ -78,8 +78,8 @@ class Content extends Admin_Controller {
 
 		if ($this->_settings['news.allow_attachments'] == 1 && (!isset($this->_settings['news.upload_dir_path']) || empty($this->_settings['news.upload_dir_path'])))
 		{
-			Template::set_message('There is no Attachment Upload Directory currently specified. You will not be able to upload attachments unless it is set up.', 'error');
-			log_message('error', 'Attachment Upload Directory not specified.');
+			Template::set_message(lang('us_upload_dir_unspecified'), 'error');
+			log_message('error', lang('us_upload_dir_unspecified'));
 		}
 		else
 		{
@@ -88,8 +88,9 @@ class Content extends Admin_Controller {
 
 			if ( !is_dir( $this->_news_dir ) && ! is_writeable( $this->_news_dir ) )
 			{
-				Template::set_message('Attachment Upload Directory is not write-able: ' . $this->_news_dir, 'error');
-				log_message('error', 'Attachment Upload Directory is not write-able: ' . $this->_news_dir);
+				$err = sprintf(lang('us_upload_dir_unwritable'),$this->_news_dir);
+				Template::set_message($err, 'error');
+				log_message('error', $err);
 			}
 		}
 		Template::set_block('sub_nav', 'content/_sub_nav');
@@ -185,7 +186,7 @@ class Content extends Admin_Controller {
 					}
 				}
 				break;
-			case 'author':
+			case 'user':
 				$user_id = (int)$this->input->get('user_id');
 				$where['news_articles.author'] = $user_id;
 
@@ -228,7 +229,8 @@ class Content extends Admin_Controller {
 
 		Template::set('current_url', current_url());
 		Template::set('filter', $filter);
-
+		Template::set('users', $this->author_model->get_users_select() );
+		
 		Template::set('toolbar_title', lang('us_article_management'));
 		Template::render();
 	}
@@ -259,18 +261,18 @@ class Content extends Admin_Controller {
 					$article = $this->news_model->find($id);
 
                     $this->load->model('activities/activity_model');
-                    $this->activity_model->log_activity($this->current_user->id, 'Created Article: '. $article->id, 'news');
+                    $this->activity_model->log_activity($this->current_user->id, sprintf(lang('us_log_article_create'), $article->id), 'news');
 
-                    Template::set_message('Article successfully created.', 'success');
+                    Template::set_message(lang('us_article_created'), 'success');
 				}
 				else
 				{
-					Template::set_message('There was a problem creating the article: '. $this->news_model->error);
+					Template::set_message(sprintf(lang('us_article_create_fail'),$this->news_model->error));
 				}
 			}
 			else
 			{
-				Template::set_message('There was a problem saving the file attachment: '. $uploadData['error']);
+				Template::set_message(sprintf(lang('us_log_file_save_fail'), $uploadData['error']));
 			}
 		}
 
@@ -317,18 +319,18 @@ class Content extends Admin_Controller {
 					$article = $this->news_model->find($article_id);
 					$this->load->model('activities/activity_model');
 
-                    $this->activity_model->log_activity($this->current_user->id, 'Edited Article: '. $article->id, 'news');
-
-                    Template::set_message('Article successfully updated.', 'success');
+                    $this->activity_model->log_activity($this->current_user->id, sprintf(lang('us_log_article_update'),$article->id), 'news');
+                    Template::set_message(lang('us_article_updated'), 'success');
 				}
 				else
 				{
-					Template::set_message('There was a problem updating the article: '. $this->news_model->error);
+					Template::set_message(sprintf(lang('us_article_update_fail'), $this->news_model->error));
+					$this->activity_model->log_activity($this->current_user->id, sprintf(lang('us_log_article_update_fail'),$article->id), 'news');
 				}
 			}
 			else
 			{
-				Template::set_message('There was a problem saving the file attachment: '. $uploadData['error']);
+				Template::set_message(sprintf(lang('us_log_file_save_fail'),$uploadData['error']));
 			}
 		}
 
@@ -357,35 +359,52 @@ class Content extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
-	public function delete()
+	public function delete($checked = false)
 	{
-		$id = $this->uri->segment(5);
-
-		if (!empty($id))
+		if (isset($checked) && is_array($checked) && count($checked))
 		{
-            $this->auth->restrict('News.Content.Manage');
-            $article = $this->news_model->find($id);
-			if (isset($article))
-			{
-				if ($this->news_model->delete($id))
+			$this->auth->restrict('News.Content.Manage');
+			$success = true;
+			$deletedCount = 0;
+			$errorCount = 0;
+			$this->load->model('activities/activity_model');
+						
+			foreach($checked as $article_id){
+				if ($success)
 				{
-					$article = $this->news_model->find($id);
-					$this->load->model('activities/activity_model');
-
-					$log_name = $this->current_user->email;
-
-                    $this->activity_model->log_activity($this->current_user->id, 'Deleted Article: '. $id, 'news');
-                    Template::set_message('The article was successfully deleted.', 'success');
+					$article = $this->news_model->find($article_id);
+					if (isset($article))
+					{
+						if ($this->news_model->delete($article_id))
+						{
+							$article = $this->news_model->find($article_id);
+							$this->activity_model->log_activity($this->current_user->id, sprintf(lang('us_log_article_delete'),$id), 'news');
+							$deletedCount++;
+						}
+						else
+						{
+							$success = false;
+							$errorCount;
+							$this->activity_model->log_activity($this->current_user->id, sprintf(lang('us_log_article_delete_fail'),$article_id), 'news');
+						}  
+					}
 				}
 				else
 				{
-					Template::set_message('Article could not be deleted: '. $this->news_model->error, 'error');
-				}							
+					break;
+				}
+			}
+			if($success){
+				Template::set_message(sprintf(lang('us_articles_deleted'),$deletedCount) , 'success');
+			}
+			else
+			{
+				Template::set_message(sprintf(lang('us_article_delete_fail'),$this->news_model->error), 'error');
 			}
 		}
 		else
 		{
-			Template::set_message(lang('us_empty_id'), 'error');
+			Template::set_message(lang('us_empty_article_list'), 'error');
 		}
 
 		redirect(SITE_AREA .'/content/news');
@@ -421,7 +440,7 @@ class Content extends Admin_Controller {
 			}
 		}
 
-		Template::set_message('Articles Purged.', 'success');
+		Template::set_message(lang('us_log_article_purge'), 'success');
 
 		Template::redirect(SITE_AREA .'/content/news');
 	}
@@ -434,11 +453,11 @@ class Content extends Admin_Controller {
 
 		if ($this->news_model->update($id, array('news_articles.deleted'=>0)))
 		{
-			Template::set_message('Article successfully restored.', 'success');
+			Template::set_message(lang('us_article_restore'), 'success');
 		}
 		else
 		{
-			Template::set_message('Unable to restore article: '. $this->news_model->error, 'error');
+			Template::set_message(sprintf(lang('us_article_restore_fail'), $this->news_model->error), 'error');
 		}
 
 		Template::redirect(SITE_AREA .'/content/news');
@@ -466,11 +485,11 @@ class Content extends Admin_Controller {
 		}
 		if (!$success)
 		{
-			Template::set_message("Attachment removal failed.", 'error');
+			Template::set_message(lang('us_log_file_remove'), 'error');
 		}
 		else
 		{
-			Template::set_message("Attachment removed.", 'success');
+			Template::set_message(lang('us_log_file_remove_fail'), 'success');
 		}
 		$this->edit();
 
@@ -656,8 +675,9 @@ class Content extends Admin_Controller {
 			$deleted = unlink( $file_dir . DIRECTORY_SEPARATOR .$attachment['file_name']);
 			if ( $deleted === false )
 			{
-				Template::set_message('Problem deleting attachment file:' . $attachment['file_name'], 'error');
-				log_message('error', 'Problem deleting attachment file:' . $attachment['file_name'] );
+				$err = sprintf(lang('us_log_file_detatch_fail'), $attachment['file_name']);
+				Template::set_message($err, 'error');
+				log_message('error', $err);
 			}
 			unset ( $deleted );
 		}
@@ -667,8 +687,9 @@ class Content extends Admin_Controller {
 			$deleted = unlink($file_dir . DIRECTORY_SEPARATOR  . $attachment['image_thumb'] );
 			if ( $deleted === false )
 			{
-				Template::set_message('Problem deleting attachment file:' . $attachment['image_thumb'], 'error');
-				log_message('error', 'Problem deleting attachment file:' . $attachment['image_thumb'] );
+				$err = sprintf(lang('us_log_file_detatch_fail'), $attachment['image_thumb']);
+				Template::set_message($err, 'error');
+				log_message('error', $err);
 			}
 
 		}

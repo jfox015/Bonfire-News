@@ -51,8 +51,14 @@ class Settings extends Admin_Controller {
 		$this->form_validation->set_rules('comments_enabled', lang('nw_comments_enabled'), 'numeric|xss_clean');
 		
 		$this->form_validation->set_rules('allow_attachments', lang('nw_settings_attachAllow'), 'numeric|xss_clean');
-		$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), 'required|strip_tags|xss_clean');
-		$this->form_validation->set_rules('upload_dir_url', lang('nw_upload_dir_url'), 'required|strip_tags|xss_clean');
+		
+		$upload_rules = "strip_tags|xss_clean";
+		if ($this->input->post('allow_attachments') == 1) 
+		{
+			$upload_rules = "required|" . $upload_rules;
+		}
+		$this->form_validation->set_rules('upload_dir_path', lang('nw_upload_dir_path'), $upload_rules);
+		$this->form_validation->set_rules('upload_dir_url', lang('nw_upload_dir_url'), $upload_rules);
 		$this->form_validation->set_rules('max_img_size', lang('nw_max_img_size'), 'numeric|xss_clean');
 		$this->form_validation->set_rules('max_img_width', lang('nw_max_img_width'), 'numeric|xss_clean');
 		$this->form_validation->set_rules('max_img_height', lang('nw_max_img_height'), 'numeric|xss_clean');

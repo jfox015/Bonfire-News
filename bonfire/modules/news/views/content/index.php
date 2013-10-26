@@ -9,13 +9,16 @@
 				<b class="caret light-caret"></b>
 			</a>
 			<ul class="dropdown-menu">
-			<?php foreach ($users as $user) : ?>
+			<?php if (isset($users) && is_array($users) && count($users)) :
+				foreach ($users as $user_id => $display_name) : ?>
 				<li>
-					<a href="<?php echo $current_url .'?filter=user&user_id='. $user->id ?>">
-						<?php echo $user->display_name; ?>
+					<a href="<?php echo $current_url .'?filter=user&user_id='. $user_id ?>">
+						<?php echo $display_name; ?>
 					</a>
 				</li>
-			<?php endforeach; ?>
+			<?php endforeach; 
+			endif;
+			?>
 			</ul>
 		</li>
 		<li <?php echo $filter=='author' ? 'class="active"' : ''; ?> class="dropdown">
@@ -62,7 +65,7 @@
 					<input type="submit" name="submit" class="btn btn-success" value="<?php echo lang('us_action_publish') ?>">
 					<input type="submit" name="submit" class="btn btn-primary" value="<?php echo lang('us_action_review') ?>">
 					<input type="submit" name="submit" class="btn btn-warning" value="<?php echo lang('us_action_archive') ?>">
-					<input type="submit" name="delete" class="btn btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" style="margin-bottom: 0px; " onclick="return confirm('<?php echo lang('bf_action_delete'); ?>')">
+					<input type="submit" name="submit" class="btn btn-danger" id="delete-me" value="<?php echo lang('bf_action_delete') ?>" style="margin-bottom: 0px; " onclick="return confirm('<?php echo lang('bf_action_delete'); ?>')">
 				</td>
 			</tr>
 		</tfoot>
@@ -87,7 +90,14 @@
 						}
 					?></td>
 				<td><?php echo anchor(SITE_AREA.'/content/news/edit/'. $article->id,$article->title) ?></td>
-				<td><?php echo($this->user_model->find($article->author)->display_name); ?></td>
+				<td><?php 
+				$user = $this->user_model->find($article->author);
+				if (isset($user->display_name)) :
+					$author_name = $user->display_name;
+				else :
+					$author_name = $user->username;
+				endif;
+				echo($author_name); ?></td>
 				<td><?php
 						if ($article->date_published != '0000-00-00 00:00:00')
 						{

@@ -1,21 +1,24 @@
 # Bonfire News Module
 
-A custom news module for the Bonfire Admin Dashboard mod.
+A custom module for the [Bonfire Admin Dashboard](https://github.com/ci-bonfire/Bonfire) mod. It allows you to 
+create, manage and publish news stories for your site. You can use the built in API to post compact news lists 
+or articles with previews in any view with just a line or two of code.
 
 ## Features
 
 - Create and manage news articles
 - Retrieve single or multiple articles as views or as a list array
-- Manage category and status
-- Add attachmments
-
-## Possible Features
-
-- Multiple Attachments
+- Manage categories and statuses
+- Add file attachmments and images
+- Enabled support for the [Bonfire Comments](https://github.com/jfox015/Bonfire-Comments) module to accept comments and start discussions
 
 ## Installation and Usage
 
 See the [Bonfire:News Wiki Guide](https://github.com/jfox015/Bonfire-News/wiki) for installation and usage tips.
+
+## Change Log
+
+Follow the progress of the library on the [Change Log](https://github.com/jfox015/Bonfire-News/wiki/Change-Log) page
 
 ## Keep Current on the Mod
 
@@ -32,7 +35,7 @@ This mod is a 100% free and open source project. The source code is publicly ava
 
 ## License
 
-Copyright (c) 2012 Jeff Fox.
+Copyright (c) 2012-13 Jeff Fox.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

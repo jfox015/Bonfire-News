@@ -57,7 +57,8 @@ class News_model extends BF_Model {
 			return false;
 		}
 
-		$data['date'] = strtotime($data['date']);
+		//Removed because $data['date'] is current a timestamp
+    	//$data['date'] = strtotime($data['date']);
 
 		$data['attachment'] = (isset($data['attachment']) && !empty($data['attachment']) ? $data['attachment'] : '');
 
@@ -65,7 +66,11 @@ class News_model extends BF_Model {
 
 		$data['image_caption'] = (isset($data['image_caption']) && !empty($data['image_caption']) ? $data['image_caption'] : '');
 
-		$data['date_published'] = (isset($data['date_published']) && !empty($data['date_published']) ? strtotime($data['date_published']) : $data['date']);
+		 //Removed because $data['date_published'] is current a timestamp
+		//$data['date_published'] = (isset($data['date_published']) && !empty($data['date_published']) ? strtotime($data['date_published']) : $data['date']);
+		if(!is_int($data['date_published']) && strlen($data['date_published']) == 10){
+			$data['date_published'] = $data['date'];
+		}
 
 		$data['author'] = $data['created_by'] = $data['modified_by'] = (isset($data['author']) && !empty($data['author'])) ? $data['author'] : (($auth != NULL) ? $auth->user_id() : 1);
 
@@ -465,7 +470,6 @@ class News_model extends BF_Model {
 			// temporarily set the soft_deletes to true.
 			$this->soft_deletes = false;
 		}
-
 		return parent::delete($id);
 	}
 
