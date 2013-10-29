@@ -51,10 +51,7 @@ class Content extends Admin_Controller {
 
 		$this->auth->restrict('News.Content.View');
 
-		$this->load->model('news/news_model');
-		$this->load->model('news/author_model');
-		
-		$this->load->helper('news');
+		$this->load->model( array('news/news_model', 'news/author_model' ));
 
 		$this->lang->load('news');
 
@@ -262,6 +259,7 @@ class Content extends Admin_Controller {
 				if ($id = $this->save_article($uploadData))
 				{
 					$article = $this->news_model->find($id);
+
                     $this->load->model('activities/activity_model');
                     $this->activity_model->log_activity($this->current_user->id, sprintf(lang('us_log_article_create'), $article->id), 'news');
 
