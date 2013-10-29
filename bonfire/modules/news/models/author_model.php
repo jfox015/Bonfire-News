@@ -85,7 +85,7 @@ class Author_model extends BF_Model
 	public function get_users_select ( $insert_empty_row = false )
 	{
 
-		$query = $this->db->select('id, ' . $this->display_name )->get( $this->table );
+		$query = $this->db->select('id, '.$this->display_name )->get( $this->table );
 
 		if ( $query->num_rows() <= 0 )
 			return '';
@@ -97,7 +97,7 @@ class Author_model extends BF_Model
             $option[-999] = lang('us_select_user');
 
         }
-        foreach ($query->result() as $row)
+		foreach ($query->result() as $row)
 		{
 			$row_id          = (int) $row->id;
 			$option[$row_id] = $row->{$this->display_name};

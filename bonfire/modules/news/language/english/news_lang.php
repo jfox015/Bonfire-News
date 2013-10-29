@@ -3,6 +3,7 @@
 $lang['us_article_management']		= 'Article Manager';
 $lang['article_unauthorized']		= 'Unauthorized. Sorry you do not have the appropriate permission to this area.';
 $lang['us_empty_id']				= 'No Article Id was received.';
+$lang['us_empty_article_list']		= 'Article Id list was empty.';
 $lang['us_create_news']				= 'Create News Article';
 $lang['us_create_news_note']		= '<h3>Create A New Article</h3><p>Create new articles to display news about the site and content.</p>';
 $lang['us_delete_article_note']		= '<h3>Delete this Article</h3><p>Deleting this article will remove it completely from the site.</p>';
@@ -12,6 +13,29 @@ $lang['us_edit_news']				= 'Edit News Article';
 $lang['us_delete_article']			= 'Delete this Article';
 $lang['us_delete_article_confirm']	= 'Are you sure you want to delete this article?';
 $lang['us_purge_del_articles']		= 'Purge Articles';
+
+// STATUSES
+$lang['us_upload_dir_unspecified']	= 'Attachment Upload Directory not specified.';
+$lang['us_upload_dir_unwritable']	= 'Attachment Upload Directory "%s" is not write-able.';
+$lang['us_article_created']			= 'Article successfully created.';
+$lang['us_article_create_fail']		= 'There was a problem creating the article: "%s"';
+$lang['us_article_updated']			= 'The article was successfully updated.';
+$lang['us_article_update_fail']		= 'The article could not be updated. Error: "%s"';
+$lang['us_article_restore']			= 'Article successfully restored.';
+$lang['us_article_restore_fail']	= 'Unable to restore article: "%s"';
+$lang['us_article_deleted']			= 'The article was successfully deleted.';
+$lang['us_article_delete_fail']		= 'Article could not be deleted. Error: "%s"';
+$lang['us_log_article_create']		= 'Created Article: "%s"';
+$lang['us_log_article_update']		= 'Edited Article: "%s"';
+$lang['us_log_article_update_fail']	= 'Could not edit article: "%s"';
+$lang['us_log_article_delete']		= 'Deleted article: "%s"';
+$lang['us_log_article_purge']		= 'Articles Purged.';
+$lang['us_log_article_delete_fail']	= 'Could not delete article: "%s"';
+$lang['us_log_file_save_fail']		= 'There was a problem saving the file attachment: "%s"';
+$lang['us_log_file_detatch']		= 'Attachment file: "%s" was successfully deleted.';
+$lang['us_log_file_detatch_fail']	= 'Problem deleting attachment file: "%s"';
+$lang['us_log_file_remove']			= 'Attachment removed.';
+$lang['us_log_file_remove_fail']	= 'Attachment removal failed.';
 
 /* New index */
 $lang['us_article_id']				= 'Article ID';
@@ -69,7 +93,7 @@ $lang['us_action_publish']			= 'Publish';
 $lang['us_action_archive']			= 'Archive';
 $lang['us_action_archived']			= 'Archived';
 $lang['us_status_change']			= 'Change Status';
-$lang['us_deleted_articles']		= 'Deleted.';
+$lang['us_deleted_articles']		= 'Deleted';
 
 $lang['us_published_articles']		= 'Published articles.';
 $lang['no_articles']				= 'No articles were found.';

@@ -136,19 +136,21 @@
 		</div>
 			
 			<!-- AUTHOR -->
-		<?php if ( has_permission('Site.News.Manage') ) : ?>
+		<?php if ( has_permission('News.Content.Manage') ) : ?>
 			<?php
 			if (isset($users) && is_array($users) && count($users)) :
-				$selection = ( isset ($article) && !empty( $article->author ) ) ? (int) $article->author : $current_user->username;
+				$selection = ( isset ($article) && !empty( $article->author ) ) ? (int) $article->author : $current_user->id;
 				echo form_dropdown('author', $users, $selection , lang('us_author'), 'class="chzn-select" id="author"');
 			endif;
 			?>
-		<?php else : 
-			echo '<div>'.$article->author_name.'</div>';
+		<?php else:
+            if (isset ($article)) :
+			    echo '<div>'.(!empty( $article->author_name )) ? $article->author_name : $current_user->display_name.'</div>';
+            endif;
 		endif; ?>
 	
 	</fieldset>
-	<?php  if ( has_permission('Site.News.Manage') && !isset($public)) :?>
+	<?php  if ( has_permission('News.Content.Manage') && !isset($public)) :?>
 	<fieldset>
 		<legend><?php echo lang('us_additional'); ?></legend>
 		
