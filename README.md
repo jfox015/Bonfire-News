@@ -40,7 +40,7 @@ This mod is a 100% free and open source project. The source code is publicly ava
 
 ## License
 
-Copyright (c) 2012-13 Jeff Fox.
+Copyright (c) 2012-14 Jeff Fox.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
