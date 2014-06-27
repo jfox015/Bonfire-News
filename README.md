@@ -12,6 +12,11 @@ or articles with previews in any view with just a line or two of code.
 - Add file attachmments and images
 - Enabled support for the [Bonfire Comments](https://github.com/jfox015/Bonfire-Comments) module to accept comments and start discussions
 
+## Requirements
+
+- PHP 5.3+
+- [Bonfire 0.7+](https://github.com/ci-bonfire/Bonfire)
+
 ## Installation and Usage
 
 See the [Bonfire:News Wiki Guide](https://github.com/jfox015/Bonfire-News/wiki) for installation and usage tips.
