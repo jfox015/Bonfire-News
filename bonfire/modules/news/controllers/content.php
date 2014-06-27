@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 /*
-	Copyright (c) 2012 Jeff Fox
+	Copyright (c) 2012-14 Jeff Fox
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal

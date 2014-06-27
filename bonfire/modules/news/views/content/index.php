@@ -1,7 +1,5 @@
 <div class="admin-box">
-	<h3><?php echo lang('us_articles') ?></h3>
-
-	<ul class="nav nav-tabs" >
+		<ul class="nav nav-tabs" >
 		<li <?php echo $filter=='' ? 'class="active"' : ''; ?>><a href="<?php echo $current_url; ?>">Published Articles</a></li>
 		<li <?php echo $filter=='author' ? 'class="active"' : ''; ?> class="dropdown">
 			<a href="#" class="drodown-toggle" data-toggle="dropdown">

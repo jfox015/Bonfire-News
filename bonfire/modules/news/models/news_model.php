@@ -6,7 +6,8 @@
 */
 class News_model extends BF_Model {
 
-	protected $table		= 'news_articles';
+	protected $table_name	= 'news_articles';
+	protected $key			= 'id';
 	protected $soft_deletes	= true;
 	protected $date_format	= 'int';
 	protected $set_modified = true;
@@ -40,7 +41,7 @@ class News_model extends BF_Model {
 	*/
 	public function insert($data=array(), $auth = NULL)
 	{
-		if (!$this->_function_check(false, $data))
+		if (!$this->prep_data($data))
 		{
 			return false;
 		}
@@ -139,12 +140,14 @@ class News_model extends BF_Model {
 	{
 		if (empty($this->selects))
 		{
-			$this->select($this->table .'.*, category');
+			$this->select($this->table_name .'.*, category');
 		}
-
+		//$this->from();
+		$this->db->where('news_articles.'.$this->key,$id);
+		
 		$this->db->join('news_categories', 'news_categories.id = news_articles.category_id', 'left');
-
-		return parent::find($id);
+		$result = $this->db->get($this->table_name)->result();
+		return $result[0];
 	}
 
 	//--------------------------------------------------------------------
@@ -165,7 +168,7 @@ class News_model extends BF_Model {
 	{
 		if (empty($this->selects))
 		{
-			$this->select($this->table .'.*, category');
+			$this->select($this->table_name .'.*, category');
 		}
 
 		if ($show_deleted === false)
@@ -200,14 +203,15 @@ class News_model extends BF_Model {
 
 		if (empty($this->selects))
 		{
-			$this->select($this->table .'.*, category');
+			$this->select($this->table_name .'.*, category');
 		}
-
+		
+		$this->from($this->table_name);
 		return parent::find_by($field, $value);
 	}
 
 	//--------------------------------------------------------------------
-	public function get_articles( $published = true, $limit = -1, $offset = 0)
+	public function get_articles( $published = true, $limit = -1, $offset = 0, $summary = false)
 	{
 		$articles = null;
 
@@ -224,15 +228,26 @@ class News_model extends BF_Model {
 		{
 			$this->db->where('status_id',3);
 		}
-
-		$query = $this->db->get($this->table);
+		
+		$query = $this->db->get($this->table_name);
 		if ($query->num_rows() > 0)
 		{
 			$articles = $query->result();
 		}
-
-		//$articles = $this->news_model->find_all_by('status_id',3);
-		//print ($this->db->last_query()."<br />");
+		$this->load->helper('text');
+		
+		foreach($articles as &$article)
+		{
+			if($summary == true)
+				$article->body = character_limiter($this->strip_tags_content($article->body), 120, '&hellip;');
+			
+			if($article->comments_thread_id)
+				$article->nbcoms = modules::run('comments/count_comments',$article->comments_thread_id);
+			else
+				$article->nbcoms = 0;
+		}
+			
+		
 		return $articles;
 	}
 
@@ -254,7 +269,7 @@ class News_model extends BF_Model {
 			$this->db->where('status_id',3);
 		}
 
-		$query = $this->db->get($this->table);
+		$query = $this->db->get($this->table_name);
 
 		if ($query->num_rows() > 0)
 		{
@@ -356,21 +371,49 @@ class News_model extends BF_Model {
 
 	public function get_news_categories_select ( )
 	{
-		$table          = $this->table;
-		$this->table	= 'news_categories';
-
+		
+		$table          = $this->table_name;
+		$this->table_name	= 'news_categories';
 		$options = $this->format_dropdown('id', 'category');
 
-		$this->table    = $table;
+		
+		$this->table_name    = $table;
 		unset ( $table );
 
 		return $options;
 	}
 
+	public function format_dropdown()
+	{
+		$args = & func_get_args();
+
+		if (count($args) == 2)
+		{
+			list($key, $value) = $args;
+		}
+		else
+		{
+			$key = $this->key;
+			$value = $args[0];
+		}
+
+		$query = $this->db->select(array($key, $value))->get($this->table_name);
+
+		$options = array();
+		foreach ($query->result() as $row)
+		{
+			$options[$row->{$key}] = $row->{$value};
+		}
+
+		return $options;
+
+	}//end format_dropdown()
 	//--------------------------------------------------------------------
 
 	public function get_default_status()
 	{
+		$this->from($this->table_name);
+		
 		$query = $this->db->select('id')->where('default',1)->get('news_status');
 		if ( $query->num_rows() > 0 )
 		{
@@ -444,7 +487,8 @@ class News_model extends BF_Model {
 		{
 			$this->db->where('news_articles.deleted', 0);
 		}
-
+		//$this->from($this->table_name);
+		
 		return $this->db->count_all_results('news_articles');
 	}
 
@@ -474,6 +518,33 @@ class News_model extends BF_Model {
 	}
 
 	//--------------------------------------------------------------------
+
+	private function strip_tags_content($text, $tags = '', $invert = FALSE) { 
+
+		preg_match_all('/<(.+?)[\s]*\/?[\s]*>/si', trim($tags), $tags); 
+		$tags = array_unique($tags[1]); 
+
+		if(is_array($tags) AND count($tags) > 0) { 
+			if($invert == FALSE) { 
+				$text = preg_replace('@<(?!(?:'. implode('|', $tags) .')\b)(\w+)\b.*?>.*?</\1>@si', '', $text); 
+			} 
+			else { 
+				$text = preg_replace('@<('. implode('|', $tags) .')\b.*?>.*?</\1>@si', '', $text); 
+			} 
+		} 
+		elseif($invert == FALSE) { 
+			$text= preg_replace('@<(\w+)\b.*?>.*?</\1>@si', '', $text); 
+		} 
+		
+		$text = str_replace("<BR />", " ", $text);
+		$text = str_replace("<BR/>", " ", $text);
+		$text = str_replace("<BR >", " ", $text);
+		$text = str_replace("<br>", " ", $text);
+		$text = str_replace("<br />", " ", $text);
+		
+		return $text; 
+	} 
+
 
 }
 

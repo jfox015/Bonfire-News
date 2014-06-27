@@ -32,7 +32,9 @@ class Author_model extends BF_Model
 	 * @var string  User Table Name
 	 */
 	protected $table		= 'users';
-
+	protected $table_name	= 'users';
+	protected $key			= 'id';
+	
 	/**
 	 * @var string  User Name DB Row to Select
 	 */
@@ -73,6 +75,17 @@ class Author_model extends BF_Model
 
 		$name = parent::find($id);
 		return $name->{$this->display_name};
+	}
+	
+	public function find_author_img( $id = 0 )
+	{
+		if ( (int)$id == 0 )
+			return false;
+
+		
+		
+		$name = parent::find($id);
+		return gravatar_link($name->email);
 	}
 
 	//--------------------------------------------------------------------

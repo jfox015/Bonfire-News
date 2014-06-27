@@ -114,6 +114,7 @@ $lang['us_image_align_right']		= 'Right';
 $lang['us_tags']					= 'Tags';
 
 $lang['us_general_settings']		= 'General Settings';
+$lang['us_general_info']			= 'General Info';
 $lang['us_comments']				= 'Comments';
 $lang['us_additional']				= 'Additional Information';
 $lang['us_img_attachments']			= 'Image Attachments';
