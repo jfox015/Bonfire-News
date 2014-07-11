@@ -234,10 +234,10 @@ class News_model extends BF_Model {
 		{
 			$articles = $query->result();
 		}
-		$this->load->helper('text');
-		
-		foreach($articles as &$article)
-		{
+		if (count($articles) > 0) {
+                   $this->load->helper('text');
+                    foreach($articles as $article)
+                    {
 			if($summary == true)
 				$article->body = character_limiter($this->strip_tags_content($article->body), 120, '&hellip;');
 			
@@ -245,9 +245,8 @@ class News_model extends BF_Model {
 				$article->nbcoms = modules::run('comments/count_comments',$article->comments_thread_id);
 			else
 				$article->nbcoms = 0;
-		}
-			
-		
+                    }  
+                }
 		return $articles;
 	}
 

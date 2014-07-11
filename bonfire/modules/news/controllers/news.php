@@ -209,8 +209,8 @@ class News extends Front_Controller {
 				$output .= $this->load->view('news/article',array('comment_count' => $comment_count, 'article'=>$article,'settings'=>$settings,'single'=>false),true);
 			}
 		} else {
-			$output = 'No Articles found.';
-			$this->activity_model->log_activity($this->current_user->id, 'Get Articles: failed. No article were found.', 'news');
+			$output = lang('us_no_articles');
+			$this->activity_model->log_activity($this->current_user->id, 'Get Articles: failed. No articles were found.', 'news');
 		}
 		return $output;
 	}

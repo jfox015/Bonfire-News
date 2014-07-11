@@ -3,7 +3,7 @@
     <?php
     // Facebook
     if ( isset ($settings['news.share_facebook']) && $settings['news.share_facebook'] == 1) : ?>
-        <span class='st_facebook_hcount' displayText='<?php echo lang('nw_share_facebook_like'); ?>'></span>
+        <span class='st_facebook_hcount' displayText='<?php echo lang('nw_share_fblike'); ?>'></span>
         <?php
     endif;
     // Twitter

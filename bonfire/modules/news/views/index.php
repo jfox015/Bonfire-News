@@ -1,4 +1,5 @@
-<?php if (isset($articles)) :
+<?php 
+if (isset($articles)) :
     echo($articles);
 endif;
 ?>
