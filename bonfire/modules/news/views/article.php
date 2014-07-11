@@ -7,7 +7,7 @@
                 <h1><?php echo $article->title; ?></h1>
                 <div id="article_date" class="news_date"><?php echo(date('m/d/Y',intval($article->date))); ?></div>
                 <?php if (isset($article->author_name) && !empty($article->author_name)) : ?>
-                    <div id="author" class="author">by <?php echo(anchor('users/profile/'.$article->author,((isset($article->author_name))? $article->author_name: 'Unnamed Author'))); ?></div>
+                    <div id="author" class="author">by <?php echo(((isset($article->author_name))? $article->author_name: 'Unnamed Author')); ?></div>
                 <?php endif; ?>
 
             </div>
