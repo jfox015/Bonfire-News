@@ -57,35 +57,36 @@ class News extends Front_Controller {
 			
 			$uploadData = array();
 			$upload = true;
-            if (isset($_FILES['attachment']) && is_array($_FILES['attachment']) && $_FILES['attachment']['error'] != 4)
-            {
-				$uploadData = $this->content->handle_upload( );
-				if (isset($uploadData['error']) && !empty($uploadData['error']))
-				{
-					$upload = false;
-				}
+                        if (isset($_FILES['attachment']) && is_array($_FILES['attachment']) && $_FILES['attachment']['error'] != 4)
+                        {
+                            $uploadData = $this->content->handle_upload( );
+                            if (isset($uploadData['error']) && !empty($uploadData['error']))
+                            {
+                                    $upload = false;
+                            }
 			}
 			if ((count($uploadData) > 0 && $upload) || (count($uploadData) == 0 && $upload))
 			{
-				if ($id = $this->content->save_article($uploadData))
-				{
-					$article = $this->news_model->find($id);
+                            if ($id = $this->content->save_article($uploadData))
+                            {
+				$article = $this->news_model->find($id);
 
-                    $this->load->model('activities/activity_model');
-                    $this->activity_model->log_activity($this->current_user->id, 'Created Article: '. $article->id, 'news');
-
-                    Template::set_message('Article successfully submitted. It will be reviewed by the news moderator.', 'success');
-					Template::set_view('index');
-					Template::render();
+                                    $this->load->model('activities/activity_model');
+                                    if (isset($this->current_user) && isset($this->current_user->id)) {
+                                        $this->activity_model->log_activity($this->current_user->id, 'Created Article: '. $article->id, 'news');
+                                    }
+                                    Template::set_message('Article successfully submitted. It will be reviewed by the news moderator.', 'success');
+                                    Template::set_view('index');
+                                    Template::render();
 				}
 				else
 				{
-					Template::set_message('There was a problem creating the article: '. $this->news_model->error);
+                                    Template::set_message('There was a problem creating the article: '. $this->news_model->error);
 				}
 			}
 			else
 			{
-				Template::set_message('There was a problem saving the file attachment: '. $uploadData['error']);
+                            Template::set_message('There was a problem saving the file attachment: '. $uploadData['error']);
 			}
 		}
 		
@@ -95,42 +96,42 @@ class News extends Front_Controller {
 			
 			if ($settings['news.public_submitters'] == 1) 
 			{
-				$cookie = unserialize($this->input->cookie($this->config->item('sess_cookie_name')));
-				$showForm = isset ($cookie['logged_in']);
-				$error = 'You must be <a href="'.site_url('/login/').'">logged in</a> to post news to this site.';
-				unset ($cookie);
+                            $cookie = unserialize($this->input->cookie($this->config->item('sess_cookie_name')));
+                            $showForm = isset ($cookie['logged_in']);
+                            $error = 'You must be <a href="'.site_url('/login/').'">logged in</a> to post news to this site.';
+                            unset ($cookie);
 			}
 			if ($showForm) 
 			{
-				$this->load->helper('form');
-                Assets::add_css( array(
-                    Template::theme_url('js/editors/markitup/skins/markitup/style.css'),
-                    Template::theme_url('js/editors/markitup/sets/default/style.css'),
-                    css_path() . 'chosen.css',
-                    css_path() . 'bootstrap-datepicker.css'
+                            $this->load->helper('form');
+                            Assets::add_css( array(
+                                Template::theme_url('js/editors/markitup/skins/markitup/style.css'),
+                                Template::theme_url('js/editors/markitup/sets/default/style.css'),
+                                css_path() . 'chosen.css',
+                                css_path() . 'bootstrap-datepicker.css'
 
-                ));
+                            ));
 
-                Assets::add_js( array(
-                    Template::theme_url('js/editors/markitup/jquery.markitup.js'),
-                    Template::theme_url('js/editors/markitup/sets/default/set.js'),
-                    js_path() . 'chosen.jquery.min.js',
-                    js_path() . 'bootstrap-datepicker.js'
-                ));
-                Template::set('public', true);
-                Template::set('settings', $settings);
-				Template::set('toolbar_title', lang('us_create_news'));
-				Template::set_view('content/news_form');
-				Template::render();
+                             Assets::add_js( array(
+                                Template::theme_url('js/editors/markitup/jquery.markitup.js'),
+                                Template::theme_url('js/editors/markitup/sets/default/set.js'),
+                                js_path() . 'chosen.jquery.min.js',
+                                js_path() . 'bootstrap-datepicker.js'
+                            ));
+                            Template::set('public', true);
+                            Template::set('settings', $settings);
+                            Template::set('toolbar_title', lang('us_create_news'));
+                            Template::set_view('content/news_form');
+                            Template::render();
 			} 
 			else 
 			{
-				show_error($error,501,'Form Access Error');
+                            show_error($error,501,'Form Access Error');
 			}
 		} 
 		else 
 		{
-			show_error('<h2>Sorry</h2><br />Public news submissions are not currently available.<br /><a href="'.site_url().'">Return to the site</a>.',501,'Public News Submission not available');
+                    show_error('<h2>Sorry</h2><br />Public news submissions are not currently available.<br /><a href="'.site_url().'">Return to the site</a>.',501,'Public News Submission not available');
 		}
 	}
     //--------------------------------------------------------------------
@@ -212,7 +213,9 @@ class News extends Front_Controller {
 			}
 		} else {
 			$output = lang('us_no_articles');
-			$this->activity_model->log_activity($this->current_user->id, 'Get Articles: failed. No articles were found.', 'news');
+                        if (isset($this->current_user) && isset($this->current_user->id)) {
+                            $this->activity_model->log_activity($this->current_user->id, 'Get Articles: failed. No articles were found.', 'news');
+                        }
 		}
 		return $output;
 	}
@@ -247,16 +250,18 @@ class News extends Front_Controller {
 			$article->asset_url = $settings['news.upload_dir_url'];
 			Template::set('article',$article);
 			if ( isset ($settings['news.sharing_enabled']) && $settings['news.sharing_enabled'] == 1) {
-                Template::set('settings',$settings);
-                Template::set('single',true);
-                Template::set('scripts',$this->load->view('news/news_articles_js',null,true));
+                            Template::set('settings',$settings);
+                            Template::set('single',true);
+                            Template::set('scripts',$this->load->view('news/news_articles_js',null,true));
 			}
 			// COMMENTS
 			$comments = (in_array('comments',module_list(true)) && $settings['news.comments_enabled'] ==1) ? modules::run('comments/thread_view_with_form',$article->comments_thread_id) : '';
 			Template::set('comment_form', $comments);
 			
 		} else {
-			$this->activity_model->log_activity($this->current_user->id, 'Get Article: '. $article_id .' failed. no article found.', 'news');
+			if (isset($this->current_user) && isset($this->current_user->id)) {
+                            $this->activity_model->log_activity($this->current_user->id, 'Get Article: '. $article_id .' failed. no article found.', 'news');
+                        }
 		}
 
 		Template::set_view('news/article');
