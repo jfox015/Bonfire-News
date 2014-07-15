@@ -24,10 +24,10 @@ class News extends Front_Controller {
 	 *	Displays a default list of news articles. The nbumber of articles displayed is managed via
 	 *	the news.default_article_count setting.
 	 *
-	 *	@return					<void>	This function outputs to the Template::render() function
+	 *	@return     <void>	This function outputs to the Template::render() function
 	 *
 	 */
-    public function index()
+        public function index()
 	{
 		$articles = $this->get_articles($this->_settings['news.default_article_count']);
 		Template::set('articles', $articles);
@@ -36,18 +36,18 @@ class News extends Front_Controller {
 		Template::render();
 	}
 
-    //--------------------------------------------------------------------
+        //--------------------------------------------------------------------
 
-    /**
+        /**
 	 *	add_news.
 	 *
 	 *	Displays a default list of news articles. The nbumber of articles displayed is managed via
 	 *	the news.default_article_count setting.
 	 *
-	 *	@return					<void>	This function outputs to the Template::render() function
+	 *	@return <void>	This function outputs to the Template::render() function
 	 *
 	 */
-    public function add_news()
+        public function add_news()
 	{
 		$settings = $this->_settings;
 		
@@ -146,30 +146,32 @@ class News extends Front_Controller {
 	 *	@return			array	Array of article objects
 	 *
 	 */
-    public function get_article_list($limit=-1, $offset=0)
-		{
+        public function get_article_list($limit=-1, $offset=0)
+        {
 
-			Assets::add_module_css('news','assets/css/news.css');
+            Assets::add_module_css('news','assets/css/news.css');
 
-			$this->load->model('activities/Activity_model', 'activity_model', true);
+            $this->load->model('activities/Activity_model', 'activity_model', true);
 
-			if ($limit != -1 && $offset == 0)
-			{
-				$this->db->limit($limit);
-			} else if ($limit != -1 && $offset > 0) {
-				$this->db->limit($limit, $offset);
-			}
+            if ($limit != -1 && $offset == 0)
+            {
+                    $this->db->limit($limit);
+            } else if ($limit != -1 && $offset > 0) {
+                    $this->db->limit($limit, $offset);
+            }
 
-			$this->db->order_by('date', 'desc');
-			$articles = $this->news_model->find_all_by('status_id',3);
+            $this->db->order_by('date', 'desc');
+            $articles = $this->news_model->find_all_by('status_id',3);
 
-			if (!is_array($articles) || !count($articles))
-			{
-				$this->activity_model->log_activity($this->current_user->id, 'Get Articles: failed. No articles were found.', 'news');
-			}
+            if (!is_array($articles) || !count($articles))
+            {
+                if (isset($this->current_user) && isset($this->current_user->id)) {
+                    $this->activity_model->log_activity($this->current_user->id, 'Get Articles: failed. No articles were found.', 'news');
+                }
+            }
 
-			return $articles;
-    }
+            return $articles;
+        }
 
 	//--------------------------------------------------------------------
 	
@@ -185,7 +187,7 @@ class News extends Front_Controller {
 	 *	@return			varchar	Formatted HTML article blocks
 	 *
 	 */
-    public function get_articles($limit=-1, $offset=0)
+        public function get_articles($limit=-1, $offset=0)
 	{
 
 		Assets::add_module_css('news','news.css');
@@ -227,7 +229,7 @@ class News extends Front_Controller {
 	 *	@return					<void>	This function outputs to the Template::render() function
 	 *
 	 */
-    public function article($article_id = false)
+        public function article($article_id = false)
 	{
 		
 		if ($article_id === false)
